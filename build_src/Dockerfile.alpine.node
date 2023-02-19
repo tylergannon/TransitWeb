@@ -1,0 +1,11 @@
+FROM alpine:edge
+
+# Install with apk and no cache.
+RUN apk add --no-cache \
+        dumb-init \
+        fish \
+        nodejs \
+        unit \
+        unit-tools \
+    && wget -qO- https://get.pnpm.io/install.sh \
+        | PNPM_HOME=/bin SHELL="$(which fish)" sh -

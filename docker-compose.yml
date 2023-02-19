@@ -1,0 +1,21 @@
+
+services:
+# First we need a server based on the latest postgres:alpine image.
+# We will name it "db" so we can reference it later on.
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: db
+
+  astroapi:
+    image: tylergannon/astroapi:latest
+    volumes:
+      - astroapi_logs:/var/log
+  web:
+    environment:
+      db_connection: "postgresql://user:password@db:5432/db"
+    
+volumes:
+  astroapi_logs:
