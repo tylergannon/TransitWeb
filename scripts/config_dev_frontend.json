@@ -1,0 +1,32 @@
+{
+    "listeners": {
+        "*:5173": { "pass": "routes" },
+        "*:5143": { "pass": "routes", 
+                    "tls": { "certificate": "transitweb" } },
+        "*:80": { "pass": "applications/transitweb" },
+        "*:443": { "pass": "applications/transitweb", 
+                    "tls": { "certificate": "transitweb" } }
+    },
+    "applications":{
+        "transitweb":{
+            "type": "external",
+            "working_directory": "/app",
+            "executable": "/usr/bin/env",
+            "user": "unit",
+            "group": "unit",
+            "arguments": [ 
+                "node", 
+                "--loader",
+                "unit-http/loader.mjs",
+                "--require",
+                "unit-http/loader",
+                "/app/index.js"
+            ]
+        }
+    },
+    "routes": [
+        {
+            "action": { "proxy": "http://10.1.2.2:5173" }
+        }
+    ]
+}
