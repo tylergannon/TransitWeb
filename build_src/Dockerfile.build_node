@@ -26,4 +26,6 @@ RUN apt-get update \
     && echo "Building node, this will take a while." \
     && make -j4 > /tmp/node-build.log 2>&1 \
     && make install || (cat /tmp/node-build.log && exit 1)
-    
+
+ARG CONTAINER_ENV=/usr/local/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+ENV PATH="${CONTAINER_ENV}"

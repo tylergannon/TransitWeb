@@ -1,0 +1,23 @@
+{
+    "listeners":{
+        "*:443":{
+            "pass": "applications/transitweb",
+            "tls": {
+                "certificate": "transitweb"
+            }
+        },
+        "*:80":{
+            "pass": "applications/transitweb"
+        }
+    },
+    "applications":{
+        "transitweb":{
+            "type": "external",
+            "working_directory": "/app",
+            "executable": "init_app.js",
+            "user": "unit",
+            "group": "unit",
+            "arguments": [ ]
+        }
+    }
+}

@@ -1,0 +1,15 @@
+FROM tylergannon/transitweb:latest
+
+VOLUME /app
+VOLUME /app/node_modules
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y \
+        fish \
+        python3-pip \
+        vim \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+    
