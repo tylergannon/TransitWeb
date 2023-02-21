@@ -1,0 +1,22 @@
+{
+    "listeners": {
+        "*:80":  { "pass": "routes" },
+        "*:443": { "pass": "routes", "tls": { "certificate": "transitweb" } }
+    },
+    "routes": [
+        {
+            "match": { "host": "dev.local" },
+            "action": {
+                "action": { "proxy": "http://10.1.2.2:5173" }
+            }
+        }, {
+            "match": { "host": "prod.local" },
+            "action": {
+                "share": "/var/www/html",
+                "fallback": {
+                    "proxy": "http://10.1.2.3:5173"
+                }
+            }
+        }
+    ]
+}
