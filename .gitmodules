@@ -1,0 +1,3 @@
+[submodule "servers/astroapi"]
+	path = servers/astroapi
+	url = https://github.com/tylergannon/astroapi.git
