@@ -1,13 +1,15 @@
-.PHONY: default unit node astroapi
+.PHONY: default unit svelte-app astroapi
 
-default: unit node astroapi
+default: unit svelte-app astroapi dev-server
 
 unit:
 	@cd servers/unit && make image
 
-node:
+svelte-app:
 	@cd servers/node && make image
 
 astroapi:
 	@cd servers/astroapi && make image
 
+dev-server:
+	@cd servers/dev-server && make image
