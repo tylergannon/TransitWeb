@@ -14,7 +14,7 @@ complain() {
 }
 
 SHA1_FILE=/app/node_modules/package-lock.json.sha1
-md5sum --status -c $SHA1_FILE;
+md5sum -s -c $SHA1_FILE;
 if [ $? -ne 0 ]; then
     echo "package-lock.json has changed, rebuilding node_modules"
     npm install --omit=dev
