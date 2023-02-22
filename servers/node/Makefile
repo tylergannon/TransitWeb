@@ -1,4 +1,4 @@
-.PHONY: default clean image rebuild_image node
+.PHONY: default clean image rebuild_image node_image
 
 NPM := "pnpm"
 VOLUME := build_dev_node_modules
@@ -7,11 +7,7 @@ PROJECT := $(shell readlink -fn $(CURDIR)/../..)
 RANDOM := $(shell head /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | head -c 10)
 
 APP_IMG := tylergannon/svelte-app
-IMAGE_LABEL := debian-slim
-
-ifeq ($(shell uname -m),arm64)
-NODE_DEP := node
-endif
+IMAGE_LABEL := alpine
 
 default: image
 
@@ -29,26 +25,26 @@ rebuild_image: $(OUT)/app
 		. \
 		--no-cache
 
-# Note this won't run except if `uname -m` is arm64.
-node:
-	docker build \
-		-t node:$(IMAGE_LABEL) \
-		. \
-		-f Dockerfile.build_node
-
+node_image:
+	@docker build \
+		-t tylergannon/node:$(IMAGE_LABEL) \
+		-t tylergannon/node:latest \
+		-f Dockerfile.node \
+		.
 $(OUT)/package.json:
 	@mkdir -p $(OUT)
 	@cp ../../package.json ../../package-lock.json $(OUT)/
 
-$(OUT)/app: $(NODE_DEP) $(OUT)/package.json
+$(OUT)/app: $(OUT)/package.json node_image
+		# /app/servers/node/npm_run_build.sh > $(OUT)/build.log 2>&1 \
 
 	@mkdir -p $(OUT)
 	docker run -it --rm \
 		-v "$(PROJECT):/app" \
 		-v "$(VOLUME):/app/node_modules" \
 		-w /app \
-		node:$(IMAGE_LABEL) \
-		/app/servers/node/npm_run_build.sh > $(OUT)/build.log 2>&1 \
+		tylergannon/node:$(IMAGE_LABEL) \
+		/app/servers/node/npm_run_build.sh \
 		|| (cat $(OUT)/build.log && exit 1)
 	@rm -rf $(OUT)/app
 	@mv $(PROJECT)/build $(OUT)/app

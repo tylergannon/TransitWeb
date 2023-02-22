@@ -1,0 +1,6 @@
+FROM alpine:edge
+
+RUN apk add --no-cache \
+        dumb-init \
+        nodejs \
+        npm
