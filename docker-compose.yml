@@ -5,25 +5,34 @@ services:
     # For now the architecture will be:
     # NGINX Unit -> Node -> AstroAPI / db
     # But we will use a Homespun NGINX Unit built on top of Alpine Linux.
-    build:
-      context: ./servers/frontend
+    image: tylergannon/nginx-unit:latest
     ports:
       - "443:443"
       - "80:80"
-    networks: frontend: {}
-    secrets:
-      - source: tls-bundle-astroapi
-        target: astroapi.pem
-      - source: tls-bundle-transitweb
-        target: transitweb.pem
+    networks: 
+      frontend: {}
+    volumes:
+      - ./cert/transitweb.pem:/run/secrets/transitweb.pem
+  web:
+    image: tylergannon/svelte-app:latest
+    environment:
+      db_connection: "postgresql://user:password@db:5432/db"
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      astroapi:
+        condition: service_healthy
+    networks:
+      frontend:
+        ipv4_address: 10.1.2.2
   dev:
     profiles:
       - dev
     ports:
       - "5173:5173"
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: tylergannon/svelte-dev:latest
     environment:
       db_connection: "postgresql://user:password@db:5432/db"
     depends_on:
@@ -31,18 +40,10 @@ services:
         condition: service_healthy
       astroapi:
         condition: service_healthy
-    healthcheck:
-      test: [ "CMD", "curl", "-fI", "http://localhost:5173/" ]
-      interval: 5s
-      timeout: 2s
-      retries: 5
-      start_period: 120s
     networks:
       frontend:
-        ipv4_address: 10.1.2.2
+        ipv4_address: 10.1.2.3
     volumes:
-      - web_logs:/var/log
-      - ./scripts/init_dev.fish:/opt/start.sh
       - ./:/app
       - dev_node_modules:/app/node_modules
 
@@ -50,7 +51,6 @@ services:
     image: tylergannon/astroapi:latest
     volumes:
       - astroapi_logs:/var/log
-      - ./scripts/start.sh:/opt/start.fish
     environment:
       # TODO: change name to something like KEY_NAME.
       BUNDLE: astroapi

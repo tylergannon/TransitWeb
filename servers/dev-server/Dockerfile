@@ -3,9 +3,7 @@
 # See Makefile.
 FROM alpine:edge
 
-ARG build=1
 WORKDIR /app
-COPY init_container.sh /etc/
 
 # Install and then at the end, remove all cached package information.
 RUN apk add --no-cache \
@@ -20,5 +18,7 @@ VOLUME [ "/app" ]
 
 ENV NODE_PATH=/app 
 
+ARG update=1
+COPY init_container.sh /etc/
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/etc/init_container.sh"]

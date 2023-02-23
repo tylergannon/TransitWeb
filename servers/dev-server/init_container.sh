@@ -21,5 +21,4 @@ else
     echo "package-lock.json has not changed, skipping rebuild"
 fi
 
-npm run dev
-
+npm run dev -- --host
