@@ -13,6 +13,21 @@ function complain {
     exit 1
 }
 
+unitd --no-daemon --control unix:$SOCKET \
+    --user unit --group unit &
+
+count=0
+while [ ! -S "$SOCKET" ]; do
+    sleep 0.1
+    count=$((count+1))
+    if [ $count -eq 100 ]
+    then
+        echo "Unit socket not found"
+        exit 1 
+    fi
+done
+
+
 # find all files in the directory ending with ".pem"
 for file in $SECRETS_DIR/*.pem; do
     # extract the filename without its preceding path or extension

@@ -5,17 +5,14 @@
     },
     "routes": [
         {
-            "match": { "host": "dev.local" },
+            "match": { "host": "app.dev.local" },
             "action": {
-                "action": { "proxy": "http://10.1.2.2:5173" }
+                "proxy": "http://10.1.2.3:5173"
             }
         }, {
-            "match": { "host": "prod.local" },
+            "match": { "host": "dev.local" },
             "action": {
-                "share": "/var/www/html",
-                "fallback": {
-                    "proxy": "http://10.1.2.3:5173"
-                }
+                "proxy": "http://10.1.2.2:3000"
             }
         }
     ]

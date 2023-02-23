@@ -3,7 +3,7 @@
 # See Makefile.
 FROM alpine:edge
 
-ARG build=1
+ARG update=1
 COPY .out/app /app
 WORKDIR /app
 COPY .out/package.json .out/package-lock.json /app/
