@@ -1,7 +1,7 @@
 # NODE Web Server
 # M1 Macs need to use the arm64v8/node image, which must be built on an M1 Mac.
 # See Makefile.
-FROM alpine:edge
+FROM tylergannon/alpine-fish
 
 ARG update=1
 COPY .out/app /app
@@ -13,7 +13,6 @@ ARG SHA1_FILE=/app/node_modules/package-lock.json.sha1
 
 # Install and then at the end, remove all cached package information.
 RUN apk add --no-cache \
-        dumb-init \
         nodejs \
         npm \
     && npm ci --omit=dev \
@@ -26,6 +25,8 @@ ENV HOST=0.0.0.0 \
     PORT=3000 \
     NODE_ENV=production \
     NODE_PATH=/app 
+ARG CONTAINER_ID="tylergannon/node"
+ARG CONTAINER_HOST_ID="Unknown"
+ENV CONTAINER_ID=${CONTAINER_ID} CONTAINER_HOST_ID=${CONTAINER_HOST_ID}
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/etc/init_container.sh"]

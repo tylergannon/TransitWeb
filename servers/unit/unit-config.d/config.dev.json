@@ -5,6 +5,13 @@
     },
     "routes": [
         {
+            "match": {
+                "host": [
+                    "www.transitweb.com"
+                ]
+            }
+        },
+        {
             "match": { "host": "app.dev.local" },
             "action": {
                 "proxy": "http://10.1.2.3:5173"

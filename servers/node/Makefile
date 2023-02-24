@@ -13,14 +13,14 @@ IMAGE_LABEL := alpine
 default: image
 
 image: $(OUT)/app
-	docker build \
+	$(DOCKER_BUILD) \
 		-t $(APP_IMG):latest \
 		-t $(APP_IMG):$(IMAGE_LABEL) \
 		. \
 		--build-arg update=$(RANDOM)
 
 rebuild_image: $(OUT)/app
-	@docker build \
+	$(DOCKER_BUILD) \
 		-t $(APP_IMG):latest \
 		-t $(APP_IMG):$(IMAGE_LABEL) \
 		. \

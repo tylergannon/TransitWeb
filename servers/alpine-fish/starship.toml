@@ -1,0 +1,17 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# The format string for the module.
+[username]
+show_always = true
+
+[status]
+
+disabled = false
+
+[env_var.CONTAINER_ID]
+symbol = '🐳 '
+format = '[$env_value]($style) '
+
+[env_var.CONTAINER_HOST_ID]
+format = '⇀ [$env_value]($style) '
+default = "(unknown host)"

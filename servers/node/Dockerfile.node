@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM tylergannon/alpine-fish
 ARG UID
 ARG GID
 ENV UID=${UID} GID=${GID}
@@ -6,7 +6,6 @@ ENV UID=${UID} GID=${GID}
 RUN [ -z "$(grep :${GID}: /etc/group)" ] && addgroup -g $GID -S node; \
     adduser -u $UID -g $GID -s /bin/sh -h /home/node -D node \
     && apk add --no-cache \
-        dumb-init \
         nodejs \
         npm
 
