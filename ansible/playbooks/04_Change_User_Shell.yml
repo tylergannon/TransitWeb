@@ -1,0 +1,19 @@
+---
+- hosts: all
+  name: Change user shell.
+  vars:
+    username: "{{ lookup('env', 'USER') }}"
+  remote_user: "{{ username }}"
+  become: true
+  tasks:
+    - name: Add fish to /etc/shells
+      ansible.builtin.lineinfile:
+        path: /etc/shells
+        state: present
+        search_string: '/home/linuxbrew/.linuxbrew/bin/fish'
+        line: '/home/linuxbrew/.linuxbrew/bin/fish'
+
+    - name: Change user's shell to fish.
+      ansible.builtin.user:
+        name: "{{ username }}"
+        shell: /home/linuxbrew/.linuxbrew/bin/fish

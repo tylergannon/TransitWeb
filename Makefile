@@ -1,4 +1,4 @@
-.PHONY: default unit svelte-app astroapi nginx alpine-fish dev-server
+.PHONY: default unit svelte-app astroapi nginx alpine-fish dev-server ansible
 
 export CONTAINER_HOST_ID ?= $(shell hostname -s)
 export DOCKER_BUILD = docker build \
@@ -7,6 +7,10 @@ export DOCKER_BUILD = docker build \
 	--build-arg GID=$(shell id -g)
 
 default: unit svelte-app astroapi dev-server nginx
+ansible:
+	cd ansible \
+	&& ansible-galaxy collection install -r requirements.yml \
+	&& ansible-playbook -i ./inventory.yml ./playbooks/*.yml
 
 unit: alpine-fish
 	@cd servers/unit && make image

@@ -3,15 +3,18 @@
 # Initialize a list of commands to check the existence of
 set -l requirements curl
 
-set -l brew_packages git \
-    neovim \
+set -l brew_packages \
     fzf \
-    ripgrep \
-    starship \
+    gh \
+    git \
+    neovim \
     nodejs \
     python \
+    ripgrep \
+    rust \
+    starship \
     the_silver_searcher \
-    rust
+    tmux
 
 # Check if the command exists
 for cmd in $requirements

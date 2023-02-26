@@ -1,0 +1,33 @@
+---
+- hosts: all
+  name: Configure User.
+  vars:
+    username: "{{ lookup('env', 'USER') }}"
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Ensure fish config exists.
+      ansible.builtin.shell: >
+        /home/linuxbrew/.linuxbrew/bin/fish --interactive --login -n -c 'ls'
+      args:
+        creates: /home/{{ username }}/.config/fish/config.fish
+
+    - name: Add Homebrew to Fish path
+      ansible.builtin.lineinfile:
+        path: /home/{{ username }}/.config/fish/config.fish
+        create: true
+        mode: '0644'
+        state: present
+        search_string: 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)'
+        line: 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)'
+        validate: '/home/linuxbrew/.linuxbrew/bin/fish -n %s'
+
+    - name: Add Homebrew to Bash PATH
+      ansible.builtin.lineinfile:
+        path: /home/{{ username }}/.bashrc
+        create: true
+        mode: '0644'
+        state: present
+        owner: "{{ username }}"
+        search_string: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        validate: '/bin/bash -n %s'
