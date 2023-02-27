@@ -1,0 +1,21 @@
+---
+homebrew:
+  packages:
+    - certbot
+    - fd
+    - fish
+    - fzf
+    - gh
+    - git
+    - gitui
+    - jesseduffield/lazygit/lazygit
+    - luajit
+    - neovim
+    - nginx
+    - nodejs
+    - python
+    - ripgrep
+    - starship
+    - the_silver_searcher
+    - tmux
+  install_url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh

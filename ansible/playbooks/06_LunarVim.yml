@@ -1,57 +1,33 @@
 ---
 - hosts: all
   name: Install LunarVim
-  vars:
-    username: "{{ lookup('env', 'USER') }}"
-    homebrew_bin: "/home/linuxbrew/.linuxbrew/bin"
-  remote_user: "{{ username }}"
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/lunarvim.yml
+  environment:
+    PATH: "{{ homebrew.bin }}:{{ ansible_env.PATH }}"
+  remote_user: "{{ user.name }}"
   tasks:
-    - name: Install npm neovim.
+    - name: Install npm dependencies.
       community.general.npm:
-        name: neovim
+        name: "{{ item }}"
         global: true
+      loop: "{{ lunarvim.deps.npm }}"
     - name: Install pip packages.
       ansible.builtin.pip:
-        name:
-          - pynvim
-          - neovim-remote
-        executable: pip3
-    - name: Install Homebrew packages.
-      community.general.homebrew:
-        name:
-          - luajit
-    - name: Install Cargo dependencies.
-      community.general.cargo:
-        name:
-          - fd-find
-          - ripgrep
+        name: "{{ lunarvim.deps.pip }}"
     - name: Download the LunarVim installer.
       ansible.builtin.get_url:
-        url: https://tinyurl.com/lunarvim-stable-12
-        dest: "/home/{{ username }}/lvim_install.sh"
-        mode: '0755'
+        url: "{{ lunarvim.install_url }}"
+        dest: "{{ user.home }}/lvim_install.sh"
+        mode: '0700'
     - name: Install LunarVim.
       ansible.builtin.command: ~/lvim_install.sh -y --overwrite --no-install-dependencies
       args:
-        creates: "/home/{{ username }}/.local/bin/lvim"
+        creates: "{{ user.local_bin }}/lvim"
       environment:
-        LV_BRANCH: release-1.2/neovim-0.8
+        LV_BRANCH: "{{ lunarvim.use_branch }}}}"
     - name: Remove the LunarVim installer.
       ansible.builtin.file:
-        path: "/home/{{ username }}/lvim_install.sh"
+        path: "/home/{{ user.name }}/lvim_install.sh"
         state: absent
-    - name: Alias to lvim in fish conf
-      ansible.builtin.lineinfile:
-        path: "/home/{{ username }}/.config/fish/config.fish"
-        line: "alias lvim='~/.local/bin/lvim'"
-        state: present
-    - name: Add fish vi keybindings to fish
-      ansible.builtin.lineinfile:
-        path: "/home/{{ username }}/.config/fish/config.fish"
-        line: "fish_vi_key_bindings"
-        state: present
-    - name: Add Starship
-      ansible.builtin.lineinfile:
-        path: "/home/{{ username }}/.config/fish/config.fish"
-        line: "starship init fish | source"
-        state: present

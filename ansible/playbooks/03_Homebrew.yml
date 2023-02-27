@@ -1,31 +1,17 @@
 ---
 - hosts: all
   name: Install Homebrew on Ubuntu 20.04
-  vars:
-    username: "{{ lookup('env', 'USER') }}"
-  remote_user: "{{ username }}"
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/homebrew.yml
+  remote_user: "{{ user.name }}"
   tasks:
     - name: If brew command can't be found, run shell command to install Homebrew.
       ansible.builtin.shell: >
-        NONINTERACTIVE=true /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=true /bin/bash -c "$(curl -fsSL {{ homebrew.install_url }})"
       args:
         creates: /home/linuxbrew/.linuxbrew
       # When the directory /home/linuxbrew/.linuxbrew/bin exists, the installation is unnecessary.
     - name: Install Homebrew packages
       community.general.homebrew:
-        name:
-          - certbot
-          - fish
-          - fzf
-          - gh
-          - git
-          - gitui
-          - jesseduffield/lazygit/lazygit
-          - neovim
-          - nodejs
-          - python
-          - ripgrep
-          - rust
-          - starship
-          - the_silver_searcher
-          - tmux
+        name: "{{ homebrew.packages }}"

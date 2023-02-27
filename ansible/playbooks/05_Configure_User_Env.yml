@@ -1,33 +1,45 @@
 ---
 - hosts: all
   name: Configure User.
-  vars:
-    username: "{{ lookup('env', 'USER') }}"
-  remote_user: "{{ username }}"
+  vars_files:
+    - ../vars/main.yml
+  remote_user: "{{ user.name }}"
   tasks:
     - name: Ensure fish config exists.
       ansible.builtin.shell: >
-        /home/linuxbrew/.linuxbrew/bin/fish --interactive --login -n -c 'ls'
+        {{ homebrew.bin }}/fish --interactive --login -n -c 'ls'
       args:
-        creates: /home/{{ username }}/.config/fish/config.fish
+        creates: "{{ fish.conf.dir }}/config.fish"
 
-    - name: Add Homebrew to Fish path
+    - name: Configure user PATH
       ansible.builtin.lineinfile:
-        path: /home/{{ username }}/.config/fish/config.fish
+        path: "{{ fish.conf.dir }}/config.fish"
         create: true
         mode: '0644'
         state: present
-        search_string: 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)'
-        line: 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)'
-        validate: '/home/linuxbrew/.linuxbrew/bin/fish -n %s'
+        search_string: 'set -gx PATH {{ item }} $PATH'
+        line: 'set -gx PATH {{ item }} $PATH'
+        validate: '{{ homebrew.bin }}/fish -n %s'
+      loop: "{{ user_path_entries }}"
 
-    - name: Add Homebrew to Bash PATH
+    - name: Add Environment setup to fish config
       ansible.builtin.lineinfile:
-        path: /home/{{ username }}/.bashrc
+        path: "{{ fish.conf.init }}"
         create: true
         mode: '0644'
         state: present
-        owner: "{{ username }}"
-        search_string: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        search_string: "{{ item }}"
+        line: "{{ item }}"
+        validate: '{{ homebrew.bin }}/fish -n %s'
+      loop: "{{ fish.startup }}"
+
+    - name: Add Homebrew init to bashrc
+      ansible.builtin.lineinfile:
+        path: "{{ user.home }}/.bashrc"
+        create: true
+        mode: '0644'
+        state: present
+        owner: "{{ user.name }}"
+        search_string: 'eval "$({{ homebrew.exe }} shellenv)"'
+        line: 'eval "$({{ homebrew.exe }} shellenv)"'
         validate: '/bin/bash -n %s'

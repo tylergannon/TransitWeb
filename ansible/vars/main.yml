@@ -1,0 +1,47 @@
+---
+repositories:
+  - tylergannon/TransitWeb
+app:
+  domains:
+    - tyler.transithd.com
+homebrew_prefix: "/home/linuxbrew/.linuxbrew"
+homebrew:
+  bin: "{{ homebrew_prefix }}/bin"
+  exe: "{{ homebrew_prefix }}/bin/brew"
+
+system:
+  apt_packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl>=7.0
+    - docker-ce
+    - python3-pip
+    - python3-setuptools
+    - software-properties-common
+    - ufw>=0.36
+    - virtualenv
+
+
+user:
+  name: "{{ lookup('env', 'USER') }}"
+  github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+  group: admin
+  groups:
+    - docker
+  home: "/home/{{ lookup('env', 'USER') }}"
+  local_bin: "/home/{{ lookup('env', 'USER') }}/.local/bin"
+  src: "/home/{{ lookup('env', 'USER') }}/src"
+  ssh_public_key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
+
+fish:
+  conf:
+    dir: "{{ user.home }}/.config/fish"
+    init: "{{ user.home }}/.config/fish/conf.d/init.fish"
+  startup:
+    - "eval ({{ homebrew.exe }} shellenv)"
+    - "starship init fish | source"
+    - "fish_vi_key_bindings"
+    - "set -g GITHUB_TOKEN {{ user.github_token }}"
+
+user_path_entries:
+  - "{{ user.local_bin }}"

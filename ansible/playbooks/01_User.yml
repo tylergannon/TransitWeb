@@ -1,0 +1,35 @@
+---
+- hosts: all
+  name: Install docker and apt packages, and create a new user
+  remote_user: root
+  vars_files:
+    - ../vars/main.yml
+  tasks:
+    - name: Configure user {{ user.name }}
+      ansible.builtin.user:
+        name: "{{ user.name }}"
+        state: present
+        groups: "{{ user.groups }}"
+        group: "{{ user.group }}"
+        append: true
+        create_home: true
+
+    - name: "Allow passwordless sudo for {{ user.name }}"
+      community.general.sudoers:
+        name: "allow-passwordless-sudo-{{ user.name }}"
+        nopassword: true
+        state: present
+        user: "{{ user.name }}"
+        commands:
+          - 'ALL'
+
+    - name: Set authorized key for remote user
+      ansible.posix.authorized_key:
+        user: "{{ user.name }}"
+        state: present
+        key: "{{ user.ssh_public_key }}"
+
+    - name: Create ssh key for remote user
+      community.crypto.openssh_keypair:
+        path: "{{ user.home }}/.ssh/id_ed25519"
+        type: ed25519

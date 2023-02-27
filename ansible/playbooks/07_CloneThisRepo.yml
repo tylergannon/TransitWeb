@@ -1,32 +1,19 @@
 - hosts: all
   name: Clone Repo
-  vars:
-    username: "{{ lookup('env', 'USER') }}"
-    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
-    repos:
-      - "tylergannon/TransitWeb"
-  remote_user: "{{ username }}"
+  vars_files:
+    - ../vars/main.yml
+  remote_user: "{{ user.name }}"
   tasks:
     - name: Ensure src directory exists.
       ansible.builtin.file:
-        path: /home/{{ username }}/src
+        path: /home/{{ user.name }}/src
         state: directory
         mode: '0755'
-    - name: Add GITHUB_TOKEN to fish config
-      ansible.builtin.lineinfile:
-        path: /home/{{ username }}/.config/fish/config.fish
-        line: "set -g GITHUB_TOKEN {{ github_token }}"
     - name: Clone repo
       ansible.builtin.command:
         cmd: gh repo clone {{ item }}
-        creates: /home/{{ username }}/src/{{ item.split('/', 1)[1] }}
-        chdir: /home/{{ username }}/src
-      loop: "{{ repos }}"
+        creates: /home/{{ user.name }}/src/{{ item.split('/', 1)[1] }}
+        chdir: /home/{{ user.name }}/src
+      loop: "{{ repositories }}"
       environment:
-        GITHUB_TOKEN: "{{ github_token }}"
-    - name: Copy tmux start script
-      ansible.builtin.copy:
-        src: start_tmux.fish
-        dest: /home/{{ username }}/.local/bin/start_tmux.fish
-        mode: '0755'
-        force: true
+        GITHUB_TOKEN: "{{ user.github_token }}"

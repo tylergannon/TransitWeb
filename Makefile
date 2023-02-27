@@ -6,11 +6,14 @@ export DOCKER_BUILD = docker build \
 	--build-arg UID=$(shell id -u) \
 	--build-arg GID=$(shell id -g)
 
-default: unit svelte-app astroapi dev-server nginx
+default: image
+
+image: svelte-app astroapi dev-server
+
 ansible:
 	cd ansible \
 	&& ansible-galaxy collection install -r requirements.yml \
-	&& ansible-playbook -i ./inventory.yml ./playbooks/*.yml
+	&& ansible-playbook -i ./inventory.yml ./playbooks/$(num)*.yml
 
 unit: alpine-fish
 	@cd servers/unit && make image

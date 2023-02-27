@@ -1,24 +1,19 @@
 ---
 - hosts: all
   name: Configure Firewall
-  remote_user: root
-  vars:
-    username: "{{ lookup('env', 'USER') }}"
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/firewall.yml
+  remote_user: "{{ user.name }}"
+  become: true
 
   tasks:
-    - name: UFW - Allow SSH connections
+    - name: Open ports for public access
       community.general.ufw:
         rule: allow
-        name: OpenSSH
-    - name: UFW - Allow HTTP connections
-      community.general.ufw:
-        rule: allow
-        port: '80'
-    - name: UFW - Allow HTTPS connections
-      community.general.ufw:
-        rule: allow
-        port: '443'
-    - name: UFW - Enable and deny by default
+        port: "{{ item }}"
+      loop: "{{ ports.general }}"
+    - name: UFW - Enable Firewall and set default policy to deny incoming connections
       community.general.ufw:
         state: enabled
         default: deny
