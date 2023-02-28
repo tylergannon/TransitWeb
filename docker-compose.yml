@@ -1,18 +1,4 @@
 services:
-  frontend:
-    # This will be a NGINX Unit server that will proxy to a node server.
-    # We may want to replace that with regular NGINX.
-    # For now the architecture will be:
-    # NGINX Unit -> Node -> AstroAPI / db
-    # But we will use a Homespun NGINX Unit built on top of Alpine Linux.
-    image: tylergannon/nginx-unit:latest
-    ports:
-      - "443:443"
-      - "80:80"
-    networks: 
-      frontend: {}
-    volumes:
-      - ./cert/transitweb.pem:/run/secrets/transitweb.pem
   web:
     image: tylergannon/svelte-app:latest
     environment:
@@ -24,9 +10,6 @@ services:
         condition: service_healthy
       astroapi:
         condition: service_healthy
-    networks:
-      frontend:
-        ipv4_address: 10.1.2.2
   dev:
     profiles:
       - dev
@@ -40,9 +23,6 @@ services:
         condition: service_healthy
       astroapi:
         condition: service_healthy
-    networks:
-      frontend:
-        ipv4_address: 10.1.2.3
     volumes:
       - ./:/app
       - dev_node_modules:/app/node_modules
@@ -56,8 +36,6 @@ services:
       BUNDLE: astroapi
     ports:
       - "8080:80"
-    networks:
-      frontend: {}
     healthcheck:
       test: [ "CMD", "curl", "-fI", "http://localhost/api/v1/openapi.json" ]
       interval: 5s
@@ -72,8 +50,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: db
-    networks:
-      frontend: {}
     # https://docs.docker.com/compose/compose-file/compose-file-v3/#healthcheck
     healthcheck:
       test:
@@ -86,21 +62,9 @@ services:
       retries: 5
       start_period: 60s
 
-
-networks:
-  frontend:
-    name: transitweb_frontend
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.1.0.0/16
-          ip_range: 10.1.1.0/24
-
-
 volumes:
   astroapi_logs:
-  frontend_logs:
   web_logs:
   db_data:
   dev_node_modules:
-  frontend_node_modules:
+
