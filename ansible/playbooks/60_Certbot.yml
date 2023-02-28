@@ -11,13 +11,17 @@
     - name: Install core snap package.
       community.general.snap:
         name: core
-    - name: Remove snap update timestamp.
+    - name: Find whether snap was updated today.
+      ansible.builtin.find:
+        paths: /etc
+        patterns: snap_updated
+        age: -15d
+      register: find_snap_updated
+    - name: Remove snap_updated file find_snap_updated is empty.
       ansible.builtin.file:
         path: /etc/snap_updated
         state: absent
-      when: >
-        lookup('ansible.builtin.fileglob', snap_tstamp) | length > 0
-        and lookup('ansible.builtin.file', snap_tstamp) != ansible_date_time.date
+      when: find_snap_updated.matched == 0
     - name: Run snap refresh core.
       ansible.builtin.shell: >
         snap refresh &> /dev/null;

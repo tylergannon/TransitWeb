@@ -1,0 +1,23 @@
+---
+- name: Check if the key exists already.
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ item }}/fullchain.pem
+  register: cert
+- name: Disable nginx
+  ansible.builtin.service:
+    name: nginx
+    state: stopped
+  when: cert.stat.exists == false
+- name: Run certbot
+  ansible.builtin.command: >
+    certbot certonly --standalone
+      -d {{ item }} -n --agree-tos --force-renewal
+      --email {{ site.certbot_email }}
+  when: cert.stat.exists == false
+  args:
+    creates: /etc/letsencrypt/live/{{ item }}/fullchain.pem
+- name: Enable nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+  when: cert.stat.exists == false

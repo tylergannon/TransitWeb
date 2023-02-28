@@ -1,5 +1,37 @@
 ---
 - hosts: all
+  name: Prepare for nginx conf
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/nginx.yml
+  remote_user: "{{ user.name }}"
+  become: true
+  tasks:
+    - name: Ensure dhparam.pem exists.
+      ansible.builtin.command: openssl dhparam -out /etc/nginx/dhparam.pem 2048
+      args:
+        creates: /etc/nginx/dhparam.pem
+    - name: Ensure letsencrypt dir exists.
+      ansible.builtin.file:
+        path: /var/www/_letsencrypt
+        owner: root
+        group: nginx
+        mode: '0750'
+        state: directory
+    - name: Ensure www directories exist.
+      ansible.builtin.file:
+        path: "/var/www/{{ item }}"
+        owner: root
+        group: nginx
+        mode: '0750'
+        state: directory
+      loop: "{{ site.hostnames }}"
+    - name: "Create SSL Certificates"
+      ansible.builtin.include_tasks:
+        file: blocks/certbot_key.yml
+      loop: "{{ site.hostnames }}"
+
+- hosts: all
   name: Configure NGINX
   vars_files:
     - ../vars/main.yml
@@ -9,20 +41,30 @@
   remote_user: "{{ user.name }}"
   become: true
   tasks:
-    - name: Create nginx group
-      ansible.builtin.group:
+    - name: Find old version files on remote
+      ansible.builtin.find:
+        paths: /etc/nginx
+        patterns: "build-version-*"
+      register: old_version_files
+    - name: Remove old version files.
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items: "{{ old_version_files.files | map(attribute='path') | list }}"
+      when: item != "/etc/nginx/build-version-" + site.build_version
+    - name: Create build version file.
+      ansible.builtin.file:
+        path: "/etc/nginx/build-version-{{ site.build_version }}"
+        state: touch
+        mode: '0644'
+      notify: "Load new nginx config"
+
+  handlers:
+    - name: Load new nginx config
+      ansible.builtin.include_tasks:
+        file: blocks/load_new_nginx_conf.yml
+      notify: "Restart nginx"
+    - name: Restart nginx
+      ansible.builtin.service:
         name: nginx
-        state: present
-        system: true
-    - name: Create nginx user
-      ansible.builtin.user:
-        name: nginx
-        system: true
-        group: nginx
-        shell: /usr/sbin/nologin
-        state: present
-        create_home: false
-    # - name: Start the nginx service
-    #   ansible.builtin.command: "{{ homebrew.exe }} services start nginx"
-    #   args:
-    #     creates: "{{ user.home }}/.config/systemd/user/{{ unit.name }}.service"
+        state: restarted

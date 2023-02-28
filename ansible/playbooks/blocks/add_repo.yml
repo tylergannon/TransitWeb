@@ -1,10 +1,14 @@
 ---
+- name: Find out if the key exists already.
+  ansible.builtin.stat:
+    path: "{{ keychain_path }}/{{ item.file_name }}"
+  register: key
 - name: Download GPG key
   ansible.builtin.get_url:
     url: "{{ item.key_url }}"
     dest: "/tmp/{{ item.file_name }}"
     mode: '0600'
-  when: lookup('fileglob', keychain_path + '/' + item.file_name, errors='ignore') | length == 0
+  when: not key.stat.exists
 
 - name: Add GPG key to keychain
   ansible.builtin.command: "gpg --dearmor -o {{ keychain_path }}/{{ item.file_name }} /tmp/{{ item.file_name }}"
