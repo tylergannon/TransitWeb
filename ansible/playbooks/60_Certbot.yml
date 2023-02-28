@@ -1,0 +1,36 @@
+---
+- hosts: all
+  name: Install Certbot
+  vars_files:
+    - ../vars/main.yml
+  remote_user: "{{ user.name }}"
+  become: true
+  vars:
+    snap_tstamp: /etc/snap_updated
+  tasks:
+    - name: Install core snap package.
+      community.general.snap:
+        name: core
+    - name: Remove snap update timestamp.
+      ansible.builtin.file:
+        path: /etc/snap_updated
+        state: absent
+      when: >
+        lookup('ansible.builtin.fileglob', snap_tstamp) | length > 0
+        and lookup('ansible.builtin.file', snap_tstamp) != ansible_date_time.date
+    - name: Run snap refresh core.
+      ansible.builtin.shell: >
+        snap refresh &> /dev/null;
+        and echo "{{ ansible_date_time.date }}" > /etc/snap_updated;
+      args:
+        executable: "{{ fish.exe }}"
+        creates: /etc/snap_updated
+    - name: Install Snap Packages, including Certbot
+      community.general.snap:
+        name: "{{ system.classic_snap_packages }}"
+        classic: true
+    - name: Add link to Certbot binary
+      ansible.builtin.file:
+        src: /snap/bin/certbot
+        dest: /usr/bin/certbot
+        state: link

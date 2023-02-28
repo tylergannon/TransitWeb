@@ -2,4 +2,4 @@ all:
   children:
     dev_host:
       hosts:
-        tyler.transithd.com
+        me.transithd.com

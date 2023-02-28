@@ -1,19 +1,32 @@
 ---
 - hosts: all
-  name: Install Docker and other Apt Packages
+  name: Install Docker and other Apt/Snap Packages
   remote_user: root
   vars_files:
     - ../vars/main.yml
+  vars:
+    keychain_path: /etc/apt/keychains
+    apt_repos:
+      - name: Docker
+        key_url: https://download.docker.com/linux/ubuntu/gpg
+        file_name: docker_signing.key
+        repo: https://download.docker.com/linux/ubuntu
+        section: stable
+      - name: NGINX
+        key_url: https://nginx.org/keys/nginx_signing.key
+        file_name: nginx_signing.key
+        repo: http://nginx.org/packages/mainline/ubuntu
+        section: nginx
   tasks:
-    - name: Add Docker GPG apt Key
-      ansible.builtin.apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Add Docker Repository
-      ansible.builtin.apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
+    - name: Ensure keychain directory exists
+      ansible.builtin.file:
+        path: "{{ keychain_path }}"
+        state: directory
+        mode: '0755'
+        owner: root
+    - name: Add keys and repos
+      ansible.builtin.include_tasks: blocks/add_repo.yml
+      loop: "{{ apt_repos }}"
 
     - name: Install apt-get dependencies
       ansible.builtin.apt:
@@ -21,7 +34,17 @@
         state: present
         update_cache: true
 
-    - name: Docker service should be running.
+    - name: Service should be running - {{ item }}
       ansible.builtin.service:
-        name: docker
+        name: "{{ item }}"
         state: started
+      loop:
+        - docker
+        - nginx
+
+    - name: Install snap packages
+      community.general.snap:
+        name: "{{ item }}"
+        state: present
+        classic: true
+      loop: "{{ system.classic_snap_packages }}"

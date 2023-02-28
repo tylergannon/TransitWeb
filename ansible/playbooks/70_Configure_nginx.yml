@@ -1,16 +1,19 @@
 ---
 - hosts: all
-  name: Install LunarVim
+  name: Configure NGINX
   vars_files:
     - ../vars/main.yml
     - ../vars/nginx.yml
   # We want nginx configured to use the correct pid file and run location.
   # Let's start by creating the nginx user.
+  remote_user: "{{ user.name }}"
+  become: true
   tasks:
     - name: Create nginx group
       ansible.builtin.group:
         name: nginx
         state: present
+        system: true
     - name: Create nginx user
       ansible.builtin.user:
         name: nginx
@@ -18,3 +21,8 @@
         group: nginx
         shell: /usr/sbin/nologin
         state: present
+        create_home: false
+    # - name: Start the nginx service
+    #   ansible.builtin.command: "{{ homebrew.exe }} services start nginx"
+    #   args:
+    #     creates: "{{ user.home }}/.config/systemd/user/{{ unit.name }}.service"

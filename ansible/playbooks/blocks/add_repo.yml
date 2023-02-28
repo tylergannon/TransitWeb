@@ -1,0 +1,23 @@
+---
+- name: Download GPG key
+  ansible.builtin.get_url:
+    url: "{{ item.key_url }}"
+    dest: "/tmp/{{ item.file_name }}"
+    mode: '0600'
+  when: lookup('fileglob', keychain_path + '/' + item.file_name, errors='ignore') | length == 0
+
+- name: Add GPG key to keychain
+  ansible.builtin.command: "gpg --dearmor -o {{ keychain_path }}/{{ item.file_name }} /tmp/{{ item.file_name }}"
+  args:
+    creates: "{{ keychain_path }}/{{ item.file_name }}"
+
+- name: Apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ keychain_path }}/{{ item.file_name }}] {{ item.repo }} jammy {{ item.section }}"
+    state: present
+    update_cache: true
+
+- name: Remove GPG key
+  ansible.builtin.file:
+    path: "/tmp/{{ item.file_name }}"
+    state: absent

@@ -15,11 +15,18 @@ system:
     - ca-certificates
     - curl>=7.0
     - docker-ce
+    - gnupg2
+    - lsb-release
+    - nginx
     - python3-pip
     - python3-setuptools
     - software-properties-common
+    - ubuntu-keyring
     - ufw>=0.36
     - virtualenv
+  classic_snap_packages:
+    - certbot
+
 
 
 user:
@@ -37,6 +44,7 @@ fish:
   conf:
     dir: "{{ user.home }}/.config/fish"
     init: "{{ user.home }}/.config/fish/conf.d/init.fish"
+  exe: "{{ homebrew.bin }}/fish"
   startup:
     - "eval ({{ homebrew.exe }} shellenv)"
     - "starship init fish | source"
