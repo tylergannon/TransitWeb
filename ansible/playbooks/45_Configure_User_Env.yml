@@ -34,12 +34,17 @@
       loop: "{{ fish.startup }}"
 
     - name: Add Homebrew init to bashrc
+      loop:
+        - home: "{{ user.home }}"
+          name: "{{ user.name }}"
+        - home: "/root"
+          name: "root"
       ansible.builtin.lineinfile:
-        path: "{{ user.home }}/.bashrc"
+        path: "{{ item.home }}/.bashrc"
         create: true
         mode: '0644'
         state: present
-        owner: "{{ user.name }}"
+        owner: "{{ item.name }}"
         search_string: 'eval "$({{ homebrew.exe }} shellenv)"'
         line: 'eval "$({{ homebrew.exe }} shellenv)"'
         validate: '/bin/bash -n %s'

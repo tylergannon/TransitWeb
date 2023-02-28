@@ -1,0 +1,89 @@
+---
+- hosts: all
+  name: Configure NGINX
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/nginx.yml
+  # We want nginx configured to use the correct pid file and run location.
+  # Let's start by creating the nginx user.
+  vars:
+    build_dir: "/etc/nginx-build-{{ site.build_version }}"
+    old_conf: /etc/nginx.default
+  remote_user: "{{ user.name }}"
+  become: true
+  tasks:
+    - name: Check if old conf exists yet.
+      ansible.builtin.stat:
+        path: "{{ old_conf }}"
+      register: check_old_conf
+
+    - name: Check if new conf exists yet.
+      ansible.builtin.stat:
+        path: "{{ site.cfg }}"
+      register: check_new_conf
+
+    - name: We should have a copy of the nginx config.
+      ansible.builtin.copy:
+        src: "/etc/nginx/"
+        dest: "{{ old_conf }}/"
+        remote_src: true
+        mode: '0644'
+        directory_mode: '0755'
+      when: not check_old_conf.stat.exists
+
+    - name: Ensure build dir exists
+      when: not check_new_conf.stat.exists
+      ansible.builtin.file:
+        path: "{{ build_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Untar the nginx config.
+      when: not check_new_conf.stat.exists
+      ansible.builtin.unarchive:
+        src: "{{ site.cfg }}"
+        dest: "{{ build_dir }}"
+        creates: "{{ build_dir }}/nginx.conf"
+        mode: '0640'
+
+    - name: Link to common artifacts (mime.types, dhparam.pem)
+      when: not check_new_conf.stat.exists
+      loop: ["mime.types", "dhparam.pem"]
+      ansible.builtin.file:
+        src: "{{ old_conf }}/{{ item }}"
+        dest: "{{ build_dir }}/{{ item }}"
+        state: link
+        mode: '0640'
+
+    - name: Validate new nginx config
+      ansible.builtin.command: >
+        nginx -t -c /etc/nginx-build-{{ site.build_version }}/nginx.conf
+      register: nginx_test
+      changed_when: false
+      failed_when: nginx_test.rc != 0
+
+    - name: Determine if nginx config is a directory.
+      ansible.builtin.stat:
+        path: /etc/nginx
+      register: nginx_conf_dir
+
+    - name: Remove nginx config directory.
+      ansible.builtin.file:
+        path: /etc/nginx
+        state: absent
+      when: nginx_conf_dir.stat.isdir
+
+    - name: Set symlink to nginx config.
+      ansible.builtin.file:
+        src: "{{ build_dir }}"
+        dest: /etc/nginx
+        state: link
+        mode: '0640'
+      notify:
+        - Reload nginx
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded

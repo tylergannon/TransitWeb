@@ -10,7 +10,6 @@ homebrew:
     - jesseduffield/lazygit/lazygit
     - luajit
     - neovim
-    - nginx
     - nodejs
     - python
     - ripgrep

@@ -1,24 +1,14 @@
 ---
 - name: Archive old configuration
-  community.general.archive:
-    path:
-      - /etc/nginx
-    dest: /etc/nginx-old.bz2
-    format: bz2
-    mode: '0600'
 
-- name: Clear out old configuration
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - /etc/nginx/nginx.conf
-    - /etc/nginx/sites-enabled
-    - /etc/nginx/sites-available
-    - /etc/nginx/nginxconfig.io
 - name: Unzip configuration dir.
   ansible.builtin.unarchive:
     src: "{{ site.cfg }}"
     dest: "/etc/nginx"
     owner: root
     mode: '0644'
+
+- name: Restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
