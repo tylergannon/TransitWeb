@@ -13,7 +13,6 @@ services:
       frontend: {}
     volumes:
       - ./cert/transitweb.pem:/run/secrets/transitweb.pem
-
   web:
     image: tylergannon/svelte-app:latest
     environment:

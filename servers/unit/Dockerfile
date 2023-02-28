@@ -14,4 +14,4 @@ ENV CONTAINER_ID=${CONTAINER_ID} CONTAINER_HOST_ID=${CONTAINER_HOST_ID}
 CMD ["/etc/init_container.sh"]
 VOLUME [ "/etc/unit-config.d/" ]
 VOLUME [ "/var/www/html" ]
-# CMD ["/usr/sbin/unitd", "--no-daemon", "--control", "unix:/var/run/control.unit.sock"]
+

@@ -22,3 +22,4 @@ ENV CONTAINER_ID=${CONTAINER_ID} CONTAINER_HOST_ID=${CONTAINER_HOST_ID}
 ARG update=1
 COPY init_container.sh /etc/
 CMD ["/etc/init_container.sh"]
+

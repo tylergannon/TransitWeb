@@ -10,3 +10,4 @@ RUN [ -z "$(grep :${GID}: /etc/group)" ] && addgroup -g $GID -S node; \
         npm
 
 USER node
+
