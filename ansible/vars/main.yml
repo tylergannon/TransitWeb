@@ -17,6 +17,7 @@ system:
     - docker-ce
     - gnupg2
     - lsb-release
+    - mongodb-org
     - nginx
     - python3-pip
     - python3-setuptools
