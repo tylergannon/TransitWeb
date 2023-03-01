@@ -1,8 +1,7 @@
 ---
 - hosts: all
   name: Install Docker and other Apt/Snap Packages
-  remote_user: tyler
-  become: true
+  remote_user: root
   vars_files:
     - ../vars/main.yml
   vars:
@@ -53,7 +52,7 @@
       loop:
         - docker
         - nginx
-
+        - mongod
 
     - name: Install snap packages
       community.general.snap:
