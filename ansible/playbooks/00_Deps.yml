@@ -1,7 +1,8 @@
 ---
 - hosts: all
   name: Install Docker and other Apt/Snap Packages
-  remote_user: root
+  remote_user: tyler
+  become: true
   vars_files:
     - ../vars/main.yml
   vars:
@@ -12,11 +13,22 @@
         file_name: docker_signing.key
         repo: https://download.docker.com/linux/ubuntu
         section: stable
+        keyword: jammy
+        options: ''
       - name: NGINX
         key_url: https://nginx.org/keys/nginx_signing.key
         file_name: nginx_signing.key
         repo: http://nginx.org/packages/mainline/ubuntu
         section: nginx
+        keyword: jammy
+        options: ''
+      - name: MongoDB
+        key_url: https://www.mongodb.org/static/pgp/server-6.0.asc
+        file_name: mongodb_signing.key
+        repo: https://repo.mongodb.org/apt/ubuntu
+        section: multiverse
+        keyword: jammy/mongodb-org/6.0
+        options: arch=amd64,arm64
   tasks:
     - name: Ensure keychain directory exists
       ansible.builtin.file:
@@ -41,6 +53,7 @@
       loop:
         - docker
         - nginx
+
 
     - name: Install snap packages
       community.general.snap:

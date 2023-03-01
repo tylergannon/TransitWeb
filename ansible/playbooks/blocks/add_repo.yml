@@ -17,7 +17,7 @@
 
 - name: Apt repository
   ansible.builtin.apt_repository:
-    repo: "deb [signed-by={{ keychain_path }}/{{ item.file_name }}] {{ item.repo }} jammy {{ item.section }}"
+    repo: "deb [signed-by={{ keychain_path }}/{{ item.file_name }} {{ item.options }}] {{ item.repo }} {{ item.keyword }} {{ item.section }}"
     state: present
     update_cache: true
 
