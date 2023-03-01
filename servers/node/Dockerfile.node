@@ -4,10 +4,13 @@ ARG GID
 ENV UID=${UID} GID=${GID}
 
 RUN [ -z "$(grep :${GID}: /etc/group)" ] && addgroup -g $GID -S node; \
-    adduser -u $UID -g $GID -s /bin/sh -h /home/node -D node \
+    adduser -u $UID -G node -s /bin/sh -h /home/node -D node \
     && apk add --no-cache \
         nodejs \
-        npm
+        npm \
+    && mkdir -p /app/node_modules \
+    && chown -R node:root /app
+
 
 USER node
 
