@@ -25,31 +25,9 @@ services:
       timeout: 2s
       retries: 5
       start_period: 120s
-  db:
-    image: postgres:alpine
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      POSTGRES_DB: db
-    # https://docs.docker.com/compose/compose-file/compose-file-v3/#healthcheck
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h $$(hostname -i)"
-        ]
-      interval: 5s
-      timeout: 2s
-      retries: 5
-      start_period: 60s
 
 volumes:
   astroapi_logs:
   web_logs:
-  db_data:
   dev_node_modules:
 
