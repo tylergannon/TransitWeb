@@ -5,23 +5,40 @@ import { PrismaClient } from "@prisma/client"
 import { SvelteKitAuth } from "@auth/sveltekit"
 import GitHub from "@auth/core/providers/github"
 import Google from "@auth/core/providers/google"
+import EmailProvider from "next-auth/providers/email"
 
-import { GITHUB_OAUTH_ID, GITHUB_OAUTH_SECRET, GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET } from "$env/static/private"
+
+import {
+  GOOGLE_OAUTH_ID,
+  GOOGLE_OAUTH_SECRET,
+  GITHUB_OAUTH_ID,
+  GITHUB_OAUTH_SECRET,
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASS,
+  SMTP_FROM
+} from "$env/static/private"
 
 const prisma = new PrismaClient()
 
-/**
-  * Appease Typescript about the fact that these factories return
-  * duck-typed Provider objects that aren't proper type descendants of Provider.
-  * */
-function provider(factory: (conf: any)=>any, id: String, sec: String) {
-  return factory({clientId: id, clientSecret: sec}) as unknown as Provider
-}
+const prov = (x: any) => x as unknown as Provider
 
 export const handle = SvelteKitAuth({
   providers: [
-    provider(GitHub, GITHUB_OAUTH_ID, GITHUB_OAUTH_SECRET),
-    provider(Google, GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET),
+    prov(GitHub({ clientId: GITHUB_OAUTH_ID, clientSecret: GITHUB_OAUTH_SECRET })),
+    prov(Google({ clientId: GOOGLE_OAUTH_ID, clientSecret: GOOGLE_OAUTH_SECRET })),
+    prov(EmailProvider({
+      server: {
+        host: SMTP_HOST,
+        port: parseInt(SMTP_PORT),
+        auth: {
+          user: SMTP_USER,
+          pass: SMTP_PASS
+        }
+      },
+      from: SMTP_FROM
+    }))
   ],
   // @ts-ignore
   adapter: PrismaAdapter( prisma ),
