@@ -1,38 +1,40 @@
-# create-svelte
+# Transit Web
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Human Design for the people
 
-## Creating a project
+## Ansible Controller
 
-If you're seeing this, you've probably already done this step. Congrats!
+Requirements:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Copy of this repository.
+- Choose hostname.  For now, that is `me.transithd.com`.
+- Go to Digital Ocean and ensure you have three DNS records.  The last two
+  will be the virtual hosts for the development server and a production-mode
+  server on which you can stage your changes.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+  1. `hostname`
+  2. `prod.hostname`
+  3. `dev.hostname`
 
-## Developing
+- Ansible installed.
+- New Ubuntu VPS:
+  - Currently require Ubuntu Jammy, for Ansible playbook to work.
+  - Place hostname in `ansible/inventory.yml`
+  - Ensure your ssh configuration will allow passwordless ssh login to
+    `root@<your-host>`.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-```bash
-npm run dev
+## Development Setup
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+1. Start on an Ansible controller that has root access to the server.
+1. Clone this repository.
+1. Run `make ansible`
+1. Connect via ssh to the server.
+1. Add a `.env.local` file containing: 
+  - GITHUB_OAUTH_SECRET
+1. The database should be properly configured already via ansible.
+1. Create Docker images by running `make`.
+1. Start astroapi and production service with `docker-compose up -d`
+1. Install npm packages `npm install`
+1. Run dev server: `npm run dev -- --host`
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
