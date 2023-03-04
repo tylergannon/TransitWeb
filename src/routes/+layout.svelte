@@ -2,6 +2,8 @@
 	import '../app.postcss';
 </script>
 
+<svelte:body
+  />
 <div class="app">
 
 	<main>
