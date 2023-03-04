@@ -1,5 +1,5 @@
 <script>
-	import './styles.css';
+	import '../app.postcss';
 </script>
 
 <div class="app">
@@ -15,3 +15,5 @@
 
 <style>
 </style>
+
+<slot />
