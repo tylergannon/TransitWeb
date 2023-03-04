@@ -45,6 +45,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  profile       Profile?
 }
 
 model VerificationToken {
@@ -54,5 +55,9 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+type Profile {
+  dark      Boolean?
 }
 
