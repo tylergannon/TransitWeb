@@ -26,4 +26,5 @@ else
     echo "package-lock.json has not changed, skipping rebuild"
 fi
 
-node /app
+node -r dotenv/config /app
+
