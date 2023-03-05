@@ -2,20 +2,22 @@
 	import '../app.postcss';
 </script>
 
-<svelte:body
-  />
-<div class="app">
+<svelte:body />
+<div class="flex h-screen flex-col bg-base-100 dark:bg-black-900">
+  <div class="navbar bg-base-200">
+    <a href="#" class="btn btn-ghost normal-case text-xl">TransitHD</a>
+    <div class="navbar-center">Hello, good sky!</div>
+  </div>
 
-	<main>
+	<main class="flex-1">
 		<slot />
 	</main>
 
 	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
+		<p>This is where my feet go.</p>
 	</footer>
 </div>
 
 <style>
 </style>
 
-<slot />
