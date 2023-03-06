@@ -1,8 +1,35 @@
+<script language="ts">
+import { page } from "$app/stores"
+import { signOut } from '@auth/sveltekit/client';
+</script>
 
 <div>
-  <div class="navbar bg-base-200">
-    <a href="#" class="btn btn-ghost normal-case text-xl">TransitHD</a>
-    <div class="navbar-center">Hello, good sky!</div>
-  </div>
-  <slot />
+	<div class="navbar bg-base-100">
+		<div class="flex-1">
+			<a href="/app" class="btn btn-ghost normal-case text-xl">TransitHD</a>
+		</div>
+		<div class="flex-none gap-2">
+			<div class="form-control">
+				<input type="text" placeholder="Search" class="input input-bordered" />
+			</div>
+			<div class="dropdown dropdown-end">
+				<span tabindex="-1" class="btn btn-ghost btn-circle avatar">
+					<div class="w-10 rounded-full">
+						<img src="{$page.data.user?.image}" alt="Profile" />
+					</div>
+				</span>
+				<ul tabindex="-1" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+					<li>
+						<a class="justify-between">
+							Profile
+							<span class="badge">New</span>
+						</a>
+					</li>
+					<li><a>Settings</a></li>
+					<li><a on:click={()=> signOut({callbackUrl: '/'})}>Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<slot />
 </div>
