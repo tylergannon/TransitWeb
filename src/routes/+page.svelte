@@ -7,7 +7,7 @@
 
 
 <div class="h-full v-full bg-gray-300">
-	<div class="hero min-h-screen" style="background-image: url(/images/stock/photo-1507358522600-9f71e620c44e.jpg);">
+	<div class="hero min-h-screen">
 		<div class="hero-overlay bg-opacity-60"></div>
 		<div class="hero-content text-center text-neutral-content">
 			<div class="max-w-md">

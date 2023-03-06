@@ -17,7 +17,8 @@ import {
   SMTP_PORT,
   SMTP_USER,
   SMTP_PASS,
-  SMTP_FROM
+  SMTP_FROM,
+  AUTH_SECRET
 } from "$env/static/private"
 
 const prisma = new PrismaClient()
@@ -42,6 +43,7 @@ export const handle = SvelteKitAuth({
   ],
   // @ts-ignore
   adapter: PrismaAdapter( prisma ),
+  secret: AUTH_SECRET,
   callbacks: { }
 })
 
