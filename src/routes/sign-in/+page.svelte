@@ -1,11 +1,6 @@
 <script>
 	import { signIn } from '@auth/sveltekit/client';
   let email = '';
-
-  function clickEmail() {
-    console.log(email);
-    signIn('email', { email, callbackUrl: '/app' })
-  }
 </script>
 <div>
   <div class="navbar bg-base-200">
