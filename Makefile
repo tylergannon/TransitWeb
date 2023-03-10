@@ -8,7 +8,7 @@ export DOCKER_BUILD = docker build \
 
 default: image
 
-image: svelte-app astroapi dev-server
+image: svelte-app astroapi
 
 ansible:
 	cd ansible \
