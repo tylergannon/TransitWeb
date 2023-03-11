@@ -57,7 +57,41 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-type Profile {
-  dark      Boolean?
+type Subject {
+  id         String    @default(uuid()) @db.ObjectId
+  name       String
+  dobUtc     DateTime
+  tz         String
+  tags       String[]
 }
 
+type Profile {
+  dark      Boolean?
+
+}
+
+model CitySearchCountry {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  geoNameId  Int
+  name       String
+  code
+}
+
+model CitySearchAdminArea1 {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  geoNameId  Int
+  name       String
+}
+
+model CitySearchCity {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  geoNameId  Int
+  name       String
+  asciiName  String
+  lat        Float
+  lng        Float
+  countryId  String       @db.ObjectId
+  adminArea1Id  String    @db.ObjectId
+  adminArea2Id  String    @db.ObjectId
+  tz  String
+}

@@ -14,5 +14,25 @@ cat $file_name.txt | script/strip_file.py | brotli > static
 
 ```
 
+## Data Model
+
+Files are stored in TSV format.
+
+> Note: geonameid is left off, assuming we'll rebuild the data if it's updated.
+
+### City
+
+TSV columns are:
+
+```
+name, asciiName, longitude, latitude, countryCode, admin1Code, admin2Code, tz
+```
+Country code, admin1 and admin2 code, are all 2-digit strings.
+
+### Country
+
+
+
+
 
 [1]: http://download.geonames.org/export/dump/
