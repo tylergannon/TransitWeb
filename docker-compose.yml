@@ -10,17 +10,16 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-  mongo:
-    image: mongo:latest
+
+  mongodb:
+    build: servers/mongo
+    hostname: mongodb
+    container_name: mongodb
+    volumes:
+      - mongo_data:/data/db
     ports:
-      - "27017:27017"
-    # command: ["mongod", "--storageEngine", "wiredTiger", "--wiredTigerCacheSizeGB", "1"]
-    healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 1s
-      retries: 3
-      start_period: 40s
+      - 27017:27017
+
   redis:
     image: redis
     ports:
@@ -35,4 +34,4 @@ services:
 
 volumes:
   astroapi_logs:
-
+  mongo_data:
