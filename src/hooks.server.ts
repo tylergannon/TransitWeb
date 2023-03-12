@@ -7,7 +7,6 @@ import GitHub from "@auth/core/providers/github"
 import Google from "@auth/core/providers/google"
 import EmailProvider from "next-auth/providers/email"
 
-
 import {
   GOOGLE_OAUTH_ID,
   GOOGLE_OAUTH_SECRET,
@@ -18,12 +17,25 @@ import {
   SMTP_USER,
   SMTP_PASS,
   SMTP_FROM,
-  AUTH_SECRET
+  AUTH_SECRET,
+  NODE_ENV
 } from "$env/static/private"
 
-const prisma = new PrismaClient()
+const prisma: PrismaClient = (()=>{
+  if (NODE_ENV === "development") {
+    if (!global._prismaClient) {
+      global._prismaClient = new PrismaClient()
+    }
+    return global._prismaClient
+  } else {
+    return new PrismaClient()
+  }
+})()
 
 const prov = (x: any) => x as unknown as Provider
+
+process.on("exit", (_) => prisma.$disconnect())
+process.on("SIGINT", () => prisma.$disconnect())
 
 export const handle = SvelteKitAuth({
   providers: [

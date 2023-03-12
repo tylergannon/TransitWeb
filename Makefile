@@ -22,27 +22,21 @@ image: svelte-app astroapi
 	curl -fsLo $@ $(CITY_FILE_BASE)/$*
 
 
-static/cities/cities%.tsv.br: .out/cities/cities%.txt
-	script/strip_city_file.py 2 3 5 6 9 11 12 18 $< | brotli > $@
+static/cities/cities%.tsv.gz: .out/cities/cities%.txt
+	script/strip_city_file.py 2 3 5 6 9 11 12 18 $< | pigz -11 -q > $@
 
-static/cities/countries.tsv.br: .out/dl/countryInfo.txt
-	script/strip_city_file.py 1 2 5 $< | brotli > $@
+.out/admin-areas.tsv: .out/dl/countryInfo.txt .out/dl/admin1CodesASCII.txt .out/dl/admin2Codes.txt
+	@script/strip_city_file.py 1 2 5 $< > $@
+	@script/strip_city_file.py 1 2 3 .out/dl/admin1CodesASCII.txt >> $@
+	@script/strip_city_file.py 1 2 3 .out/dl/admin2Codes.txt >> $@
 
-static/cities/admin1-codes.tsv.br: .out/dl/admin1CodesASCII.txt
-	script/strip_city_file.py 1 2 3 $< | brotli > $@
+static/cities/admin-areas.tsv.gz: .out/admin-areas.tsv
+	cat $< | pigz -11 -q > $@
 
-static/cities/admin2-codes.tsv.br: .out/dl/admin2Codes.txt
-	script/strip_city_file.py 1 2 3 $< | brotli > $@
-
-static/cities/countries.tsv.br: .out/dl/countryInfo.txt
-
-
-cities_data: static/cities/cities15000.tsv.br \
-							static/cities/cities5000.tsv.br \
-							static/cities/cities500.tsv.br \
-							static/cities/countries.tsv.br \
-							static/cities/admin1-codes.tsv.br \
-							static/cities/admin2-codes.tsv.br 
+cities_data: static/cities/cities15000.tsv.gz \
+							static/cities/cities5000.tsv.gz \
+							static/cities/cities500.tsv.gz \
+							static/cities/admin-areas.tsv.gz
 
 
 ansible:

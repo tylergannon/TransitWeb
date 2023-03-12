@@ -9,5 +9,5 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 servers/node/.out
-static/cities/*.br
+static/cities/*.gz
 .out/*
