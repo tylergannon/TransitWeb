@@ -1,7 +1,7 @@
 import type { Database } from './init'
 import type { Table } from 'dexie'
 import type { GeonamesCity, GeonamesAdminArea } from './model'
-import { gunzip as _gunzip, strFromU8 } from 'fflate'
+// import { gunzip as _gunzip, strFromU8 } from 'fflate'
 
 const CHUNK_SIZE = 500
 const chunk = <T> (input: T[], size: number = CHUNK_SIZE) => {
@@ -12,20 +12,20 @@ const chunk = <T> (input: T[], size: number = CHUNK_SIZE) => {
   }, [] as T[][]);
 };
 
-function gunzip(fileData: Uint8Array) {
-  return new Promise<Uint8Array>((resolve, reject) => {
-    _gunzip(
-      fileData,
-      { consume: true },
-      (err, data) => err === null ? resolve(data) : reject(err)
-    )
-  })
-}
-
-async function fetchAndGunzip( path: string ) : Promise<string> {
-  const arrayBuffer = await fetch(path).then(x => x.arrayBuffer())
-  return gunzip( new Uint8Array(arrayBuffer)).then(strFromU8)
-}
+// function gunzip(fileData: Uint8Array) {
+//   return new Promise<Uint8Array>((resolve, reject) => {
+//     _gunzip(
+//       fileData,
+//       { consume: true },
+//       (err, data) => err === null ? resolve(data) : reject(err)
+//     )
+//   })
+// }
+//
+// async function fetchAndGunzip( path: string ) : Promise<string> {
+//   const arrayBuffer = await fetch(path).then(x => x.arrayBuffer())
+//   return gunzip( new Uint8Array(arrayBuffer)).then(strFromU8)
+// }
 
 async function loadDataFile<T, U>(path: string, table: Table<T, U>, tx: (line: string[]) => T) {
   const lines = await fetch(path).then(x => x.text()).then(x => x.split("\n"))
