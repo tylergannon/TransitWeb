@@ -10,7 +10,17 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    # command: ["mongod", "--storageEngine", "wiredTiger", "--wiredTigerCacheSizeGB", "1"]
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+      start_period: 40s
   redis:
     image: redis
     ports:
