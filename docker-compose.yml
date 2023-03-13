@@ -10,21 +10,23 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-
-  mongodb:
-    build: servers/mongo
-    hostname: mongodb
-    container_name: mongodb
-    volumes:
-      - mongo_data:/data/db
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: transitweb
     ports:
-      - 27017:27017
-
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   redis:
     image: redis
     ports:
       - "6379:6379"
     command: ["redis-server", "--maxmemory", "200mb", "--maxmemory-policy", "volatile-lru"]
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "set", "HEALTHCHECK", "1"]
       interval: 5s
@@ -34,4 +36,5 @@ services:
 
 volumes:
   astroapi_logs:
-  mongo_data:
+  redis_data:
+  postgres_data:

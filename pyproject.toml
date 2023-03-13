@@ -11,6 +11,8 @@ python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
 typer = { version = "^0.7.0", extras = ["all"] }
+ansible = "^7.3.0"
+ansible-lint = { version = "^6.14.0", markers = "platform_system != 'Windows'" }
 
 [build-system]
 requires = ["poetry-core"]
