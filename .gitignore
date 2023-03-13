@@ -9,3 +9,8 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 servers/node/.out
+static/cities/*.gz
+.out/*
+.venv
+.vscode-extensions
+
