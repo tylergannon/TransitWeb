@@ -31,23 +31,23 @@
   tasks:
     - name: Ensure keychain directory exists
       ansible.builtin.file:
-        path: "{{ keychain_path }}"
+        path: '{{ keychain_path }}'
         state: directory
         mode: '0755'
         owner: root
     - name: Add keys and repos
       ansible.builtin.include_tasks: blocks/add_repo.yml
-      loop: "{{ apt_repos }}"
+      loop: '{{ apt_repos }}'
 
     - name: Install apt-get dependencies
       ansible.builtin.apt:
-        name: "{{ system.apt_packages }}"
+        name: '{{ system.apt_packages }}'
         state: present
         update_cache: true
 
     - name: Service should be running - {{ item }}
       ansible.builtin.service:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: started
       loop:
         - docker
@@ -56,7 +56,7 @@
 
     - name: Install snap packages
       community.general.snap:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
         classic: true
-      loop: "{{ system.classic_snap_packages }}"
+      loop: '{{ system.classic_snap_packages }}'

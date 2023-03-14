@@ -3,8 +3,8 @@
 
 - name: Unzip configuration dir.
   ansible.builtin.unarchive:
-    src: "{{ site.cfg }}"
-    dest: "/etc/nginx"
+    src: '{{ site.cfg }}'
+    dest: '/etc/nginx'
     owner: root
     mode: '0644'
 

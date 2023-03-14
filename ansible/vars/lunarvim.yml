@@ -1,7 +1,7 @@
 ---
 lunarvim:
-  install_url: "https://tinyurl.com/lunarvim-stable-12"
-  use_branch: "release-1.2/neovim-0.8"
+  install_url: 'https://tinyurl.com/lunarvim-stable-12'
+  use_branch: 'release-1.2/neovim-0.8'
   deps:
     brew:
       - fd

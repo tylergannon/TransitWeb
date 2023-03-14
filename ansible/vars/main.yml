@@ -4,10 +4,10 @@ repositories:
 app:
   domains:
     - tyler.transithd.com
-homebrew_prefix: "/home/linuxbrew/.linuxbrew"
+homebrew_prefix: '/home/linuxbrew/.linuxbrew'
 homebrew:
-  bin: "{{ homebrew_prefix }}/bin"
-  exe: "{{ homebrew_prefix }}/bin/brew"
+  bin: '{{ homebrew_prefix }}/bin'
+  exe: '{{ homebrew_prefix }}/bin/brew'
 
 system:
   apt_packages:
@@ -28,8 +28,6 @@ system:
   classic_snap_packages:
     - certbot
 
-
-
 user:
   name: "{{ lookup('env', 'USER') }}"
   github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
@@ -43,14 +41,14 @@ user:
 
 fish:
   conf:
-    dir: "{{ user.home }}/.config/fish"
-    init: "{{ user.home }}/.config/fish/conf.d/init.fish"
-  exe: "{{ homebrew.bin }}/fish"
+    dir: '{{ user.home }}/.config/fish'
+    init: '{{ user.home }}/.config/fish/conf.d/init.fish'
+  exe: '{{ homebrew.bin }}/fish'
   startup:
-    - "eval ({{ homebrew.exe }} shellenv)"
-    - "starship init fish | source"
-    - "fish_vi_key_bindings"
-    - "set -g GITHUB_TOKEN {{ user.github_token }}"
+    - 'eval ({{ homebrew.exe }} shellenv)'
+    - 'starship init fish | source'
+    - 'fish_vi_key_bindings'
+    - 'set -g GITHUB_TOKEN {{ user.github_token }}'
 
 user_path_entries:
-  - "{{ user.local_bin }}"
+  - '{{ user.local_bin }}'

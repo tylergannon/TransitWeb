@@ -3,18 +3,18 @@
   name: Change user shell.
   vars_files:
     - ../vars/main.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   become: true
   tasks:
     - name: Add fish to /etc/shells
       ansible.builtin.lineinfile:
         path: /etc/shells
         state: present
-        search_string: "{{ homebrew.bin }}/fish"
-        line: "{{ homebrew.bin }}/fish"
+        search_string: '{{ homebrew.bin }}/fish'
+        line: '{{ homebrew.bin }}/fish'
 
     - name: Change user's shell to fish.
-      loop: ["{{ user.name }}", "root"]
+      loop: ['{{ user.name }}', 'root']
       ansible.builtin.user:
-        name: "{{ item }}"
-        shell: "{{ homebrew.bin }}/fish"
+        name: '{{ item }}'
+        shell: '{{ homebrew.bin }}/fish'
