@@ -11,13 +11,10 @@ RUN apk add --no-cache \
         npm \
         git
 
-VOLUME [ "/app/node_modules" ]
 VOLUME [ "/app" ]
+VOLUME [ "/app/node_modules" ]
 
-ENV NODE_PATH=/app 
-ARG CONTAINER_ID="Svelte-Dev-Server"
-ARG CONTAINER_HOST_ID="Unknown"
-ENV CONTAINER_ID=${CONTAINER_ID} CONTAINER_HOST_ID=${CONTAINER_HOST_ID}
+ENV NODE_PATH=/app
 
 ARG update=1
 COPY init_container.sh /etc/

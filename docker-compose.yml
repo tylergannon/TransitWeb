@@ -1,4 +1,18 @@
 services:
+  dev-server:
+    image: tylergannon/svelte-dev:latest
+    restart: always
+    volumes:
+      - "./:/app"
+      - dev_node_modules:/app/node_modules
+    ports:
+      - '5173:5173'
+    depends_on:
+      astroapi:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
   astroapi:
     image: tylergannon/astroapi:latest
     volumes:
@@ -38,3 +52,4 @@ volumes:
   astroapi_logs:
   mongo_data:
   redis_data:
+  dev_node_modules:
