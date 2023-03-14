@@ -25,6 +25,8 @@ services:
     ports:
       - '6379:6379'
     command: ['redis-server', '--maxmemory', '200mb', '--maxmemory-policy', 'volatile-lru']
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'set', 'HEALTHCHECK', '1']
       interval: 5s
