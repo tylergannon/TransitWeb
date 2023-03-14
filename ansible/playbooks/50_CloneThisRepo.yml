@@ -2,7 +2,7 @@
   name: Clone Repo
   vars_files:
     - ../vars/main.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   tasks:
     - name: Ensure src directory exists.
       ansible.builtin.file:
@@ -14,6 +14,6 @@
         cmd: gh repo clone {{ item }}
         creates: /home/{{ user.name }}/src/{{ item.split('/', 1)[1] }}
         chdir: /home/{{ user.name }}/src
-      loop: "{{ repositories }}"
+      loop: '{{ repositories }}'
       environment:
-        GITHUB_TOKEN: "{{ user.github_token }}"
+        GITHUB_TOKEN: '{{ user.github_token }}'

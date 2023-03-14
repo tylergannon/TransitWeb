@@ -5,29 +5,29 @@
     - ../vars/main.yml
     - ../vars/lunarvim.yml
   environment:
-    PATH: "{{ homebrew.bin }}:{{ ansible_env.PATH }}"
-  remote_user: "{{ user.name }}"
+    PATH: '{{ homebrew.bin }}:{{ ansible_env.PATH }}'
+  remote_user: '{{ user.name }}'
   tasks:
     - name: Install npm dependencies.
       community.general.npm:
-        name: "{{ item }}"
+        name: '{{ item }}'
         global: true
-      loop: "{{ lunarvim.deps.npm }}"
+      loop: '{{ lunarvim.deps.npm }}'
     - name: Install pip packages.
       ansible.builtin.pip:
-        name: "{{ lunarvim.deps.pip }}"
+        name: '{{ lunarvim.deps.pip }}'
     - name: Download the LunarVim installer.
       ansible.builtin.get_url:
-        url: "{{ lunarvim.install_url }}"
-        dest: "{{ user.home }}/lvim_install.sh"
+        url: '{{ lunarvim.install_url }}'
+        dest: '{{ user.home }}/lvim_install.sh'
         mode: '0700'
     - name: Install LunarVim.
       ansible.builtin.command: ~/lvim_install.sh -y --overwrite --no-install-dependencies
       args:
-        creates: "{{ user.local_bin }}/lvim"
+        creates: '{{ user.local_bin }}/lvim'
       environment:
-        LV_BRANCH: "{{ lunarvim.use_branch }}"
+        LV_BRANCH: '{{ lunarvim.use_branch }}'
     - name: Remove the LunarVim installer.
       ansible.builtin.file:
-        path: "/home/{{ user.name }}/lvim_install.sh"
+        path: '/home/{{ user.name }}/lvim_install.sh'
         state: absent

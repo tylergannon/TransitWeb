@@ -1,5 +1,4 @@
 all:
   children:
     dev_host:
-      hosts:
-        me.transithd.com
+      hosts: me.transithd.com

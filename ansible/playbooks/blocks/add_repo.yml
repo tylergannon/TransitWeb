@@ -1,27 +1,27 @@
 ---
 - name: Find out if the key exists already.
   ansible.builtin.stat:
-    path: "{{ keychain_path }}/{{ item.file_name }}"
+    path: '{{ keychain_path }}/{{ item.file_name }}'
   register: key
 - name: Download GPG key
   ansible.builtin.get_url:
-    url: "{{ item.key_url }}"
-    dest: "/tmp/{{ item.file_name }}"
+    url: '{{ item.key_url }}'
+    dest: '/tmp/{{ item.file_name }}'
     mode: '0600'
   when: not key.stat.exists
 
 - name: Add GPG key to keychain
-  ansible.builtin.command: "gpg --dearmor -o {{ keychain_path }}/{{ item.file_name }} /tmp/{{ item.file_name }}"
+  ansible.builtin.command: 'gpg --dearmor -o {{ keychain_path }}/{{ item.file_name }} /tmp/{{ item.file_name }}'
   args:
-    creates: "{{ keychain_path }}/{{ item.file_name }}"
+    creates: '{{ keychain_path }}/{{ item.file_name }}'
 
 - name: Apt repository
   ansible.builtin.apt_repository:
-    repo: "deb [signed-by={{ keychain_path }}/{{ item.file_name }} {{ item.options }}] {{ item.repo }} {{ item.keyword }} {{ item.section }}"
+    repo: 'deb [signed-by={{ keychain_path }}/{{ item.file_name }} {{ item.options }}] {{ item.repo }} {{ item.keyword }} {{ item.section }}'
     state: present
     update_cache: true
 
 - name: Remove GPG key
   ansible.builtin.file:
-    path: "/tmp/{{ item.file_name }}"
+    path: '/tmp/{{ item.file_name }}'
     state: absent

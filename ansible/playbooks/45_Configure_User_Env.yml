@@ -3,48 +3,48 @@
   name: Configure User.
   vars_files:
     - ../vars/main.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   tasks:
     - name: Ensure fish config exists.
       ansible.builtin.shell: >
         {{ homebrew.bin }}/fish --interactive --login -n -c 'ls'
       args:
-        creates: "{{ fish.conf.dir }}/config.fish"
+        creates: '{{ fish.conf.dir }}/config.fish'
 
     - name: Configure user PATH
       ansible.builtin.lineinfile:
-        path: "{{ fish.conf.dir }}/config.fish"
+        path: '{{ fish.conf.dir }}/config.fish'
         create: true
         mode: '0644'
         state: present
         search_string: 'set -gx PATH {{ item }} $PATH'
         line: 'set -gx PATH {{ item }} $PATH'
         validate: '{{ homebrew.bin }}/fish -n %s'
-      loop: "{{ user_path_entries }}"
+      loop: '{{ user_path_entries }}'
 
     - name: Add Environment setup to fish config
       ansible.builtin.lineinfile:
-        path: "{{ fish.conf.init }}"
+        path: '{{ fish.conf.init }}'
         create: true
         mode: '0644'
         state: present
-        search_string: "{{ item }}"
-        line: "{{ item }}"
+        search_string: '{{ item }}'
+        line: '{{ item }}'
         validate: '{{ homebrew.bin }}/fish -n %s'
-      loop: "{{ fish.startup }}"
+      loop: '{{ fish.startup }}'
 
     - name: Add Homebrew init to bashrc
       loop:
-        - home: "{{ user.home }}"
-          name: "{{ user.name }}"
-        - home: "/root"
-          name: "root"
+        - home: '{{ user.home }}'
+          name: '{{ user.name }}'
+        - home: '/root'
+          name: 'root'
       ansible.builtin.lineinfile:
-        path: "{{ item.home }}/.bashrc"
+        path: '{{ item.home }}/.bashrc'
         create: true
         mode: '0644'
         state: present
-        owner: "{{ item.name }}"
+        owner: '{{ item.name }}'
         search_string: 'eval "$({{ homebrew.exe }} shellenv)"'
         line: 'eval "$({{ homebrew.exe }} shellenv)"'
         validate: '/bin/bash -n %s'
