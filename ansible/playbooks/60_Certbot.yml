@@ -3,7 +3,7 @@
   name: Install Certbot
   vars_files:
     - ../vars/main.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   become: true
   vars:
     snap_tstamp: /etc/snap_updated
@@ -27,11 +27,11 @@
         snap refresh &> /dev/null;
         and echo "{{ ansible_date_time.date }}" > /etc/snap_updated;
       args:
-        executable: "{{ fish.exe }}"
+        executable: '{{ fish.exe }}'
         creates: /etc/snap_updated
     - name: Install Snap Packages, including Certbot
       community.general.snap:
-        name: "{{ system.classic_snap_packages }}"
+        name: '{{ system.classic_snap_packages }}'
         classic: true
     - name: Add link to Certbot binary
       ansible.builtin.file:

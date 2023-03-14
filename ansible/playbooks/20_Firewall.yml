@@ -4,15 +4,15 @@
   vars_files:
     - ../vars/main.yml
     - ../vars/firewall.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   become: true
 
   tasks:
     - name: Open ports for public access
       community.general.ufw:
         rule: allow
-        port: "{{ item }}"
-      loop: "{{ ports.general }}"
+        port: '{{ item }}'
+      loop: '{{ ports.general }}'
     - name: UFW - Enable Firewall and set default policy to deny incoming connections
       community.general.ufw:
         state: enabled

@@ -4,7 +4,7 @@
   vars_files:
     - ../vars/main.yml
     - ../vars/homebrew.yml
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   tasks:
     - name: If brew command can't be found, run shell command to install Homebrew.
       ansible.builtin.shell: >
@@ -14,4 +14,4 @@
       # When the directory /home/linuxbrew/.linuxbrew/bin exists, the installation is unnecessary.
     - name: Install Homebrew packages
       community.general.homebrew:
-        name: "{{ homebrew.packages }}"
+        name: '{{ homebrew.packages }}'

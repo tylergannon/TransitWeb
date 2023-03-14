@@ -7,25 +7,25 @@
   # We want nginx configured to use the correct pid file and run location.
   # Let's start by creating the nginx user.
   vars:
-    build_dir: "/etc/nginx-build-{{ site.build_version }}"
+    build_dir: '/etc/nginx-build-{{ site.build_version }}'
     old_conf: /etc/nginx.default
-  remote_user: "{{ user.name }}"
+  remote_user: '{{ user.name }}'
   become: true
   tasks:
     - name: Check if old conf exists yet.
       ansible.builtin.stat:
-        path: "{{ old_conf }}"
+        path: '{{ old_conf }}'
       register: check_old_conf
 
     - name: Check if new conf exists yet.
       ansible.builtin.stat:
-        path: "{{ site.cfg }}"
+        path: '{{ site.cfg }}'
       register: check_new_conf
 
     - name: We should have a copy of the nginx config.
       ansible.builtin.copy:
-        src: "/etc/nginx/"
-        dest: "{{ old_conf }}/"
+        src: '/etc/nginx/'
+        dest: '{{ old_conf }}/'
         remote_src: true
         mode: '0644'
         directory_mode: '0755'
@@ -34,24 +34,24 @@
     - name: Ensure build dir exists
       when: not check_new_conf.stat.exists
       ansible.builtin.file:
-        path: "{{ build_dir }}"
+        path: '{{ build_dir }}'
         state: directory
         mode: '0755'
 
     - name: Untar the nginx config.
       when: not check_new_conf.stat.exists
       ansible.builtin.unarchive:
-        src: "{{ site.cfg }}"
-        dest: "{{ build_dir }}"
-        creates: "{{ build_dir }}/nginx.conf"
+        src: '{{ site.cfg }}'
+        dest: '{{ build_dir }}'
+        creates: '{{ build_dir }}/nginx.conf'
         mode: '0640'
 
     - name: Link to common artifacts (mime.types, dhparam.pem)
       when: not check_new_conf.stat.exists
-      loop: ["mime.types", "dhparam.pem"]
+      loop: ['mime.types', 'dhparam.pem']
       ansible.builtin.file:
-        src: "{{ old_conf }}/{{ item }}"
-        dest: "{{ build_dir }}/{{ item }}"
+        src: '{{ old_conf }}/{{ item }}'
+        dest: '{{ build_dir }}/{{ item }}'
         state: link
         mode: '0640'
 
@@ -75,7 +75,7 @@
 
     - name: Set symlink to nginx config.
       ansible.builtin.file:
-        src: "{{ build_dir }}"
+        src: '{{ build_dir }}'
         dest: /etc/nginx
         state: link
         mode: '0640'
