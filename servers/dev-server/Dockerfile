@@ -15,8 +15,7 @@ VOLUME [ "/app" ]
 VOLUME [ "/app/node_modules" ]
 
 ENV NODE_PATH=/app
-
+EXPOSE 5173 15000
 ARG update=1
 COPY init_container.sh /etc/
 CMD ["/etc/init_container.sh"]
-
