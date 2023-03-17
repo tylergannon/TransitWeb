@@ -2,11 +2,13 @@
 // for information about these interfaces
 import type { RedisClientType } from '@redis/client';
 import type { Model } from 'mongoose';
+import type { ValidationErrors } from 'svelte-use-form';
 
 declare global {
 	declare var models: Record<string, Model<any>>; // eslint-disable-line no-var
 	namespace App {
 		// interface Error {}
+
 		interface Locals {
 			redisClient: RedisClientType;
 			auth: Lucia.Auth;
