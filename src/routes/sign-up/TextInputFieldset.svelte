@@ -8,10 +8,10 @@
 
 	export let name: string;
   export let label: string;
-  export let type: string = "text"
+  export let type = "text"
   export let validators: Validator[] = []
   export let hints: Record<string, string> = {}
-  export let moreClasses: string = ""
+  export let moreClasses = ""
   export let value = ""
   export let placeholder = ""
   export let formName = "form"
