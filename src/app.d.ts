@@ -1,8 +1,10 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 import type { RedisClientType } from '@redis/client';
+import type { Model } from 'mongoose';
 
 declare global {
+	declare var models: Record<string, Model<any>>; // eslint-disable-line no-var
 	namespace App {
 		// interface Error {}
 		interface Locals {

@@ -9,7 +9,9 @@
  */
 import type { Model } from 'mongoose';
 import mongooseModule from 'mongoose';
-
+if (global.models === undefined) {
+	global.models = {};
+}
 import type { GeoNamesCityType } from './geoNamesCity';
 import type { KeyType } from './key';
 import type { PersonType } from './person';
@@ -24,15 +26,18 @@ import { PersonSchema } from './person';
 import { SessionSchema } from './session';
 import { UserSchema } from './user';
 
-const models = mongooseModule.models;
+const models: Record<string, Model<any>> = global.models;
 
 export const GeoNamesCity: Model<GeoNamesCityType> =
-	models.GeoNamesCity || mongooseModule.model('GeoNamesCity', GeoNamesCitySchema);
-export const Key: Model<KeyType> = models.Key || mongooseModule.model('key', KeySchema);
+	models.GeoNamesCity ||
+	(models.GeoNamesCity = mongooseModule.model('geoNamesCity', GeoNamesCitySchema));
+export const Key: Model<KeyType> =
+	models.Key || (models.Key = mongooseModule.model('key', KeySchema));
 export const Person: Model<PersonType> =
-	models.Person || mongooseModule.model('Person', PersonSchema);
+	models.Person || (models.Person = mongooseModule.model('person', PersonSchema));
 export const Session: Model<SessionType> =
-	models.Session || mongooseModule.model('session', SessionSchema);
-export const User: Model<UserType> = models.User || mongooseModule.model('user', UserSchema);
+	models.Session || (models.Session = mongooseModule.model('session', SessionSchema));
+export const User: Model<UserType> =
+	models.User || (models.User = mongooseModule.model('user', UserSchema));
 
 export const mongoose = mongooseModule;
