@@ -2,6 +2,7 @@ Dionannd.tokyo-night-ported-nvim
 GitHub.copilot-nightly
 Prisma.prisma
 asvetliakov.vscode-neovim
+bradlc.vscode-tailwindcss
 bungcip.better-toml
 dlech.chmod
 esbenp.prettier-vscode

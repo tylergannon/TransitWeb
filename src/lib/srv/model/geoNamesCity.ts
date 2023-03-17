@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import model from './mongoose';
 
 export interface GeoNamesCityType {
 	name: string;
@@ -37,4 +38,5 @@ GeoNamesCitySchema.index({
 	cc_iso: 'text'
 });
 
-export const GeoNamesCity = model<GeoNamesCityType>('geonames_city', GeoNamesCitySchema);
+export const GeoNamesCity =
+	mongoose.models.geonames_city || model<GeoNamesCityType>('geonames_city', GeoNamesCitySchema);

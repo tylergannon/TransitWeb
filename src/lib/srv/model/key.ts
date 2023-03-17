@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
+import model from './mongoose';
 export interface KeyType {
 	_id: string;
 	user_id: string;
@@ -7,7 +8,7 @@ export interface KeyType {
 	expires: number;
 }
 
-export const Key = model(
+export const Key = model<KeyType>(
 	'key',
 	new Schema<KeyType>(
 		{
