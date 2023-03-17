@@ -5,11 +5,9 @@ import { createClient } from '@redis/client';
 import { REDIS_URL } from '$env/static/private';
 import { buildAuth } from '$lib/srv/lucia';
 import { sequence } from '@sveltejs/kit/hooks';
-import mongoose from 'mongoose';
-import { User } from '$lib/srv/model';
+import { mongoose } from '$lib/srv/model';
 
 const redisClient = createClient({ url: REDIS_URL });
-
 const auth = buildAuth(redisClient);
 
 const handleSession = handleHooks(auth);
@@ -32,4 +30,4 @@ const handleDatabases = (async ({ event, resolve }) => {
 	}
 }) satisfies Handle;
 
-export default sequence(handleSession, handleDatabases);
+export default sequence(handleDatabases, handleSession);

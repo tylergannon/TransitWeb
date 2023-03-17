@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import model from './mongoose';
 
 export interface PersonType {
 	userId: string;
@@ -8,7 +7,7 @@ export interface PersonType {
 	tz: string;
 	tags: string[];
 }
-const PersonSchema = new Schema<PersonType>({
+export const PersonSchema = new Schema<PersonType>({
 	userId: { type: String, required: true },
 	name: { type: String, required: true },
 	dob_utc: { type: Date, required: true },
@@ -18,5 +17,3 @@ const PersonSchema = new Schema<PersonType>({
 
 PersonSchema.index({ userId: 1, name: 'text' });
 PersonSchema.index({ userId: 1, tags: 1 });
-
-export const Person = model<PersonType>('person', PersonSchema);

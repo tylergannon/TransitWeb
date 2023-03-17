@@ -1,29 +1,38 @@
-import mongoose from 'mongoose';
+/**
+ * @fileoverview Exports all models and mongoose instance
+ * @author @tylergannon
+ *
+ * Note the conditional creation of new models. This is to prevent
+ * conflict during development, between the HMR process repeating the
+ * same calls to mongoose.model(), which is not idempotent but throws
+ * an error if the model already exists.
+ */
+import type { Model } from 'mongoose';
+import mongooseModule from 'mongoose';
 
-import { dev } from '$app/environment';
+import type { GeoNamesCityType } from './geoNamesCity';
+import type { KeyType } from './key';
+import type { PersonType } from './person';
+import type { SessionType } from './session';
+import type { UserType } from './user';
 
-if (dev) {
-	console.log('WHATSAD');
-	// Delete each model in mongoose.models.
-	Object.keys(mongoose.models).forEach((key) => {
-		mongoose.deleteModel(key);
-		console.log(key);
-		if (mongoose.models[key]) {
-			delete mongoose.models[key];
-		}
-	});
-}
+export type { GeoNamesCityType, KeyType, PersonType, SessionType, UserType };
 
-export type { GeoNamesCityType } from './geoNamesCity';
-export type { KeyType } from './key';
-export type { PersonType } from './person';
-export type { SessionType } from './session';
-export type { UserType } from './user';
+import { GeoNamesCitySchema } from './geoNamesCity';
+import { KeySchema } from './key';
+import { PersonSchema } from './person';
+import { SessionSchema } from './session';
+import { UserSchema } from './user';
 
-import { GeoNamesCity } from './geoNamesCity';
-import { Key } from './key';
-import { Person } from './person';
-import { Session } from './session';
-import { User } from './user';
+const models = mongooseModule.models;
 
-export { GeoNamesCity, Key, Person, Session, User };
+export const GeoNamesCity: Model<GeoNamesCityType> =
+	models.GeoNamesCity || mongooseModule.model('GeoNamesCity', GeoNamesCitySchema);
+export const Key: Model<KeyType> = models.Key || mongooseModule.model('key', KeySchema);
+export const Person: Model<PersonType> =
+	models.Person || mongooseModule.model('Person', PersonSchema);
+export const Session: Model<SessionType> =
+	models.Session || mongooseModule.model('session', SessionSchema);
+export const User: Model<UserType> = models.User || mongooseModule.model('user', UserSchema);
+
+export const mongoose = mongooseModule;

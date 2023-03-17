@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import model from './mongoose';
 
 export interface GeoNamesCityType {
 	name: string;
@@ -15,7 +14,7 @@ export interface GeoNamesCityType {
 	tz: string;
 }
 
-const GeoNamesCitySchema = new Schema<GeoNamesCityType>({
+export const GeoNamesCitySchema = new Schema<GeoNamesCityType>({
 	name: { type: String, required: true },
 	lat: { type: Number, required: true },
 	lng: { type: Number, required: true },
@@ -37,6 +36,3 @@ GeoNamesCitySchema.index({
 	country: 'text',
 	cc_iso: 'text'
 });
-
-export const GeoNamesCity =
-	mongoose.models.geonames_city || model<GeoNamesCityType>('geonames_city', GeoNamesCitySchema);

@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import model from './mongoose';
 
 export interface SessionType {
 	_id: string;
@@ -8,26 +7,23 @@ export interface SessionType {
 	idle_expires: number;
 }
 
-export const Session = model(
-	'session',
-	new Schema<SessionType>(
-		{
-			_id: {
-				type: String
-			},
-			user_id: {
-				type: String,
-				required: true
-			},
-			active_expires: {
-				type: Number,
-				required: true
-			},
-			idle_expires: {
-				type: Number,
-				required: true
-			}
+export const SessionSchema = new Schema<SessionType>(
+	{
+		_id: {
+			type: String
 		},
-		{ _id: false }
-	)
+		user_id: {
+			type: String,
+			required: true
+		},
+		active_expires: {
+			type: Number,
+			required: true
+		},
+		idle_expires: {
+			type: Number,
+			required: true
+		}
+	},
+	{ _id: false }
 );
