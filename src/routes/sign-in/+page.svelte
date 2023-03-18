@@ -1,5 +1,4 @@
 <script>
-	import { signIn } from '@auth/sveltekit/client';
   let email = '';
 </script>
 <div>
@@ -66,7 +65,6 @@
                 </div>
                 <div>
                   <button
-                    on:click={() => signIn('email', { email, callbackUrl: '/app' })}
                     type="submit"
                     class="w-full flex justify-center bg-green-400  hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500"
                   >
@@ -78,7 +76,6 @@
                   <button>{email}</button>
                   <button
                     class="btn w-full flex justify-center bg-slate-900 hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500"
-                    on:click={() => signIn('github', { callbackUrl: '/app' })}
                   >
                     Sign in with Github
                   </button>
@@ -86,7 +83,6 @@
                 <div>
                   <button
                     class="btn w-full flex justify-center bg-blue-900 hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500"
-                    on:click={() => signIn('github', { callbackUrl: '/app' })}
                   >
                     Sign in with Google
                   </button>

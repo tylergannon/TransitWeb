@@ -1,6 +1,5 @@
 <script language="ts">
 import { page } from "$app/stores"
-import { signOut } from '@auth/sveltekit/client';
 </script>
 
 <div>
@@ -26,7 +25,7 @@ import { signOut } from '@auth/sveltekit/client';
 						</a>
 					</li>
 					<li><a>Settings</a></li>
-					<li><a on:click={()=> signOut({callbackUrl: '/'})}>Logout</a></li>
+					<li><a>Logout</a></li>
 				</ul>
 			</div>
 		</div>

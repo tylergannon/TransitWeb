@@ -15,12 +15,15 @@ image: svelte-app astroapi
 .out/cities/cities%.txt: .out/dl/cities%.zip
 	@mkdir -p .out/cities
 	cd .out/cities \
-		&& unzip -qq ../dl/cities$*.zip
+		cat ../dl/cities$*.zip | funzip > $@
 
 .out/dl/%:
 	@mkdir -p .out/dl
 	curl -fsLo $@ $(CITY_FILE_BASE)/$*
 
+.out/mongodb-initdb/load_cities.js:
+	@mkdir -p .out/mongodb-initdb
+	script/build_cities_js.py --output $@
 
 static/cities/cities%.tsv.gz: .out/cities/cities%.txt
 	script/strip_city_file.py 2 3 5 6 9 11 12 18 $< | pigz -11 -q > $@
@@ -36,8 +39,8 @@ static/cities/admin-areas.tsv.gz: .out/admin-areas.tsv
 cities_data: static/cities/cities15000.tsv.gz \
 							static/cities/cities5000.tsv.gz \
 							static/cities/cities500.tsv.gz \
-							static/cities/admin-areas.tsv.gz
-
+							static/cities/admin-areas.tsv.gz \
+							.out/mongodb-initdb/load_cities.js
 
 ansible:
 	cd ansible \
