@@ -13,6 +13,7 @@ default: image
 image:
 	$(DOCKER_BUILD) \
 		--build-arg CONTAINER_ID=$(APP_IMG) \
+		--build-arg WORKDIR=/TransitWeb \
 		-t $(APP_IMG):latest \
 		-t $(APP_IMG):$(IMAGE_LABEL) \
 		. \
