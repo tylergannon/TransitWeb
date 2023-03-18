@@ -3,7 +3,6 @@
 # See Makefile.
 FROM tylergannon/alpine-fish
 
-WORKDIR /app
 
 # Install and then at the end, remove all cached package information.
 RUN apk add --no-cache \
@@ -13,11 +12,17 @@ RUN apk add --no-cache \
         npm \
         redis
 
-VOLUME [ "/app" ]
-VOLUME [ "/app/node_modules" ]
+ARG WORKDIR=/app
 
-ENV NODE_PATH=/app
+ENV WORKDIR=${WORKDIR}
+
+WORKDIR ${WORKDIR}
+
+VOLUME [ "${WORKDIR}" ]
+VOLUME [ "${WORKDIR}/node_modules" ]
+
+ENV NODE_PATH=${WORKDIR}
 EXPOSE 5173 15000
 
-COPY init_container.sh /etc/
-CMD ["/etc/init_container.sh"]
+COPY init_container.sh /usr/local/bin/init_container.sh
+CMD ["init_container.sh"]

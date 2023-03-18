@@ -5,9 +5,9 @@ import redisAdapter from '@lucia-auth/adapter-session-redis';
 import type { RedisClientType } from '@redis/client';
 import { dev } from '$app/environment';
 import bcrypt from 'bcrypt';
-import { mongoose } from '$lib/srv/model';
+import type { mongoose as _mongoose } from '$lib/srv/model';
 
-export const buildAuth = (redisCli: RedisClientType<any, any, any>) =>
+export const buildAuth = (redisCli: RedisClientType<any, any, any>, mongoose: typeof _mongoose) =>
 	lucia({
 		adapter: {
 			user: mongooseAdapter(mongoose),
