@@ -19,7 +19,8 @@
         <div class="max-w-md">
           <h1 class="mb-5 text-5xl font-bold">Transit HD</h1>
           <p class="mb-5">It will be pretty expensive but you're worth it.</p>
-          <a href="/sign-in" class="btn btn-primary">Sign up now!</a>
+          <a href="/sign-up" class="btn btn-primary">Sign up now!</a>
+          <a href="/sign-in" class="btn btn-secondary">I have an account</a>
         </div>
       </div>
     </div>

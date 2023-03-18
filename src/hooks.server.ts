@@ -1,48 +1,36 @@
-import type { Provider } from '@auth/core/providers';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
+import type { Handle } from '@sveltejs/kit';
+import { handleHooks } from '@lucia-auth/sveltekit';
+import { createClient } from '@redis/client';
 
-import { SvelteKitAuth } from '@auth/sveltekit';
-import GitHub from '@auth/core/providers/github';
-import Google from '@auth/core/providers/google';
-import EmailProvider from 'next-auth/providers/email';
+import { REDIS_URL } from '$env/static/private';
+import { buildAuth } from '$lib/srv/lucia';
+import { sequence } from '@sveltejs/kit/hooks';
+import { mongoose } from '$lib/srv/model';
 
-import {
-	GOOGLE_OAUTH_ID,
-	GOOGLE_OAUTH_SECRET,
-	GITHUB_OAUTH_ID,
-	GITHUB_OAUTH_SECRET,
-	SMTP_HOST,
-	SMTP_PORT,
-	SMTP_USER,
-	SMTP_PASS,
-	SMTP_FROM,
-	AUTH_SECRET
-} from '$env/static/private';
+const redisClient = createClient({ url: REDIS_URL });
+console.log(REDIS_URL, 'NICE');
+const auth = buildAuth(redisClient);
 
-const prov = (x: any) => x as unknown as Provider;
+const handleSession = handleHooks(auth);
 
-export const handle = SvelteKitAuth({
-	providers: [
-		prov(GitHub({ clientId: GITHUB_OAUTH_ID, clientSecret: GITHUB_OAUTH_SECRET })),
-		prov(Google({ clientId: GOOGLE_OAUTH_ID, clientSecret: GOOGLE_OAUTH_SECRET })),
-		prov(
-			EmailProvider({
-				server: {
-					host: SMTP_HOST,
-					port: parseInt(SMTP_PORT),
-					auth: {
-						user: SMTP_USER,
-						pass: SMTP_PASS
-					}
-				},
-				from: SMTP_FROM
-			})
-		)
-	],
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	adapter: PrismaAdapter(prisma),
-	secret: AUTH_SECRET,
-	callbacks: {}
-});
+const handleDatabases = (async ({ event, resolve }) => {
+	const { locals } = event;
+	locals.redisClient = redisClient;
+	await redisClient.connect();
+	locals.auth = auth;
+	try {
+		return resolve(event);
+	} finally {
+		if (redisClient.isReady) {
+			// locals.redisClient.disconnect();
+			await redisClient.quit();
+			console.log('sick');
+		}
+
+		if (mongoose.connection.readyState === 1) {
+			mongoose.connection.close();
+		}
+	}
+}) satisfies Handle;
+
+export const handle = sequence(handleDatabases, handleSession);
