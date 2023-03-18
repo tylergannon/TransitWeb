@@ -1,12 +1,11 @@
 <script lang="ts">
 	import TextInputFieldset from '$lib/components/auth/InputFieldset.svelte';
 	import AuthPage from '$lib/components/auth/Page.svelte';
-	import { useForm, required, minLength, maxLength, email, pattern } from 'svelte-use-form';
+	import { required, minLength, maxLength, email, pattern } from 'svelte-use-form';
 
-	const form = useForm({}, 'signup');
 </script>
 
-<AuthPage formAction="?/signUp">
+<AuthPage formAction="?/signUp" formName="signup">
 	<div class="mb-4">
 		<h2>Please sign up to create your account.</h2>
 		<p>We won't share your email with anyone.</p>

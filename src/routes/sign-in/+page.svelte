@@ -1,12 +1,11 @@
 <script lang="ts">
 	import TextInputFieldset from '$lib/components/auth/InputFieldset.svelte';
-	import AuthPage from '$lib/components/auth/AuthPage.svelte';
-	import { useForm, required, minLength, maxLength, email, pattern } from 'svelte-use-form';
+	import AuthPage from '$lib/components/auth/Page.svelte';
+	import { required, email } from 'svelte-use-form';
 
-	const form = useForm({}, 'signup');
 </script>
 
-<AuthPage formAction="?/signUp">
+<AuthPage formAction="?/signIn" formName="signin">
 	<div class="mb-4">
 		<h2>Please sign in.</h2>
 		<p>Welcome back, by the way.</p>
@@ -16,7 +15,7 @@
 			name="email"
 			label="Email"
 			type="email"
-			formName="signup"
+			formName="signin"
 			placeholder="you@email.com"
 			validators={[required, email]}
 			hints={{
@@ -28,7 +27,7 @@
 			name="password"
 			label="Password"
 			type="password"
-			formName="signup"
+			formName="signin"
 			placeholder="Please choose a strong password."
 			validators={[ required ]}
 			hints={{ required: 'Please enter your password.', }}
