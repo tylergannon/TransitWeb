@@ -11,7 +11,7 @@
 		<a href="#" class="btn btn-ghost normal-case text-xl">TransitHD</a>
 		<div class="navbar-center">Hello, good sky!</div>
 	</div>
-	<form method="post" use:form >
+	<form method="post" use:form action="?/signUp" >
 		<div class="min-h-screen bg-base-300 dark:bg-black sm:flex sm:flex-row mx-0 justify-center">
 			<div class="flex justify-center self-center  z-10">
 				<div class="p-12 mx-auto rounded-2xl w-100 prose">

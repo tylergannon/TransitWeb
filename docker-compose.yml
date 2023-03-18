@@ -1,6 +1,14 @@
 services:
   dev-server:
-    image: tylergannon/svelte-dev:latest
+    build:
+      context: servers/dev-server
+      args:
+        - CONTAINER_ID=svelte-dev
+        - CONTAINER_HOST=dev-server
+      tags:
+        - "tylergannon/svelte-dev:latest"
+
+    # image: tylergannon/svelte-dev:latest
     restart: always
     volumes:
       - "./:/app"

@@ -7,11 +7,11 @@ WORKDIR /app
 
 # Install and then at the end, remove all cached package information.
 RUN apk add --no-cache \
+        bat \
         git \
         nodejs \
         npm \
-        redis \
-    && npm install -g husky
+        redis
 
 VOLUME [ "/app" ]
 VOLUME [ "/app/node_modules" ]
