@@ -1,23 +1,21 @@
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { mongoose, Key } from '$lib/srv/model';
-import { DATABASE_URL } from '$env/static/private';
+import { Key } from '$lib/srv/model';
 
 export const actions = {
-	signUp: async (event) => {
+	signUp: async ({ request, locals: { auth, setSession } }) => {
 		console.log('dude, sick.');
-		await mongoose.connect(DATABASE_URL);
-		const data = await event.request.formData();
-		const email = data.get('email');
-		const password = data.get('password');
-		const name = data.get('name');
+		const data = await request.formData();
+		const email = data.get('email')?.valueOf() as string | null;
+		const password = data.get('password')?.valueOf() as string | null;
+		const name = data.get('name')?.valueOf() as string | null;
 		if (!name || !email || !password) {
 			throw fail(400, { message: 'failed validation' });
 		}
 		if ((await Key.count({ user_id: email })) !== 0) {
 			throw fail(400, { email: 'Already exists' });
 		}
-		await event.locals.auth.createUser({
+		await auth.createUser({
 			primaryKey: {
 				providerId: 'email',
 				providerUserId: email.valueOf().toString(),
@@ -27,6 +25,12 @@ export const actions = {
 				name
 			}
 		});
-		throw redirect(303, '/home');
+
+		const key = await auth.useKey('email', email, password);
+		const session = await auth.createSession(key.userId);
+
+		setSession(session);
+
+		throw redirect(303, '/app');
 	}
 } satisfies Actions;

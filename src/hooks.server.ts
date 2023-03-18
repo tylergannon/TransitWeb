@@ -8,27 +8,27 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { mongoose } from '$lib/srv/model';
 
 const redisClient = createClient({ url: REDIS_URL });
-console.log(REDIS_URL, 'NICE');
-const auth = buildAuth(redisClient);
+const auth = buildAuth(redisClient, mongoose);
 
 const handleSession = handleHooks(auth);
+import { DATABASE_URL } from '$env/static/private';
 
 const handleDatabases = (async ({ event, resolve }) => {
 	const { locals } = event;
 	locals.redisClient = redisClient;
-	await redisClient.connect();
+
+	await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)]);
+
 	locals.auth = auth;
 	try {
-		return resolve(event);
+		// Be sure to await here before closing db connections.
+		return await resolve(event);
 	} finally {
-		if (redisClient.isReady) {
-			// locals.redisClient.disconnect();
-			await redisClient.quit();
-			console.log('sick');
+		if (redisClient.isOpen) {
+			redisClient.disconnect();
 		}
-
 		if (mongoose.connection.readyState === 1) {
-			mongoose.connection.close();
+			mongoose.disconnect();
 		}
 	}
 }) satisfies Handle;
