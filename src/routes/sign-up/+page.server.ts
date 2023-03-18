@@ -27,6 +27,7 @@ export const actions = {
 				name
 			}
 		});
+
 		throw redirect(303, '/home');
 	}
 } satisfies Actions;
