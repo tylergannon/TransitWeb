@@ -1,14 +1,43 @@
 services:
-  dev-server:
-    # build:
-    #   context: servers/dev-server
-    #   args:
-    #     - CONTAINER_ID=svelte-dev
-    #     - CONTAINER_HOST=dev-server
-    #     - WORKDIR=/TransitWeb
-    #   tags:
-    #     - "tylergannon/svelte-dev:latest"
+  traefik:
+    # The official v2 Traefik docker image
+    image: traefik:v3.0
+    # Enables the web UI and tells Traefik to listen to docker
+    # Activate ping to enable Traefik healthcheck
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --ping=true
+      - --experimental.plugins.traefik-plugin.modulename=github.com/jlfxt/traefik-plugin
+      - --experimental.plugins.traefik-plugin.version=v0.1.3
+      - --log.level=DEBUG
+    # Call traefik healthcheck.
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 30s
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  dev-server:
+    labels:
+      # Enable Traefik to listen to this container over HTTP to port 5173
+      - traefik.enable=true
+      - traefik.http.routers.dev-server.rule=Host(`dev.home`)
+      - traefik.http.routers.dev-server.priority=10
+      - traefik.http.routers.dev-server.entrypoints=web
+      - traefik.http.routers.dev-server.service=dev-server
+      - traefik.http.services.dev-server.loadbalancer.server.port=5173
     image: tylergannon/svelte-dev:latest
     restart: always
     volumes:
@@ -16,10 +45,9 @@ services:
       - dev_node_modules:/TransitWeb/node_modules
     environment:
       DATABASE_URL: mongodb://mongodb:27017/transitweb?ssl=false
-    ports:
-      - '5173:5173'
-      - '15000:15000'
     depends_on:
+      traefik:
+        condition: service_healthy
       astroapi:
         condition: service_healthy
       mongodb:
@@ -31,10 +59,29 @@ services:
       - astroapi_logs:/var/log
     environment:
       REDIS_URL: redis://redis
-    ports:
-      - '8080:80'
+    labels:
+      # Enable Traefik to listen to this container over HTTP and forward /astropi to port 80
+      # Enable traefik.
+      - traefik.enable=true
+      - traefik.http.routers.astroapi.rule=Host(`dev.home`) && PathPrefix(`/astroapi`)
+
+      # Forward auth.
+      - traefik.http.middlewares.astroapi-auth.forwardauth.address=http://auth:80
+      - traefik.http.middlewares.astroapi-auth.forwardauth.trustforwardheader=true
+
+      - traefik.http.middlewares.astroapi-cacheheaders.headers.customresponseheaders.Cache-Control=public, max-age=31536000, immutable
+      # Middleware to strip /astroapi from the path.
+      - traefik.http.middlewares.strip-astroapi.stripprefix.prefixes=/astroapi
+
+      - traefik.http.routers.astroapi.middlewares=astroapi-auth,strip-astroapi,astroapi-cacheheaders
+      - traefik.http.routers.astroapi.priority=20
+      - traefik.http.routers.astroapi.entrypoints=web
+      - traefik.http.routers.astroapi.service=astroapi
+      - traefik.http.services.astroapi.loadbalancer.server.port=80
     depends_on:
       redis:
+        condition: service_healthy
+      traefik:
         condition: service_healthy
 
   mongodb:
@@ -47,18 +94,38 @@ services:
       - mongo_data:/data/db
       - mongo_configdata:/data/configdb
       - ./.out/mongodb-initdb:/docker-entrypoint-initdb.d:ro
-    ports:
-      - 27017:27017
+  auth:
+    image: tylergannon/lucia-auth-server
+    hostname: auth
+    container_name: auth
+    volumes:
+      - ./servers/auth/index.ts:/app/index.ts:ro
+    environment:
+      REDIS_URL: redis://redis
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.auth.loadbalancer.server.port=80
+      - traefik.http.routers.auth.rule=Host(`auth.home`)
+      - traefik.http.routers.auth.entrypoints=web
+      - traefik.http.routers.auth.service=auth
+    depends_on:
+      traefik:
+        condition: service_healthy
 
   redis:
     image: redis
-    ports:
-      - '6379:6379'
-    command: ['redis-server', '--maxmemory', '200mb', '--maxmemory-policy', 'volatile-lru']
+    command:
+      [
+        'redis-server',
+        '--maxmemory',
+        '200mb',
+        '--maxmemory-policy',
+        'volatile-lru'
+      ]
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'set', 'HEALTHCHECK', '1']
+      test: [ 'CMD', 'redis-cli', 'set', 'HEALTHCHECK', '1' ]
       interval: 5s
       timeout: 1s
       retries: 3

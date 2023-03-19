@@ -1,0 +1,12 @@
+{
+  "name": "lucia-auth",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "^0.5.0"
+  },
+  "dependencies": {
+    "@redis/client": "^1.5.6",
+    "cookie": "^0.5.0"
+  }
+}
