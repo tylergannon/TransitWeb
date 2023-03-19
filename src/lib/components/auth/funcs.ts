@@ -1,3 +1,6 @@
+/**
+ * Handles to update or destroy an action / component extension.
+ */
 export type ActionCallbacks<T = void> = {
 	destroy: () => void;
 	update?: (val: T) => void;
