@@ -1,4 +1,4 @@
-.PHONY: default svelte-app astroapi alpine-fish dev-server ansible cities_data
+.PHONY: default svelte-app astroapi alpine-fish dev-server ansible cities_data auth-server
 
 export CONTAINER_HOST_ID ?= $(shell hostname -s)
 export DOCKER_BUILD = docker build \
@@ -10,7 +10,7 @@ CITY_FILE_BASE := "http://download.geonames.org/export/dump"
 
 default: image
 
-image: svelte-app astroapi
+image: svelte-app astroapi auth-server
 
 .out/cities/cities%.txt: .out/dl/cities%.zip
 	@mkdir -p .out/cities
@@ -52,6 +52,9 @@ svelte-app: alpine-fish
 
 astroapi:
 	@cd servers/astroapi && make image
+
+auth-server:
+	@cd servers/auth && make image
 
 dev-server: alpine-fish
 	@cd servers/dev-server && make image
