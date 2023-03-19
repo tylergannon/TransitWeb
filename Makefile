@@ -10,7 +10,7 @@ CITY_FILE_BASE := "http://download.geonames.org/export/dump"
 
 default: image
 
-image: svelte-app astroapi auth-server
+image: cities_data astroapi auth-server
 
 .out/cities/cities%.txt: .out/dl/cities%.zip
 	@mkdir -p .out/cities
@@ -46,9 +46,6 @@ ansible:
 	cd ansible \
 	&& ansible-galaxy collection install -r requirements.yml \
 	&& ansible-playbook -i ./inventory.yml ./playbooks/$(num)*.yml
-
-svelte-app: alpine-fish
-	@cd servers/node && make image
 
 astroapi:
 	@cd servers/astroapi && make image
