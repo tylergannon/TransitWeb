@@ -13,24 +13,12 @@ const auth = buildAuth(redisClient, mongoose);
 const handleSession = handleHooks(auth);
 import { DATABASE_URL } from '$env/static/private';
 
-const handleDatabases = (async ({ event, resolve }) => {
-	const { locals } = event;
-	locals.redisClient = redisClient;
+await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)]);
 
-	await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)]);
-
-	locals.auth = auth;
-	try {
-		// Be sure to await here before closing db connections.
-		return await resolve(event);
-	} finally {
-		if (redisClient.isOpen) {
-			redisClient.disconnect();
-		}
-		if (mongoose.connection.readyState === 1) {
-			mongoose.disconnect();
-		}
-	}
+const handleDatabases = (({ event, resolve }) => {
+	event.locals.redisClient = redisClient;
+	event.locals.auth = auth;
+	return resolve(event);
 }) satisfies Handle;
 
 export const handle = sequence(handleDatabases, handleSession);

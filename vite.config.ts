@@ -1,7 +1,16 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-// import fs from 'fs';
 
+import mongoose from 'mongoose';
+
+function disconnect() {
+	return {
+		name: 'disconnect',
+		closeBundle() {
+			mongoose.disconnect();
+		}
+	};
+}
 /**
  * Add the following to the server config in order to use https:
  * 	  https: {
@@ -11,7 +20,7 @@ import { defineConfig } from 'vitest/config';
  *  host: 'dev.me.transithd.com'
  */
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), disconnect()],
 	server: { },
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
