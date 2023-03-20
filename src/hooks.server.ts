@@ -13,7 +13,17 @@ const auth = buildAuth(redisClient, mongoose);
 const handleSession = handleHooks(auth);
 import { DATABASE_URL } from '$env/static/private';
 
-await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)]);
+async function tryConnecting(prom: Promise<any>) {
+	try {
+		return await prom;
+	} catch (err) {
+		console.error(`Error connecting to database: ${err}`);
+		process.exit(1);
+	}
+}
+
+// The server should actually fail and quit if there's an error on either of these.
+await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)].map(tryConnecting));
 
 const handleDatabases = (({ event, resolve }) => {
 	event.locals.redisClient = redisClient;
