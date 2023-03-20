@@ -1,7 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 
-import { mongoose } from '$lib/srv/model';
+import mongoose from 'mongoose';
+
 function disconnect() {
 	return {
 		name: 'disconnect',
