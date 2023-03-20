@@ -43,8 +43,8 @@ services:
     volumes:
       - "./:/TransitWeb"
       - dev_node_modules:/TransitWeb/node_modules
-    environment:
-      DATABASE_URL: mongodb://mongodb:27017/transitweb?ssl=false
+    # environment:
+
     depends_on:
       traefik:
         condition: service_healthy
@@ -63,7 +63,6 @@ services:
       # Enable Traefik to listen to this container over HTTP and forward /astropi to port 80
       # Enable traefik.
       - traefik.enable=true
-      - traefik.http.routers.astroapi.rule=Host(`dev.home`) && PathPrefix(`/astroapi`)
 
       # Forward auth.
       - traefik.http.middlewares.astroapi-auth.forwardauth.address=http://auth:80
@@ -73,6 +72,7 @@ services:
       # Middleware to strip /astroapi from the path.
       - traefik.http.middlewares.strip-astroapi.stripprefix.prefixes=/astroapi
 
+      - traefik.http.routers.astroapi.rule=Host(`dev.home`) && PathPrefix(`/astroapi`)
       - traefik.http.routers.astroapi.middlewares=astroapi-auth,strip-astroapi,astroapi-cacheheaders
       - traefik.http.routers.astroapi.priority=20
       - traefik.http.routers.astroapi.entrypoints=web
@@ -111,7 +111,17 @@ services:
     depends_on:
       traefik:
         condition: service_healthy
-
+  mailcrab:
+    image: marlonb/mailcrab
+    hostname: mailcrab
+    environment:
+      - SMTP_PORT=25
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.mailcrab.loadbalancer.server.port=1080
+      - traefik.http.routers.mailcrab.rule=Host(`mailcrab.home`)
+      - traefik.http.routers.mailcrab.entrypoints=web
+      - traefik.http.routers.mailcrab.service=mailcrab
   redis:
     image: redis
     command:
