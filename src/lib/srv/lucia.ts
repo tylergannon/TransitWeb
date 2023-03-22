@@ -5,7 +5,7 @@ import redisAdapter from '@lucia-auth/adapter-session-redis';
 import type { RedisClientType } from '@redis/client';
 import { dev } from '$app/environment';
 import bcrypt from 'bcrypt';
-import type { mongoose as _mongoose } from '$lib/srv/model';
+import type { UserType, mongoose as _mongoose } from '$lib/srv/model';
 
 export const buildAuth = (redisCli: RedisClientType<any, any, any>, mongoose: typeof _mongoose) =>
 	lucia({
@@ -14,6 +14,10 @@ export const buildAuth = (redisCli: RedisClientType<any, any, any>, mongoose: ty
 			session: redisAdapter({ session: redisCli, userSession: redisCli })
 		},
 		env: dev ? 'DEV' : 'PROD',
+		transformUserData(userData) {
+			console.log('transformUserData', userData);
+			return userData;
+		},
 		hash: {
 			generate: async (password) => {
 				const salt = await bcrypt.genSalt(10);

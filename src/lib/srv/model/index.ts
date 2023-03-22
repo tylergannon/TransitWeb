@@ -9,9 +9,11 @@
  */
 import type { Model } from 'mongoose';
 import mongooseModule from 'mongoose';
-if (global.models === undefined) {
-	global.models = {};
+
+if (globalThis.models === undefined) {
+	globalThis.models = {};
 }
+
 import type { GeoNamesCityType } from './geoNamesCity';
 import type { KeyType } from './key';
 import type { PersonType } from './person';

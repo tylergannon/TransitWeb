@@ -5,6 +5,8 @@
   interface Validator {
     (value: string): null | ValidationErrors;
   }
+  type EventArgs = Event & {currentTarget: EventTarget & HTMLInputElement}
+  type OnChangeHandler = (e: EventArgs) => void
 
 	export let name: string;
   export let label: string;
@@ -15,6 +17,8 @@
   export let value = ""
   export let placeholder = ""
   export let formName = "form"
+  export let onChange: OnChangeHandler|null = null;
+
 </script>
 
 <div class="form-control w-full max-w-xs">
@@ -24,7 +28,7 @@
         name="{name}"
         type="{type}"
         placeholder="{placeholder}"
-        on:change={(a) => { value = a.currentTarget.value }}
+        on:keyup={(a) => { value = a.currentTarget.value ; onChange && onChange(a) }}
         class="input input-bordered w-full focus:border-secondary-focus {moreClasses}"
       />
 		<label for="name" class="label">

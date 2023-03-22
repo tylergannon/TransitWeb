@@ -73,21 +73,22 @@ def parse_cities(
 ) -> list[StrDict]:
     reader = csv.reader(data.splitlines(), delimiter="\t")
     cities = []
-
     for row in reader:
+        names = [row[2], *filter(lambda x: bool(x), row[3].split(","))]
+        place = [
+            countries[row[8]]["ISO3"],
+            countries[row[8]]["name"],
+            admin1.get(f"{row[8]}.{row[10]}", None),
+            admin2.get(f"{row[8]}.{row[10]}.{row[11]}", None)
+        ]
         if not row[8] or row[8] not in countries:
             continue
+
         city = {
+            "_id": int(row[0]),
             "name": row[1],
-            "lat": float(row[4]),
-            "lng": float(row[5]),
-            "country": countries[row[8]]["name"],
-            "cc": row[8],
-            "cc_iso": countries[row[8]]["ISO3"],
-            "ac1": row[10] if row[10] != "" else None,
-            "ac2": row[11] if row[11] != "" else None,
-            "aa1": admin1.get(f"{row[8]}.{row[10]}", None),
-            "aa2": admin2.get(f"{row[8]}.{row[10]}.{row[11]}", None),
+            "names": [*map(str.lower, names)],
+            "place": [*filter(None, place)],
             "tz": row[17],
         }
         cities.append(city)
@@ -95,7 +96,7 @@ def parse_cities(
     return cities
 
 
-@app.command(name="build_cities_js")
+@app.command(name="build_cities.js")
 def main(
     output: Path = typer.Option("-", help="Output file name", allow_dash=True),
     indent: int = typer.Option(4, help="Indentation for JSON output"),
@@ -111,9 +112,7 @@ def main(
 
     city_data = download_and_unzip(BASE_URL + "cities500.zip")
     cities = parse_cities(city_data, countries, admin1, admin2)
-    data = "use admin;\n" + \
-        "rs.initiate();\n" + \
-        "use transitweb;\n" + \
+    data = "rs.initiate();\n" + \
         "db.geoNamesCities.insertMany(\n" + \
             json.dumps(cities, indent=indent, ensure_ascii=False) + "\n);\n"
 
