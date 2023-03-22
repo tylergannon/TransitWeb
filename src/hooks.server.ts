@@ -5,7 +5,7 @@ import { createClient } from '@redis/client';
 import { REDIS_URL } from '$env/static/private';
 import { buildAuth } from '$lib/srv/lucia';
 import { sequence } from '@sveltejs/kit/hooks';
-import { mongoose } from '$lib/srv/model';
+import { mongoose, GeoNamesCity } from '$lib/srv/model';
 
 const redisClient = createClient({ url: REDIS_URL });
 const auth = buildAuth(redisClient, mongoose);
@@ -24,6 +24,13 @@ async function tryConnecting(prom: Promise<any>) {
 
 // The server should actually fail and quit if there's an error on either of these.
 await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)].map(tryConnecting));
+console.log('I ensure indexes!');
+try {
+	await GeoNamesCity.syncIndexes();
+} catch (err) {
+	console.error('Error ensuring indexes', err);
+}
+console.log('I ensured indexes!', await GeoNamesCity.listIndexes());
 
 const handleDatabases = (({ event, resolve }) => {
 	event.locals.redisClient = redisClient;

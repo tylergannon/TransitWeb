@@ -8,12 +8,13 @@ export const actions = {
 		const data = await request.formData();
 		const email = data.get('email')?.valueOf() as string | null;
 		const password = data.get('password')?.valueOf() as string | null;
-		const name = data.get('name')?.valueOf() as string | null;
-		if (!name || !email || !password) {
-			throw fail(400, { message: 'failed validation' });
+		const firstName = data.get('firstName')?.valueOf() as string | null;
+		const lastName = data.get('lastName')?.valueOf() as string | '';
+		if (!firstName || !email || !password) {
+			return fail(400, { message: 'failed validation' });
 		}
 		if ((await Key.count({ user_id: email })) !== 0) {
-			throw fail(400, { email: 'Already exists' });
+			return fail(400, { email: 'Already exists' });
 		}
 		await auth.createUser({
 			primaryKey: {
@@ -22,7 +23,9 @@ export const actions = {
 				password: password.valueOf().toString()
 			},
 			attributes: {
-				name
+				firstName,
+				lastName,
+				tags: []
 			}
 		});
 
