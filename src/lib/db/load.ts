@@ -1,6 +1,6 @@
 import type { Database } from './init';
 import type { Table } from 'dexie';
-import type { GeonamesCity, GeonamesAdminArea } from './model';
+
 // import { gunzip as _gunzip, strFromU8 } from 'fflate'
 
 const CHUNK_SIZE = 500;
@@ -44,7 +44,14 @@ export async function loadInitialData(db: Database) {
 		await loadDataFile(
 			'/cities/cities500.tsv.gz',
 			db.geonamesCities,
-			([name, nameAscii, cc, admin1, admin2, tz]) => ({ name, nameAscii, cc, admin1, admin2, tz })
+			([name, nameAscii, cc, admin1, admin2, tz]) => ({
+				name,
+				nameAscii,
+				cc,
+				admin1: cc + '.' + admin1,
+				admin2: cc + '.' + admin1 + '.' + admin2,
+				tz
+			})
 		);
 		console.log('Done.');
 	}

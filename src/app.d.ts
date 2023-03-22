@@ -5,8 +5,9 @@ import type { Model } from 'mongoose';
 import type { ValidationErrors } from 'svelte-use-form';
 import type { Validate, ValidateUser, SetSession } from '@lucia-auth/sveltekit';
 import type { LuciaContext } from '@lucia-auth/sveltekit/types';
+import type { ObjectId } from 'mongodb';
 declare global {
-	declare var models: Record<string, Model<any>>; // eslint-disable-line no-var
+	var models: Record<string, Model<any>>; // eslint-disable-line no-var
 	namespace App {
 		// interface Error {}
 
@@ -28,14 +29,19 @@ declare global {
 		}
 		// interface Platform {}
 	}
-}
 
-/// <reference types="lucia-auth" />
-declare namespace Lucia {
-	type Auth = import('./lib/srv/lucia').Auth;
-	type UserAttributes = {
-		name: string;
-	};
+	declare namespace Lucia {
+		type Auth = import('./lib/srv/lucia').Auth;
+		type UserAttributes = {
+			firstName: string;
+			lastName: string;
+			profile_img: string;
+			dob_utc: Date;
+			tz: string;
+			birthplace: import('mongodb').ObjectId;
+			createdAt: Date;
+		};
+	}
 }
 
 export {};

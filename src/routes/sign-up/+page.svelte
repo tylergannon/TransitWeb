@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PASSWORD_HINTS, PASSWORD_VALIDATORS } from '$lib/authHelper';
 	import TextInputFieldset from '$lib/components/auth/InputFieldset.svelte';
 	import AuthPage from '$lib/components/auth/Page.svelte';
 	import { required, minLength, maxLength, email, pattern } from 'svelte-use-form';
@@ -42,20 +43,8 @@
 			type="password"
 			formName="signup"
 			placeholder="Please choose a strong password."
-			validators={[
-				required,
-				minLength(8),
-				maxLength(40),
-				pattern('a-z'),
-				pattern('A-Z'),
-				pattern('[\\d;!@#$%&-\'".,`~:]')
-			]}
-			hints={{
-				required: 'Please supply a strong password.',
-				minLength: 'At least 8 characters.',
-				maxLength: 'Not more than 40 characters.',
-				pattern: 'At least one upper, one lower, one number.'
-			}}
+			validators={PASSWORD_VALIDATORS}
+			hints={PASSWORD_HINTS}
 		/>
 		<div class="flex items-center justify-between">
 			<div class="flex items-center">
