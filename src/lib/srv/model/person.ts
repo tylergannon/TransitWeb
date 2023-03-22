@@ -2,15 +2,22 @@ import { Schema } from 'mongoose';
 
 export interface PersonType {
 	userId: string;
-	name: string;
-	dob_utc: Date;
+	firstName: string;
+	lastName?: string;
+	dobUtc: Date;
 	tz: string;
 	tags: string[];
+	city: string;
+	cc: string;
+	aa1: string;
+	aa2: string;
 }
+
 export const PersonSchema = new Schema<PersonType>({
 	userId: { type: String, required: true },
-	name: { type: String, required: true },
-	dob_utc: { type: Date, required: true },
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: false },
+	dobUtc: { type: Date, required: true },
 	tz: { type: String, required: true },
 	tags: { type: [String], required: true, default: [] }
 });

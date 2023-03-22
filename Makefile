@@ -1,4 +1,4 @@
-.PHONY: default svelte-app astroapi alpine-fish dev-server ansible cities_data auth-server
+.PHONY: default svelte-app astroapi alpine-fish dev-server ansible cities_data auth-server clean
 
 export CONTAINER_HOST_ID ?= $(shell hostname -s)
 export DOCKER_BUILD = docker build \
@@ -14,19 +14,21 @@ image: cities_data astroapi auth-server
 
 .out/cities/cities%.txt: .out/dl/cities%.zip
 	@mkdir -p .out/cities
-	cd .out/cities \
-		cat ../dl/cities$*.zip | funzip > $@
+	cat $< | funzip > $@
 
 .out/dl/%:
 	@mkdir -p .out/dl
 	curl -fsLo $@ $(CITY_FILE_BASE)/$*
+
+clean:
+	rm -rf .out/* static/cities/*.gz
 
 .out/mongodb-initdb/load_cities.js:
 	@mkdir -p .out/mongodb-initdb
 	script/build_cities_js.py --output $@
 
 static/cities/cities%.tsv.gz: .out/cities/cities%.txt
-	script/strip_city_file.py 2 3 5 6 9 11 12 18 $< | pigz -11 -q > $@
+	script/strip_city_file.py 1 2 3 5 6 9 11 12 18 $< | pigz -11 -q > $@
 
 .out/admin-areas.tsv: .out/dl/countryInfo.txt .out/dl/admin1CodesASCII.txt .out/dl/admin2Codes.txt
 	@script/strip_city_file.py 1 2 5 $< > $@

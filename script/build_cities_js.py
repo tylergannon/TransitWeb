@@ -78,6 +78,7 @@ def parse_cities(
         if not row[8] or row[8] not in countries:
             continue
         city = {
+            "_id": int(row[0]),
             "name": row[1],
             "lat": float(row[4]),
             "lng": float(row[5]),
@@ -95,7 +96,7 @@ def parse_cities(
     return cities
 
 
-@app.command(name="build_cities_js")
+@app.command(name="build_cities.js")
 def main(
     output: Path = typer.Option("-", help="Output file name", allow_dash=True),
     indent: int = typer.Option(4, help="Indentation for JSON output"),

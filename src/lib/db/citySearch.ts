@@ -8,7 +8,7 @@ type CityAggregate = {
 	[key: string]: Array<GeonamesCity | CityAggregate>;
 };
 
-interface CitySearchResult {
+export interface CitySearchResult {
 	id: number;
 	tz: string;
 	display: string;
@@ -45,42 +45,48 @@ async function filterCities(
 async function searchCities(query: string, limit = 20): Promise<CitySearchResult[]> {
 	const [cityPart, adminPart] = query.split(',').map((s) => s.trim());
 
-	const cities = await filterCities(
-		database.geonamesCities.where('nameAscii').startsWithIgnoreCase(cityPart),
-		adminPart
-	).then((c) => c.limit(limit).toArray());
-
-	const adminAreasIds = cities.reduce((acc, city) => {
-		const ids = [city.cc];
-		ids.push(city.cc + '.' + city.admin1);
-		ids.push(ids[1] + '.' + city.admin2);
-		for (const id of ids) {
-			if (!acc[id]) acc[id] = 0;
-			acc[id]++;
-		}
-		return acc;
-	}, {} as Record<string, number>);
+	const citiesView = await database.geonamesCities
+		.where('nameAscii')
+		.startsWithIgnoreCase(cityPart)
+		.limit(100)
+		.toArray();
+	const areaIds = new Set<string>();
+	citiesView.forEach((city) => {
+		areaIds.add(city.cc);
+		areaIds.add(city.admin1);
+		areaIds.add(city.admin2);
+	});
 
 	const adminAreas = await database.geonamesAdminAreas
 		.where('id')
-		.anyOf(Object.keys(adminAreasIds))
+		.anyOf([...areaIds])
 		.toArray();
 
 	const adminAreasById = Object.fromEntries(adminAreas.map((a) => [a.id, a]));
+	let cities: GeonamesCity[] = citiesView;
+	if (adminPart) {
+		const q = adminPart.toLowerCase();
+		cities = citiesView.filter((city) => {
+			return [city.cc, city.admin1, city.admin2].some((id) => {
+				const adminArea = adminAreasById[id];
+				return adminArea?.nameAscii?.startsWith(q);
+			});
+		});
+	}
 
-	const results: CitySearchResult[] = cities.map((city) => {
+	return cities.map((city) => {
 		const country = adminAreasById[city.cc];
-		const adminArea1 = adminAreasById[city.cc + '.' + city.admin1];
-		const adminArea2 = adminAreasById[city.cc + '.' + city.admin1 + '.' + city.admin2];
+		const adminArea1 = adminAreasById[city.admin1];
+		const adminArea2 = adminAreasById[city.admin2];
 
 		const displayParts = [city.name];
 
-		if (adminArea2 && adminArea2.name !== city.name) {
-			displayParts.push(adminArea2.name);
-		}
-
 		if (adminArea1 && adminArea1.name !== city.name) {
 			displayParts.push(adminArea1.name);
+		}
+
+		if (adminArea2 && adminArea2.name !== city.name) {
+			displayParts.push(adminArea2.name);
 		}
 
 		if (country) {
@@ -95,8 +101,6 @@ async function searchCities(query: string, limit = 20): Promise<CitySearchResult
 			display
 		};
 	});
-
-	return results;
 }
 
 export default searchCities;

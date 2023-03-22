@@ -1,18 +1,22 @@
 export interface Person {
-	id?: number;
+	id?: string;
 	name: string;
 	utcDob: Date;
 	tz: string;
-	chartId?: number;
+	placeId: string;
+	tags: string[];
 }
 
 export interface GeonamesCity {
-	id?: number;
+	id: number;
 	name: string;
 	nameAscii: string;
 	cc: string;
-	admin1: string;
-	admin2: string;
+	ac1: string;
+	ac2: string;
+	country: string;
+	aa1: string;
+	aa2: string;
 	tz: string;
 }
 
