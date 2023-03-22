@@ -26,3 +26,4 @@ EXPOSE 5173 15000
 
 COPY init_container.sh /usr/local/bin/init_container.sh
 CMD ["init_container.sh"]
+SHELL [ "fish" ]

@@ -1,14 +1,27 @@
 <script lang="ts">
 import { useForm } from "svelte-use-form";
 import { enhance } from "$app/forms";
-
-const url = "https://media.licdn.com/dms/image/C4D03AQHmVyYWuBZBuA/profile-displayphoto-shrink_800_800/0/1516252644819?e=2147483647&v=beta&t=srsC_bbtLygjWiCjotrmi1EMkH62ImLBrZjtTt557_8";
+import NewChart from "./NewChart.svelte";
+import { goto } from "$app/navigation";
+import type { LayoutData } from "./$types";
+import ProfileImgSvg from "carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte"
+import { setContext } from 'svelte';
+import { writable } from 'svelte/store';
+import type { PersonType, UserType } from "$lib/srv/model";
+export let data: LayoutData;
 
 let showDropdown = false
 let dropdownElement: HTMLLabelElement
+let showNewChartModal = false
+
+setContext("userProfile", writable<Partial<UserType>>(data.user))
+setContext("userPeople", writable<Partial<PersonType[]>>(data.people))
 
 const signOutForm = useForm({}, "signout")
-
+function toggleShowNewChart() {
+	showNewChartModal = !showNewChartModal
+	console.log(`Toggle new chart ${showNewChartModal}`)
+}
 function dropdownClicked(event: Event) {
 	event.preventDefault()
 	if (showDropdown) {
@@ -20,13 +33,15 @@ function dropdownClicked(event: Event) {
 </script>
 
 <div>
-	<div class="navbar bg-base-100">
+	<NewChart show={showNewChartModal} on:close={()=>{showNewChartModal = false}} />
+	<div class="navbar bg-slate-900">
 		<div class="flex-1">
-			<a href="/app" class="btn btn-ghost normal-case text-xl">TransitHD</a>
+			<a href="/app" class="btn btn-ghost normal-case text-stone-100 text-xl">TransitHD</a>
 		</div>
 		<div class="flex-none gap-2">
+			<button on:click={toggleShowNewChart} class="rounded-full btn btn-secondary btn-sm">New Chart</button>
 			<div class="form-control">
-				<input type="text" placeholder="Search" class="input input-bordered" />
+				<input type="text" placeholder="Search" class="input input-bordered input-sm rounded-md" />
 			</div>
 			<div class="dropdown dropdown-end " >
 				<!-- svelte-ignore a11y-no-noninteractive-tabindex a11y-label-has-associated-control -->
@@ -37,8 +52,12 @@ function dropdownClicked(event: Event) {
 					tabindex="0"
 					class="btn btn-ghost btn-circle avatar"
 				>
-					<div class="w-10 rounded-full">
-						<img src="{url}" alt="Profile" />
+					<div class="w-8 rounded-full">
+						{#if data.user?.profileImg}
+						<img src="{data.user.profileImg}" alt="Profile" />
+						{:else}
+						<ProfileImgSvg size={32} class="bg-gray-600" />
+						{/if}
 					</div>
 				</label>
 				<!-- svelte-ignore a11y-no-noninteractive-tabindex a11y-label-has-associated-control -->
@@ -46,7 +65,7 @@ function dropdownClicked(event: Event) {
 					<li>
 						<a class="justify-between"> Profile <span class="badge">New</span> </a>
 					</li>
-					<li><a>Settings</a></li>
+					<li><a href="/app/settings" on:click={()=>goto('/app/settings')}>Settings</a></li>
 					<li><form use:enhance use:signOutForm method="post" action="/sign-in?/signOut">
 						<button type="submit">Log out</button>
 					</form></li>
