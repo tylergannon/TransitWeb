@@ -29,19 +29,6 @@ declare global {
 		}
 		// interface Platform {}
 	}
-
-	declare namespace Lucia {
-		type Auth = import('./lib/srv/lucia').Auth;
-		type UserAttributes = {
-			firstName: string;
-			lastName: string;
-			profile_img: string;
-			dob_utc: Date;
-			tz: string;
-			birthplace: import('mongodb').ObjectId;
-			createdAt: Date;
-		};
-	}
 }
 
 export {};

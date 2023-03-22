@@ -6,16 +6,19 @@
   import { database } from '$lib/db';
   import { debounce } from '$lib/components/helper';
   import { useForm } from 'svelte-use-form';
+  import { getContext } from 'svelte';
 
   import type { UserType } from '$lib/srv/model/user';
 	import { PASSWORD_HINTS, PASSWORD_VALIDATORS } from '$lib/authHelper';
+	import type { Writable } from 'svelte/store';
 
   export let data: PageData
+  const userProfile = getContext<Writable<Partial<UserType>>>("userProfile")
 
   const form = useForm({
-    firstName: { initial: data.firstName || "" },
-    lastName: { initial: data.lastName || "" },
-    profileImg: { initial: data.profileImg || "", validators: [url], errorMap: {"url": "Profile image doesn't look like a real url."} }
+    firstName: { initial: data.user?.firstName || "" },
+    lastName: { initial: data.user?.lastName || "" },
+    profileImg: { initial: data.user?.profileImg || "", validators: [url], errorMap: {"url": "Profile image doesn't look like a real url."} }
   }, "settings")
 
   const passwordForm = useForm({
@@ -35,6 +38,14 @@
       method: "POST",
       body: new URLSearchParams(args)
     })
+    if (res.status == 200) {
+      userProfile.update((value) => {
+        return {
+          ...value,
+          ...args
+        }
+      })
+    }
     console.log(await res.text())
   })
 

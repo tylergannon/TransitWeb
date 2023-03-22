@@ -6,16 +6,19 @@ export const load = (async ({ locals }) => {
 		throw redirect(307, '/sign-in');
 	}
 	const { auth, validate } = locals;
-	const { birthplace, dobUtc, firstName, id, lastName, profileImg, tz } = await auth.getUser(
+	const { birthplace, dobUtc, firstName, id, lastName, profileImg, tz, tags } = await auth.getUser(
 		(await validate())!.userId
 	);
 	return {
-		birthplace,
-		dobUtc,
-		firstName,
-		id,
-		lastName,
-		profileImg,
-		tz
+		user: {
+			birthplace,
+			dobUtc,
+			firstName,
+			id,
+			lastName,
+			profileImg,
+			tags,
+			tz
+		}
 	};
 }) satisfies LayoutServerLoad;

@@ -3,14 +3,21 @@ import { useForm } from "svelte-use-form";
 import { enhance } from "$app/forms";
 import NewChart from "./NewChart.svelte";
 import { goto } from "$app/navigation";
-import type { PageData } from "./$types";
+import type { LayoutData } from "./$types";
 import ProfileImgSvg from "carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte"
-
-export let data: PageData;
+import { setContext } from 'svelte';
+import { writable } from 'svelte/store';
+import type { UserType } from "$lib/srv/model";
+export let data: LayoutData;
 
 let showDropdown = false
 let dropdownElement: HTMLLabelElement
 let showNewChartModal = false
+
+const userProfile = writable<Partial<UserType>>()
+
+$: userProfile.set(data.user as Partial<UserType>)
+setContext("userProfile", userProfile)
 
 const signOutForm = useForm({}, "signout")
 function toggleShowNewChart() {
@@ -48,8 +55,8 @@ function dropdownClicked(event: Event) {
 					class="btn btn-ghost btn-circle avatar"
 				>
 					<div class="w-8 rounded-full">
-						{#if data.profileImg}
-						<img src="{data.profileImg}" alt="Profile" />
+						{#if data.user?.profileImg}
+						<img src="{data.user.profileImg}" alt="Profile" />
 						{:else}
 						<ProfileImgSvg size={32} class="bg-gray-600" />
 						{/if}
