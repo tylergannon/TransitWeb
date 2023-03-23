@@ -16,7 +16,7 @@ if (globalThis.models === undefined) {
 
 import type { GeoNamesCityType } from './geoNamesCity';
 import type { KeyType } from './key';
-import type { PersonType } from './person';
+import type { PersonType, PersonModel } from './person';
 import type { SessionType } from './session';
 import type { UserType } from './user';
 
@@ -35,8 +35,9 @@ export const GeoNamesCity: Model<GeoNamesCityType> =
 	(models.GeoNamesCity = mongooseModule.model('geoNamesCity', GeoNamesCitySchema));
 export const Key: Model<KeyType> =
 	models.Key || (models.Key = mongooseModule.model('key', KeySchema));
-export const Person: Model<PersonType> =
-	models.Person || (models.Person = mongooseModule.model('person', PersonSchema));
+export const Person: PersonModel =
+	(models.Person as PersonModel) ||
+	(models.Person = mongooseModule.model<PersonType, PersonModel>('person', PersonSchema));
 export const Session: Model<SessionType> =
 	models.Session || (models.Session = mongooseModule.model('session', SessionSchema));
 export const User: Model<UserType> =

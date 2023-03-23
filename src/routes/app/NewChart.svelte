@@ -4,11 +4,12 @@
 	import TimeIcon from 'carbon-icons-svelte/lib/Time.svelte';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import type { Writable } from 'svelte/store';
-	import type { GeoNamesCityType, PersonType, UserType } from '$lib/srv/model';
+	import type { GeoNamesCityType, PersonType } from '$lib/srv/model';
 	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { getContext } from 'svelte';
+	import type { PeopleStore } from '$lib/stores/people';
 
-	const people = getContext('userPeople') as Writable<PersonObj[]>;
+	const people = getContext('userPeople') as Writable<PeopleStore>;
 	export let show: boolean;
 
 	const dispatch = createEventDispatcher();
@@ -25,9 +26,9 @@
 			dobUtc = zonedTimeToUtc(`${currDate} ${currTime}`, selectedCity.tz);
 		}
 	}
-	type PersonObj = Omit<PersonType, 'userId'>;
+	type PersonObj = Omit<PersonType, 'userId'|'_id'|'slug'>;
 
-	function handleSubmit(event: Event) {
+	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		if (!dobUtc) return;
 		const personObj: PersonObj = {
@@ -39,26 +40,26 @@
 			tags: []
 		};
 
-		fetch('/app/api/people', {
+		const {_id, slug} = await fetch('/app/people', {
 			method: 'POST',
 			body: new URLSearchParams({
 				...personObj,
-				dobUtc: dobUtc.toISOString(),
+				dobUtc: dobUtc.valueOf().toString(),
 				tags: personObj.tags.join(','),
 				placeId: personObj.placeId.toString()
 			})
-		}).then(() => {
-			try {
-				people.update((people) => {
-					people.push(personObj);
-					return people;
-				});
-				dispatch('close');
-			} catch (e) {
-				alert(`Error: ${e}`)
-				console.error(e);
+		}).then((res) => res.json()) as {_id: string, slug: string};
+
+		people.update((people) => {
+			people[slug] = {
+				...personObj,
+				_id,
+				slug
 			}
+			return people;
 		});
+
+		dispatch('close')
 	}
 </script>
 
