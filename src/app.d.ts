@@ -5,9 +5,10 @@ import type { Model } from 'mongoose';
 import type { ValidationErrors } from 'svelte-use-form';
 import type { Validate, ValidateUser, SetSession } from '@lucia-auth/sveltekit';
 import type { LuciaContext } from '@lucia-auth/sveltekit/types';
-import type { ObjectId } from 'mongodb';
+
 declare global {
 	var models: Record<string, Model<any>>; // eslint-disable-line no-var
+
 	namespace App {
 		// interface Error {}
 

@@ -15,7 +15,6 @@ export const buildAuth = (redisCli: RedisClientType<any, any, any>, mongoose: ty
 		},
 		env: dev ? 'DEV' : 'PROD',
 		transformUserData(userData) {
-			console.log('transformUserData', userData);
 			return userData;
 		},
 		hash: {

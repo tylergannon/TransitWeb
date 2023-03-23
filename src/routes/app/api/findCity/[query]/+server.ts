@@ -3,7 +3,6 @@ import { GeoNamesCity } from '$lib/srv/model';
 
 export const GET: RequestHandler = async ({ params }) => {
 	// by now we know we're logged in.
-	console.log(params.query);
 	if (params.query.length < 3) {
 		return new Response(JSON.stringify([]));
 	}
