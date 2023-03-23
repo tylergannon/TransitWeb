@@ -4,7 +4,6 @@ import { Key } from '$lib/srv/model';
 
 export const actions = {
 	signUp: async ({ request, locals: { auth, setSession } }) => {
-		console.log('dude, sick.');
 		const data = await request.formData();
 		const email = data.get('email')?.valueOf() as string | null;
 		const password = data.get('password')?.valueOf() as string | null;

@@ -2,6 +2,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 
 import mongoose from 'mongoose';
+import ViteRestart from 'vite-plugin-restart'
 
 function disconnect() {
 	return {
@@ -11,6 +12,13 @@ function disconnect() {
 		}
 	};
 }
+
+const viteRestart = ViteRestart({
+	restart: [
+		"src/lib/srv/*.ts"
+	],
+});
+
 /**
  * Add the following to the server config in order to use https:
  * 	  https: {
@@ -20,7 +28,7 @@ function disconnect() {
  *  host: 'dev.me.transithd.com'
  */
 export default defineConfig({
-	plugins: [sveltekit(), disconnect()],
+	plugins: [sveltekit(), viteRestart, disconnect()],
 	server: { },
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']

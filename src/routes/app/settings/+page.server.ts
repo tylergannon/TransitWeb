@@ -10,7 +10,6 @@ export const actions = {
 		for (const [key, value] of form.entries()) {
 			user[key as 'profileImg' | 'firstName' | 'lastName' | 'tz'] = value.valueOf() as string;
 		}
-		console.log(`Saving profile for user ${userId}:`, user);
 
 		// TODO: validate data
 		try {

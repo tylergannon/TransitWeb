@@ -27,12 +27,9 @@
 
   const profileImg = $form.profileImg.valid ? $form.profileImg.value : null
 
-  let error: string | null = null;
   type args = { profileImg: string, firstName: string, lastName: string }
 
   const saveProfile = debounce(async (args: Partial<args>) => {
-    console.log("Save profile")
-
     const res = await fetch("/app/settings?/saveProfile", {
       method: "POST",
       body: new URLSearchParams(args)
@@ -45,15 +42,7 @@
         }
       })
     }
-    console.log(await res.text())
   })
-
-  async function handleDeleteDatabase() {
-    if (confirm('Are you sure you want to delete the database?')) {
-      console.log("Deleted database.")
-      window.location.reload()
-    }
-  }
 </script>
 
 <div class="p-4">
@@ -90,13 +79,6 @@
     {/if}
 
   </form>
-
-  <div class="mt-4">
-    <button
-      type="button"
-      class="btn btn-accent"
-      on:click="{handleDeleteDatabase}">Delete Database</button>
-  </div>
 
   <div class="mt-4">
     <!-- Add the "change password" feature here -->
