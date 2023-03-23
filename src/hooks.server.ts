@@ -24,13 +24,12 @@ async function tryConnecting(prom: Promise<any>) {
 
 // The server should actually fail and quit if there's an error on either of these.
 await Promise.all([redisClient.connect(), mongoose.connect(DATABASE_URL)].map(tryConnecting));
-console.log('I ensure indexes!');
+
 try {
 	await GeoNamesCity.syncIndexes();
 } catch (err) {
 	console.error('Error ensuring indexes', err);
 }
-console.log('I ensured indexes!', await GeoNamesCity.listIndexes());
 
 const handleDatabases = (({ event, resolve }) => {
 	event.locals.redisClient = redisClient;

@@ -14,7 +14,6 @@
 	let showDropdown = false;
 	let dropdownElement: HTMLLabelElement;
 	let showNewChartModal = false;
-	console.log("Inside layout", Object.keys(data.people))
 
 	setContext('userProfile', writable<Partial<UserType>>(data.user));
 	setContext('userPeople', writable<PeopleStore>(data.people));
@@ -23,7 +22,6 @@
 
 	function toggleShowNewChart() {
 		showNewChartModal = !showNewChartModal;
-		console.log(`Toggle new chart ${showNewChartModal}`);
 	}
 	function dropdownClicked(event: Event) {
 		event.preventDefault();

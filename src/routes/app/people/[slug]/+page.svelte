@@ -7,9 +7,6 @@
 
 	const userPeople = getContext('userPeople') as Writable<PeopleStore>;
 	export let data: PageData;
-  console.log("My people", data.people)
-  console.log("People store", $userPeople)
-  console.log(data.person.slug)
   if (!Object.prototype.hasOwnProperty.call($userPeople, data.person.slug)) {
     userPeople.update(people => {
       people[data.person.slug] = data.person
@@ -17,11 +14,6 @@
     })
   }
   $: person = $userPeople[data.person.slug]
-  console.log($userPeople)
-  console.log("KEYS", Object.keys($userPeople))
-  Object.entries($userPeople).forEach(([slug, person]) => {
-    console.log(slug, person)
-  });
 
 </script>
 
