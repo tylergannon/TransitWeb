@@ -1,5 +1,6 @@
 <script lang="ts">
   import Settings from "carbon-icons-svelte/lib/Settings.svelte";
+	import { LightSwitch } from '@skeletonlabs/skeleton';
 </script>
 <div class="card p-4" data-popup="userMenu">
 	<nav class="list-nav">
@@ -11,6 +12,7 @@
 					<span class="flex-auto">Settings</span>
 				</a>
 			</li>
+			<li><LightSwitch /></li>
 			<!-- ... -->
 		</ul>
 	</nav>
