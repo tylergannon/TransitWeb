@@ -1,4 +1,4 @@
-import { ASTROAPI_URL } from '$env/static/private';
+import { PUBLIC_ASTROAPI_URL } from '$env/static/public';
 import { zonedTimeToUtc, format } from 'date-fns-tz';
 
 export type PlanetData<T> = {
@@ -64,7 +64,7 @@ export type TransitionReportJson = {
 export function chartRequest(date: string, time: string, tz: string) {
 	const dateUtc = zonedTimeToUtc(`${date} ${time}`, tz);
 	return fetch(
-		ASTROAPI_URL +
+		PUBLIC_ASTROAPI_URL +
 			'/chart?' +
 			new URLSearchParams({
 				local_date: format(dateUtc, 'yyyy-MM-dd'),
@@ -76,7 +76,7 @@ export function chartRequest(date: string, time: string, tz: string) {
 
 export function transitionReportRequest(utcStart: Date, utcEnd: Date, tz: string) {
 	return fetch(
-		ASTROAPI_URL +
+		PUBLIC_ASTROAPI_URL +
 			'/transition_report?' +
 			new URLSearchParams({
 				start_date: format(utcStart, 'yyyy-MM-dd'),
