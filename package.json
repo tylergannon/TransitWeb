@@ -56,11 +56,16 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@lucia-auth/adapter-mongoose": "file:../lucia/packages/adapter-mongoose/dist",
+		"@lucia-auth/adapter-session-redis": "file:../lucia/packages/adapter-session-redis/dist",
+		"@lucia-auth/oauth": "^0.7.2",
+		"@lucia-auth/sveltekit": "^0.6.11",
 		"@redis/client": "^1.5.6",
 		"bcrypt": "^5.1.0",
 		"date-fns": "^2.29.3",
 		"date-fns-tz": "^2.0.0",
 		"dotenv": "^16.0.3",
+		"lucia-auth": "^0.10.0",
 		"mongodb": "^5.1.0",
 		"mongoose": "^7.0.3",
 		"nodemailer": "^6.9.1"
