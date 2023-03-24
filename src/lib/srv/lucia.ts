@@ -1,6 +1,6 @@
 import lucia from 'lucia-auth';
-import mongooseAdapter from '@lucia-auth/adapter-mongoose';
-import redisAdapter from '@lucia-auth/adapter-session-redis';
+import mongooseAdapter from './lucia-auth/mongoose';
+import redisAdapter from './lucia-auth/redis';
 
 import type { RedisClientType } from '@redis/client';
 import { dev } from '$app/environment';
