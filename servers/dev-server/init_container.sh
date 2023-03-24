@@ -13,8 +13,6 @@ md5sum -s -c $SHA1_FILE;
 if [ $? -ne 0 ]; then
     echo "package-lock.json has changed, rebuilding node_modules"
     npm install
-    # if the node_modules directory doesn't have a symlink called unit-http,
-    # then link it using npm link.
 
     md5sum package-lock.json > $SHA1_FILE
 else
