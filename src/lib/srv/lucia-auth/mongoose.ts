@@ -1,4 +1,4 @@
-import type Mongoose from 'mongoose';
+import type mongoose from 'mongoose';
 
 import { transformKeyDoc, transformSessionDoc, transformUserDoc } from './utils.js';
 import type { Adapter, AdapterFunction } from 'lucia-auth';
@@ -12,7 +12,7 @@ const createMongoValues = (object: Record<any, any>) => {
 	);
 };
 
-const adapter = (mongoose: Mongoose.Mongoose): AdapterFunction<Adapter> => {
+const adapter = (mongoose: mongoose.Mongoose): AdapterFunction<Adapter> => {
 	const User = mongoose.model<UserDoc>('user');
 	const Session = mongoose.model<SessionDoc>('session');
 	const Key = mongoose.model<KeyDoc>('key');
