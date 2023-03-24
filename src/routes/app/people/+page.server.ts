@@ -2,12 +2,13 @@ import type { Actions } from './$types';
 import { Person } from '$lib/srv/model';
 const NUMBER = /^\d+$/;
 export const actions = {
-	default: async ({ request, locals: { validate } }) => {
+	default: async ({ request, locals: { validate }, ...x }) => {
 		/**
 		 * We'll take Person data from the request body.  If _id is present we convert it to a Mongo ObjectId
 		 * If not, that means we're making a NEW object.
 		 */
 		const formData = await request.formData();
+
 		const tags = formData.get('tags') as string;
 		const dateVal = formData.get('dobUtc') as string;
 		return await Person.createPerson({

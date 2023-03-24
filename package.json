@@ -15,11 +15,14 @@
 		"lint-staged": "is-ci || lint-staged"
 	},
 	"devDependencies": {
+		"@floating-ui/dom": "^1.2.5",
 		"@fontsource/fira-mono": "^4.5.10",
 		"@neoconfetti/svelte": "^1.0.0",
 		"@playwright/test": "^1.28.1",
+		"@skeletonlabs/skeleton": "^1.0.0",
 		"@sveltejs/adapter-node": "^1.2.0",
 		"@sveltejs/kit": "^1.5.0",
+		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/typography": "^0.5.9",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie": "^0.5.1",
@@ -28,7 +31,6 @@
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.7",
 		"carbon-icons-svelte": "^11.4.0",
-		"daisyui": "^2.51.3",
 		"eslint": "^8.36.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
