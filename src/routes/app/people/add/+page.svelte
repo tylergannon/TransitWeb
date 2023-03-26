@@ -3,13 +3,12 @@
 	import CalendarIcon from 'carbon-icons-svelte/lib/Calendar.svelte';
 	import TimeIcon from 'carbon-icons-svelte/lib/Time.svelte';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
-	import type { Writable } from 'svelte/store';
 	import type { GeoNamesCityType, PersonType } from '$lib/srv/model';
 	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { getContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
-	
-	const people = getContext('userPeople') as Writable<PeopleStore>;
+
+	const people = getContext('userPeople') as PeopleStore;
 
 	const dispatch = createEventDispatcher();
 
@@ -49,13 +48,10 @@
 			})
 		}).then((res) => res.json())) as { _id: string; slug: string };
 
-		people.update((people) => {
-			people[slug] = {
-				...personObj,
-				_id,
-				slug
-			};
-			return people;
+		people.add({
+			...personObj,
+			_id,
+			slug
 		});
 
 		dispatch('close');

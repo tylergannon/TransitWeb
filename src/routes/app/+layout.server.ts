@@ -10,20 +10,17 @@ export const load = (async ({ locals, parent }) => {
 		throw redirect(307, '/sign-in');
 	}
 
-	const peopleList: [string, ClientSidePerson][] = (
-		await Person.find({ userId: parentData.user.id }).select('-userId -__v')
-	).map((p) => {
-		return [
-			p.slug,
-			{
-				...p.toObject(),
-				_id: p._id.toString()
-			}
-		];
-	});
+	const people = (await Person.find({ userId: parentData.user.id }).select('-userId -__v')).map(
+		(person) => {
+			return {
+				...person.toObject(),
+				_id: person._id.toString()
+			};
+		}
+	) as ClientSidePerson[];
 
 	return {
 		user: parentData.user!,
-		people: Object.fromEntries(peopleList) as PeopleStore
+		people
 	};
 }) satisfies LayoutServerLoad;

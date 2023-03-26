@@ -27,8 +27,6 @@
 	import type { UserType } from '$lib/srv/model';
 
 	import UserMenu from '$lib/components/nav/UserMenu.svelte';
-	import { goto } from '$app/navigation';
-	import Designer from '$lib/components/Designer.svelte';
 
 	const popupSettings: PopupSettings = {
 		event: 'click',
