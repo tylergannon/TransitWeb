@@ -1,3 +1,5 @@
+import { derived, type Readable, type Writable } from 'svelte/store';
+
 export interface TriangleCenterProps {
 	size: number;
 	height: number;
@@ -68,6 +70,17 @@ export function mapCenterRecord<T, U>(
 	};
 }
 
+export const pipPropsStore = (
+	props: Readable<CenterDisplayProps>,
+	x: (props: CenterDisplayProps) => number,
+	y: (props: CenterDisplayProps) => number
+): Readable<PipProps> =>
+	derived(props, ($props) => ({
+		x: x($props),
+		y: y($props),
+		radius: $props.pipRadius
+	}));
+
 export const pipProps = (
 	props: CenterDisplayProps,
 	x: (props: CenterDisplayProps) => number,
@@ -78,7 +91,7 @@ export const pipProps = (
 	radius: props.pipRadius
 });
 
-const CENTER_GATES = {
+export const CENTER_GATES = {
 	head: ['64', '61', '63'] as const,
 	ajna: ['47', '24', '4', '17', '43', '11'] as const,
 	throat: ['62', '23', '56', '35', '12', '45', '33', '8', '31', '20', '16'] as const,
