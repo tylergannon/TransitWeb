@@ -1,38 +1,26 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { Person, type PersonType } from '$lib/srv/model';
+import type { ClientSidePerson, PeopleStore } from '$lib/stores/people';
 
-export const load = (async ({ locals }) => {
-	if ((await locals.validate()) == null) {
+export const load = (async ({ locals, parent }) => {
+	const parentData = await parent();
+
+	if (parentData.user === null) {
 		throw redirect(307, '/sign-in');
 	}
-	const { auth, validate } = locals;
-	const { birthplace, dobUtc, firstName, id, lastName, profileImg, tz, tags } = await auth.getUser(
-		(await validate())!.userId
-	);
-	const peopleList: [string, ClientSidePerson][] = (
-		await Person.find({ userId: id }).select('-userId -__v')
-	).map((p) => {
-		return [
-			p.slug,
-			{
-				...p.toObject(),
-				_id: p._id.toString()
-			}
-		];
-	});
+
+	const people = (await Person.find({ userId: parentData.user.id }).select('-userId -__v')).map(
+		(person) => {
+			return {
+				...person.toObject(),
+				_id: person._id.toString()
+			};
+		}
+	) as ClientSidePerson[];
 
 	return {
-		user: {
-			birthplace,
-			dobUtc,
-			firstName,
-			id,
-			lastName,
-			profileImg,
-			tags,
-			tz
-		},
-		people: Object.fromEntries(peopleList) as PeopleStore
+		user: parentData.user!,
+		people
 	};
 }) satisfies LayoutServerLoad;
