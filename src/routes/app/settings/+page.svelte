@@ -80,8 +80,5 @@
 
   </form>
 
-  <div class="mt-4">
-    <!-- Add the "change password" feature here -->
-  </div>
 
 </div>
