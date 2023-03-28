@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { bodyGraphProps, centerArgs, centersArgs } from '$lib/hd/stores';
 
-	import Center from './NewCenter.svelte';
+	import Center from './Center.svelte';
+
 	import * as pos from '$lib/hd/gatePos';
 	import { roundedSquare, roundedTriangle } from './roundedPolygon';
 	import Pip from './Pip.svelte';
