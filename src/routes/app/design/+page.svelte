@@ -18,7 +18,7 @@
 	 * ones that compose various settable values into a single Readable interface.
 	*/
 
-	import BodyGraph from "$lib/components/hd/BodyGraph.svelte"
+	import Graph from "$lib/components/hd/Graph.svelte"
 
 	let height = 800;
 	let width = 800;
@@ -27,5 +27,5 @@
 
 <div>
 	Design
-	<BodyGraph {height} {width} />
+	<Graph />
 </div>

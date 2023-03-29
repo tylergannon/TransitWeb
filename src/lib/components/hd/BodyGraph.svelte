@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { bodyGraphProps, centerArgs, centersArgs, type GateNumber } from '$lib/hd/stores';
+	import { bodyGraphPropsStore, centerArgs, centersArgs, type GateNumber } from '$lib/hd/stores';
 
 	import { gatesConfig } from '$lib/hd/gatePos';
 	import { moveAbs, roundedSquare, roundedTriangle } from './roundedPolygon';
@@ -10,7 +10,7 @@
 	export let height = 800;
 	export let width = (800 * 5) / 6;
 
-	const { scaled: scaledProps } = bodyGraphProps({
+	const { scaled: scaledProps } = bodyGraphPropsStore({
 		channelSpace: 2,
 		pipRadius: 16,
 		distFromEdge: 5,
@@ -85,7 +85,4 @@
 	/>
 	<path d="{moveAbs([$espProps.x, $espProps.y])} {roundedTriangle($espProps.size * $espProps.scale, 270)}" />
 
-	{#each gates as gate}
-		<Pip props={gate} />
-	{/each}
 </svg>
