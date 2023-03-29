@@ -1,14 +1,11 @@
 const ratio = 0.6;
 const cos30 = Math.sqrt(3) / 2;
 
-function arc(r1: number, r2: number, dX: number, dY: number, largeArcFlag = 0) {
-	return `a${r1},${r2},0,0,${largeArcFlag},${dX},${dY}`;
-}
 function move(dX: number, dY: number) {
-	return `m${dX},${dY}`;
+	return `m${rnd(dX)},${rnd(dY)}`;
 }
 function line(dX: number, dY: number) {
-	return `l${dX},${dY}`;
+	return `l${rnd(dX)},${rnd(dY)}`;
 }
 /**
  *
@@ -29,7 +26,7 @@ export const roundedTriangleHeight = (size: number, r = ratio) => {
 	const radius = r * k;
 	return k * cos30 + radius * 2;
 };
-
+const rnd = (a: number) => Math.round(a);
 /**
  * Make the rounded triangle centered at the current cursor position.
  * @param size Side length of the square containing the rounded triangle
@@ -40,7 +37,8 @@ export const roundedTriangle = (size: number, r = ratio) => {
 	const k = size / (1 + 2 * r);
 	const radius = r * k;
 	const height = k * cos30 + radius * 2;
-	const _arc = (dX: number, dY: number) => `a${radius},${radius},0,0,1,${dX},${dY}`;
+	const _arc = (dX: number, dY: number) =>
+		`a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
 	return [
 		move(-radius * cos30, (radius - height) / 2),
 		_arc(2 * radius * cos30, 0),
@@ -55,7 +53,8 @@ export const roundedTriangle = (size: number, r = ratio) => {
 export const roundedSquare = (size: number, r = ratio) => {
 	const k = size / (1 + 2 * r);
 	const radius = r * k;
-	const _arc = (dX: number, dY: number) => `a${radius},${radius},0,0,1,${dX},${dY}`;
+	const _arc = (dX: number, dY: number) =>
+		`a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
 	return [
 		move(size / 2, size / 2 - radius),
 		_arc(-radius, radius),

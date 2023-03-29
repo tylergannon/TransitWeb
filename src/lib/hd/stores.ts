@@ -151,6 +151,4 @@ export const gateDisplay = (props: GateDisplay) => {
 	};
 };
 
-// const pipPositions = {
-// };
-//
+export const channelPos = 9;

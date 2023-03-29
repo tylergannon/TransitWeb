@@ -3,8 +3,6 @@
 	import type { Readable } from "svelte/store";
 
 	export let props: Readable<PipProps>
-
-	export let gate: string;
 </script>
 
 <circle cx={$props.x} cy={$props.y} r={$props.radius} class="fill-secondary-500" stroke="black" stroke-width="1" />
@@ -16,5 +14,5 @@
 	alignment-baseline="middle"
 	fill="black"
 >
-	{gate}
+	{$props.gate}
 </text>
