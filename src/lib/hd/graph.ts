@@ -1,4 +1,5 @@
 import { derived, type Readable, type Writable } from 'svelte/store';
+import type { GateNumber } from './stores';
 
 export interface TriangleCenterProps {
 	size: number;
@@ -30,6 +31,7 @@ export interface CenterDisplayProps {
 }
 
 export interface PipProps {
+	gate: GateNumber;
 	x: number;
 	y: number;
 	radius: number;
@@ -71,25 +73,17 @@ export function mapCenterRecord<T, U>(
 }
 
 export const pipPropsStore = (
+	gate: GateNumber,
 	props: Readable<CenterDisplayProps>,
 	x: (props: CenterDisplayProps) => number,
 	y: (props: CenterDisplayProps) => number
 ): Readable<PipProps> =>
 	derived(props, ($props) => ({
-		x: x($props),
-		y: y($props),
-		radius: $props.pipRadius
+		gate,
+		x: Math.round(x($props) * $props.scale + $props.x),
+		y: Math.round(y($props) * $props.scale + $props.y),
+		radius: Math.round($props.pipRadius * $props.scale)
 	}));
-
-export const pipProps = (
-	props: CenterDisplayProps,
-	x: (props: CenterDisplayProps) => number,
-	y: (props: CenterDisplayProps) => number
-): PipProps => ({
-	x: x(props),
-	y: y(props),
-	radius: props.pipRadius
-});
 
 export const CENTER_GATES = {
 	head: ['64', '61', '63'] as const,
@@ -97,7 +91,7 @@ export const CENTER_GATES = {
 	throat: ['62', '23', '56', '35', '12', '45', '33', '8', '31', '20', '16'] as const,
 	g: ['7', '1', '13', '10', '25', '15', '46', '2'] as const,
 	sacral: ['5', '14', '29', '59', '9', '3', '42', '27', '34'] as const,
-	root: ['58', '38', '54', '53', '60', '52', '9', '39', '41'] as const,
+	root: ['58', '38', '54', '53', '60', '52', '19', '39', '41'] as const,
 	will: ['26', '51', '21', '40'] as const,
 	spleen: ['48', '57', '44', '50', '32', '28', '18'] as const,
 	esp: ['36', '22', '37', '6', '49', '55', '30'] as const
