@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { bodyGraphProps, centerArgs, centersArgs, type GateNumber } from '$lib/hd/stores';
 
-	import * as pos from '$lib/hd/gatePos';
-	import { roundedSquare, roundedTriangle } from './roundedPolygon';
+	import { gatesConfig } from '$lib/hd/gatePos';
+	import { moveAbs, roundedSquare, roundedTriangle } from './roundedPolygon';
 	import Pip from './Pip.svelte';
 	import { pipPropsStore } from '$lib/hd/graph';
 	import type { CenterName } from '$lib/hd/graph';
@@ -44,54 +44,46 @@
 		esp: espProps
 	} = centersProps;
 
-	
-
 	const gates = [
-		...Object.entries(pos.gatesConfig).flatMap(([center, conf]) => {
+		...Object.entries(gatesConfig).flatMap(([center, conf]) => {
 			return Object.entries(conf).map(([gate, params]) => {
-				return pipPropsStore(gate as GateNumber, centersProps[center as CenterName], params[0], params[1])
-			})
+				return pipPropsStore(
+					gate as GateNumber,
+					centersProps[center as CenterName],
+					params[0],
+					params[1]
+				);
+			});
 		})
-	]
+	];
 </script>
 
 <svg width="500" height="600" viewBox="-500 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+	<path d="M{$headProps.x},{$headProps.y} {roundedTriangle($headProps.size * $headProps.scale)}" />
 	<path
-		transform="translate({$headProps.x},{$headProps.y})"
-		d="{roundedTriangle($headProps.size * $headProps.scale)}"
+		d="{moveAbs([$ajnaProps.x, $ajnaProps.y])} {roundedTriangle($ajnaProps.size * $ajnaProps.scale, 180)}"
 	/>
 	<path
-		transform="translate({$ajnaProps.x},{$ajnaProps.y}) rotate(180)"
-		d="{roundedTriangle($ajnaProps.size * $ajnaProps.scale)}"
+		d="{moveAbs([$throatProps.x,$throatProps.y])} {roundedSquare($throatProps.size * $throatProps.scale)}"
+	/>
+	<path d="{moveAbs([$gProps.x,$gProps.y])} {roundedSquare($gProps.size * $gProps.scale, 45)}" />
+	<path
+		d="{moveAbs([$sacralProps.x, $sacralProps.y])} {roundedSquare($sacralProps.size * $sacralProps.scale)}"
+	/>
+	<path d="{moveAbs([$rootProps.x,$rootProps.y])} {roundedSquare($rootProps.size * $rootProps.scale)}" />
+	<path
+		d="{moveAbs([$willProps.x, $willProps.y])} {roundedTriangle(
+			$willProps.size * $willProps.scale * 0.85,
+			15
+		)}"
 	/>
 	<path
-		transform="translate({$throatProps.x},{$throatProps.y})"
-		d="{roundedSquare($throatProps.size * $throatProps.scale, 0.7)}"
+		d="{moveAbs([$spleenProps.x, $spleenProps.y])} {roundedTriangle(
+			$spleenProps.size * $spleenProps.scale,
+			90
+		)}"
 	/>
-	<path
-		transform="translate({$gProps.x},{$gProps.y}) rotate(45)"
-		d="{roundedSquare($gProps.size * $gProps.scale, 0.7)}"
-	/>
-	<path
-		transform="translate({$sacralProps.x},{$sacralProps.y})"
-		d="{roundedSquare($sacralProps.size * $sacralProps.scale, 0.7)}"
-	/>
-	<path
-		transform="translate({$rootProps.x},{$rootProps.y})"
-		d="{roundedSquare($rootProps.size * $rootProps.scale, 0.7)}"
-	/>
-	<path
-		transform="translate({$willProps.x},{$willProps.y}) rotate(15)"
-		d="{roundedTriangle($willProps.size * $willProps.scale * 0.85)}"
-	/>
-	<path
-		transform="translate({$spleenProps.x},{$spleenProps.y}) rotate(90)"
-		d="{roundedTriangle($spleenProps.size * $spleenProps.scale)}"
-	/>
-	<path
-		transform="translate({$espProps.x},{$espProps.y}) rotate(270)"
-		d="{roundedTriangle($espProps.size * $espProps.scale)}"
-	/>
+	<path d="{moveAbs([$espProps.x, $espProps.y])} {roundedTriangle($espProps.size * $espProps.scale, 270)}" />
 
 	{#each gates as gate}
 		<Pip props={gate} />
