@@ -1,12 +1,25 @@
 const ratio = 0.6;
 const cos30 = Math.sqrt(3) / 2;
+type Point = [number, number];
+type Rotation = (p: Point) => Point;
+const _rotateZero: Rotation = (p) => p;
 
-function move(dX: number, dY: number) {
-	return `m${rnd(dX)},${rnd(dY)}`;
-}
-function line(dX: number, dY: number) {
-	return `l${rnd(dX)},${rnd(dY)}`;
-}
+export const moveAbs = ([x, y]: Point) => {
+	return `M${rnd(x)},${rnd(y)}`;
+};
+
+const move = ([dX, dY]: Point) => `m${rnd(dX)},${rnd(dY)}`;
+const line = ([dX, dY]: Point) => `l${rnd(dX)},${rnd(dY)}`;
+
+const makeRotator = (Θ: number): Rotation => {
+	if (Θ === 0) {
+		return _rotateZero;
+	}
+	const cos = Math.cos((Θ * Math.PI) / 180);
+	const sin = Math.sin((Θ * Math.PI) / 180);
+	return ([x, y]) => [x * cos - y * sin, x * sin + y * cos];
+};
+
 /**
  *
  * @param size
@@ -33,37 +46,37 @@ const rnd = (a: number) => Math.round(a);
  * @param r Ratio of corner radius to the length of the straight portion of the side
  * @returns a value to insert into an SVG path's d attribute
  */
-export const roundedTriangle = (size: number, r = ratio) => {
+export const roundedTriangle = (size: number, Θ = 0, r = ratio) => {
 	const k = size / (1 + 2 * r);
 	const radius = r * k;
 	const height = k * cos30 + radius * 2;
-	const _arc = (dX: number, dY: number) =>
-		`a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
+	const rotate = makeRotator(Θ);
+	const _arc = ([dX, dY]: Point) => `a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
 	return [
-		move(-radius * cos30, (radius - height) / 2),
-		_arc(2 * radius * cos30, 0),
-		line(k / 2, k * cos30),
-		_arc(-radius * cos30, radius * 1.5),
-		line(-k, 0),
-		_arc(-radius * cos30, -radius * 1.5),
+		move(rotate([-radius * cos30, (radius - height) / 2])),
+		_arc(rotate([2 * radius * cos30, 0])),
+		line(rotate([k / 2, k * cos30])),
+		_arc(rotate([-radius * cos30, radius * 1.5])),
+		line(rotate([-k, 0])),
+		_arc(rotate([-radius * cos30, -radius * 1.5])),
 		'Z'
 	].join(' ');
 };
 
-export const roundedSquare = (size: number, r = ratio) => {
+export const roundedSquare = (size: number, Θ = 0, r = 0.7) => {
 	const k = size / (1 + 2 * r);
 	const radius = r * k;
-	const _arc = (dX: number, dY: number) =>
-		`a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
+	const rotate = makeRotator(Θ);
+	const _arc = ([dX, dY]: Point) => `a${rnd(radius)},${rnd(radius)},0,0,1,${rnd(dX)},${rnd(dY)}`;
 	return [
-		move(size / 2, size / 2 - radius),
-		_arc(-radius, radius),
-		line(-k, 0),
-		_arc(-radius, -radius),
-		line(0, -k),
-		_arc(radius, -radius),
-		line(k, 0),
-		_arc(radius, radius),
+		move(rotate([size / 2, size / 2 - radius])),
+		_arc(rotate([-radius, radius])),
+		line(rotate([-k, 0])),
+		_arc(rotate([-radius, -radius])),
+		line(rotate([0, -k])),
+		_arc(rotate([radius, -radius])),
+		line(rotate([k, 0])),
+		_arc(rotate([radius, radius])),
 		'Z'
 	].join(' ');
 };
