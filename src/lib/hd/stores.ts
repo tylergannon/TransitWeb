@@ -6,7 +6,8 @@ import {
 	type CenterArgs,
 	type CenterDisplayProps,
 	type CenterRecord,
-	type TriangleCenterProps
+	type TriangleCenterProps,
+	type CenterName
 } from './graph';
 
 export type GateNumber =
@@ -76,7 +77,58 @@ export type GateNumber =
 	| '64';
 export type GateRecord<T> = Record<GateNumber, T>;
 
-export const bodyGraphProps = (props: BodyGraphProps) => {
+export const DEFAULT_GRAPH_PROPS: BodyGraphProps = {
+	channelSpace: 2,
+	pipRadius: 16,
+	distFromEdge: 5,
+	height: 800,
+	width: 667,
+	scale: 1,
+	triangleSize: 150,
+	squareSize: 162
+};
+
+export type CenterProps = {
+	name: CenterName;
+	x: number;
+	y: number;
+	shapeSize: number;
+	shape?: 'triangle' | 'square';
+	rotation?: number;
+	scale?: number;
+};
+
+export const DEFAULT_CENTER_ARGS: CenterRecord<CenterProps> = {
+	head: { name: 'head', x: 0, y: 80, shapeSize: 150 },
+	ajna: { name: 'ajna', x: 0, y: 240, scale: 1.2, shapeSize: 150, rotation: 180 },
+	throat: { name: 'throat', x: 0, y: 420, shape: 'square', shapeSize: 162 },
+	g: { name: 'g', x: 0, y: 640, shape: 'square', shapeSize: 162, rotation: 45 },
+	sacral: { name: 'sacral', x: 0, y: 900, shape: 'square', shapeSize: 162 },
+	root: { name: 'root', x: 0, y: 1100, shape: 'square', shapeSize: 162 },
+	will: { name: 'will', x: 150, y: 750, rotation: 15, shapeSize: 150 * 0.85 },
+	spleen: { name: 'spleen', x: -300, y: 900, rotation: 90, shapeSize: 150 },
+	esp: { name: 'esp', x: 300, y: 900, rotation: 270, shapeSize: 150 }
+};
+
+/**
+ *
+ * @param props
+ * @returns Body graph props with all values scaled by the scale property
+ */
+export const bodyGraphProps = (props: Partial<BodyGraphProps> = {}) => {
+	const res = { ...DEFAULT_GRAPH_PROPS, ...props };
+	const { scale } = res;
+	return {
+		...res,
+		pipRadius: res.pipRadius * scale,
+		channelSpace: res.channelSpace * scale,
+		distFromEdge: res.distFromEdge * scale,
+		triangleSize: res.triangleSize * scale,
+		squareSize: res.squareSize * scale
+	} as BodyGraphProps;
+};
+
+export const bodyGraphPropsStore = (props: BodyGraphProps) => {
 	const { subscribe, update } = writable({
 		...props
 	} as BodyGraphProps);
