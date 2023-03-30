@@ -1,14 +1,13 @@
-import { roundedTriangleHeight } from '$lib/components/hd/roundedPolygon';
 import { derived, writable, type Readable, type Writable } from 'svelte/store';
-import {
-	mapCenterRecord,
-	type BodyGraphProps,
-	type CenterArgs,
-	type CenterDisplayProps,
-	type CenterRecord,
-	type TriangleCenterProps,
-	type CenterName
+import type {
+	CenterDisplayProps,
+	BodyGraphProps,
+	CenterArgs,
+	CenterRecord,
+	CenterName
 } from './graph';
+
+const roundedTriangleHeight = (size: number, r = 0.6) => size * (1 - 0.134 / (1 + 2 * r));
 
 export type GateNumber =
 	| '1'
@@ -150,41 +149,6 @@ export const bodyGraphPropsStore = (props: BodyGraphProps) => {
 };
 
 export const centerArgs = (props: CenterArgs) => writable(props);
-
-export const centersArgs = (
-	graphProps: Readable<BodyGraphProps>,
-	args: CenterRecord<Writable<CenterArgs>>
-) => ({
-	args,
-	props: mapCenterRecord(({ center }) => centerDisplayProps(graphProps, center), args)
-});
-
-export const centerDisplayProps = (
-	graphProps: Readable<BodyGraphProps>,
-	centerArgs: Readable<CenterArgs>,
-	shape: 'triangle' | 'square' = 'triangle'
-): Readable<CenterDisplayProps> =>
-	derived([graphProps, centerArgs], ([props, { x, y, scale, size }]) => ({
-		x,
-		y,
-		size: size || (shape === 'triangle' ? props.triangleSize : props.squareSize),
-		pipRadius: props.pipRadius,
-		centerDx: 2 * props.pipRadius + props.channelSpace,
-		height: roundedTriangleHeight(props.triangleSize),
-		channelSpace: props.channelSpace,
-		distFromEdge: props.distFromEdge,
-		scale
-	}));
-
-export const triangleProps = (size: Readable<number>) =>
-	derived(size, ($size) => {
-		const height = roundedTriangleHeight($size);
-		return {
-			size: $size,
-			height,
-			halfHeight: height / 2
-		} as TriangleCenterProps;
-	});
 
 export interface GateDisplay {
 	x: number;
