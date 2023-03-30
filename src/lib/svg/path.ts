@@ -1,4 +1,5 @@
-export type Point = [number, number];
+import type { Point } from './types';
+
 type Rotation = (p: Point) => Point;
 
 const _rotateZero: Rotation = (p) => p;
@@ -13,6 +14,10 @@ const makeRotator = (Θ: number): Rotation => {
 	const sin = Math.sin((Θ * Math.PI) / 180);
 	return ([x, y]) => [x * cos - y * sin, x * sin + y * cos];
 };
+
+export const toPoint = <T extends { x: number; y: number }>({ x, y }: T) => [x, y] as Point;
+
+export const pathFrom = (p: Point) => new SvgPath().move(p, 'M');
 
 export class SvgPath {
 	private _path: string[] = [];
@@ -48,14 +53,7 @@ export class SvgPath {
 		return this.add('Z');
 	}
 
-	arc(
-		p: Point,
-		r1: number,
-		r2?: number,
-		large = 0,
-		sweep = 0,
-		cmd: 'A' | 'a' = 'a'
-	) {
+	arc(p: Point, r1: number, r2?: number, large = 0, sweep = 0, cmd: 'A' | 'a' = 'a') {
 		return this.add(cmd, r1, r2 || r1, 0, large, sweep, ...this._rotation(p));
 	}
 
