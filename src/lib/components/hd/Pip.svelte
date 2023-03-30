@@ -15,6 +15,12 @@
 	>
 		{gate}
 	</text>
+	{#if gate === '35'}
+		<circle style:z-index={1000} cx={x+ radius} cy={y- radius} r={6} fill="yellow" id="zorg" />
+		<circle style:z-index={1000} cx={x+ radius} cy={y- radius + 13} r={6} fill="orange" />
+		<circle style:z-index={1000} cx={x+ radius} cy={y- radius + 13 * 2} r={6} fill="red" />
+	
+	{/if}
 </g>
 
 <style lang="postcss">
@@ -23,7 +29,7 @@
 		alignment-baseline: middle;
 		fill: black;
 	}
-	circle {
+	g > circle:first-child {
 		@apply fill-secondary-500;
 		stroke: black;
 		stroke-width: 1;
