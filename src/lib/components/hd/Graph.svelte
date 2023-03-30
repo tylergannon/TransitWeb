@@ -5,9 +5,9 @@
 
 	import { gatesConfig } from '$lib/hd/gatePos';
 	import { DEFAULT_CENTER_ARGS, DEFAULT_GRAPH_PROPS } from '$lib/hd/stores';
-	import Center from './NewCenter.svelte';
+	import Center from './Center.svelte';
 	import Pip from './Pip.svelte';
-	import { pathFrom, SvgPath, toPoint } from '$lib/svg/path';
+	import { pathFrom, toPoint } from '$lib/svg/path';
 	import { subtract, add as addPoint } from '$lib/svg/calc';
 	import type { Point } from '$lib/svg/types';
 
