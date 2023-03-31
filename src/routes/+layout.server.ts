@@ -1,6 +1,3 @@
-import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
-import { Person, type PersonType } from '$lib/srv/model';
 import { handleServerSession } from '@lucia-auth/sveltekit';
 import type { LayoutServerLoadEvent } from './$types';
 

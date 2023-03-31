@@ -7,6 +7,7 @@
 	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { getContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
+	import AppBar from '$lib/elem/AppBar.svelte';
 
 	const people = getContext('userPeople') as PeopleStore;
 
@@ -57,7 +58,7 @@
 		dispatch('close');
 	}
 </script>
-
+<AppBar />
 <div class="w-8/12 max-w-5xl">
 	<form on:submit={handleSubmit} class="relative w-full p-8 bg-white rounded-lg daisyUI-modal">
 		<h3 class="mb-6 text-xl font-semibold">Add Person</h3>
