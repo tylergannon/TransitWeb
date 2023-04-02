@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	import CloseOutline from "carbon-icons-svelte/lib/CloseOutline.svelte";
+	import TrashCan from "carbon-icons-svelte/lib/TrashCan.svelte";
 
 	import { popup, SlideToggle } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import type { GeoNamesCityType, PersonType } from '$lib/srv/model';
+	import type { GeoNamesCityType } from '$lib/srv/model';
 	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { getContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
 	import AppBar from '$lib/elem/AppBar.svelte';
 	import { writable } from 'svelte/store';
-	import derivedStore from '$lib/stores/asyncDerivedStore';
 	import { citiesStore, postForm } from './helper';
+
+	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
 
 	const people = getContext('userPeople') as PeopleStore;
 
@@ -27,23 +28,6 @@
 
 	let cityQuery = writable('');
 	const cities = citiesStore(cityQuery);
-	let citiesList: HTMLElement;
-	
-	onMount(() => {
-		citiesList.addEventListener('click', (e) => {
-			if (e.target instanceof HTMLElement) {
-				const city = e.target.closest('[data-idx]') as HTMLDivElement;
-				if (city) {
-					const idx = parseInt(city.dataset.idx!);
-					selectedCity = $cities[idx];
-					console.log(selectedCity);
-					// cityQuery.set('');
-				}
-			} else {
-				console.log(`${e.target} is not an HTMLElement}`);
-			}
-		});
-	});
 
 	$: {
 		if (currTime && currDate && selectedCity) {
@@ -67,8 +51,7 @@
 		people.add(newPerson);
 
 		dispatch('close');
-	}
-
+	};
 
 	let cityPopupSettings: PopupSettings = {
 		placement: 'bottom',
@@ -77,55 +60,8 @@
 	};
 
 	let selectedIdx = -1;
-
-	const navigateList = (
-		e: KeyboardEvent & {
-			currentTarget: EventTarget & Window;
-		}
-	) => {
-    if ($cities.length == 0) return;
-		if (e.key === 'ArrowDown') {
-      if (selectedIdx === $cities.length-1) {
-        selectedIdx = 0;
-      } else {
-        selectedIdx += 1
-      }
-		} else if (e.key === 'ArrowUp' && selectedIdx >= 0) {
-      if (selectedIdx === 0) {
-        selectedIdx = $cities.length - 1;
-      } else {
-        selectedIdx -= 1
-      }
-		} else if (e.key === 'Escape') {
-			document.getElementById('city-input')?.blur();
-		} else if (e.key === 'Enter') {
-      if (selectedIdx >= 0) {
-				selectedCity = $cities[selectedIdx];
-      } else {
-        e.preventDefault()
-      }
-		}
-	};
-
 </script>
 
-<div class="card w-90 min-h-[320px] rounded-none" style:z-index="1000" data-popup="cities-results">
-	<section bind:this={citiesList}>
-		{#each $cities as city,id (city._id)}
-			<div
-				data-idx={id}
-				class="flex flex-row items-center p-2 cursor-pointer hover:bg-gray-100"
-				on:click={() => { selectedCity = city; }}
-				on:keydown={() => { selectedCity = city; }}
-			>
-				<div class="flex flex-col">
-					<span class="text-lg font-semibold">{city.name}</span>
-					<span class="text-sm text-gray-500"><em>{city.place[0]}</em>, {city.place.slice(2)}</span>
-				</div>
-			</div>
-		{/each}
-	</section>
-</div>
 <AppBar />
 <div class="grid grid-cols-6">
 	<div class="card col-span-2 col-start-2 card-hover p-4">
@@ -150,22 +86,59 @@
 					<label class="label mt-1.5">
 						{#if selectedCity}
 							<span class="pl-4 prose">Place of Birth</span>
-							<span class="chip">
-								<CloseOutline size={16} />
-							</span>
-
 						{:else}
-						<span class="pl-4 prose">Where were they born?</span>
+							<span class="pl-4 prose">Where were they born?</span>
+						{/if}
+						{#if selectedCity}
+							<div class="flex flex-row">
+								<div class="hover:cursor-pointer chip variant-soft-secondary relative" on:click={()=>selectedCity = null} on:keydown={()=>selectedCity = null}>
+									<div class="absolute top-2 right-2">
+										<TrashCan />
+									</div>
+									<div class="flex flex-col items-start">
+										<div class="text-lg">{selectedCity.name}</div>
+										<span class="text-sm">{selectedCity.place[0]}, {selectedCity.place[2]}, {selectedCity.place[3]}</span>
+									</div>
+								</div>
+							</div>
 						{/if}
 						<input
 							use:popup={cityPopupSettings}
 							class="input"
+							on:blur={() => { $cityQuery = ''; }}
 							disabled={selectedCity ? true : false}
+							style:display={selectedCity ? 'none' : 'block'}
 							bind:value={$cityQuery}
 							type="search"
 							placeholder="Start typing a city name..."
 						/>
-
+						<div class="autocomplete">
+							<nav class="autocomplete-nav">
+								<ul class="autocomplete-list list-nav">
+									{#if !selectedCity}
+										{#each $cities as city, i}
+											<AutoCompleteItem
+												classesItem="autocomplete-item"
+												classesButton="autocomplete-button"
+												on:click={() => {
+													selectedCity = city;
+												}}
+												on:keypress={() => {
+													selectedCity = city;
+												}}
+											>
+												<div class="flex flex-col items-start">
+													<span class="text-lg">{city.name}</span>
+													<span class="text-sm"
+														>{city.place[0]}, {city.place[2]}, {city.place[3]}</span
+													>
+												</div>
+											</AutoCompleteItem>
+										{/each}
+									{/if}
+								</ul>
+							</nav>
+						</div>
 					</label>
 					<div class="flex flex-row">
 						<label class="label mt-1.5">
