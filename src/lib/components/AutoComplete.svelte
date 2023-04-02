@@ -29,20 +29,20 @@
 	 */
 	export let blacklist: unknown[] = [];
 	/** Provide a HTML markup to display when no match is found. */
-	export let emptyState: string = 'No Results Found.';
+	export let emptyState = 'No Results Found.';
 	/** Set the animation duration. Use zero to disable. */
-	export let duration: number = 200;
+	export let duration = 200;
 	// Props (region)
 	/** Provide arbitrary classes to nav element. */
-	export let regionNav: string = '';
+	export let regionNav = '';
 	/** Provide arbitrary classes to each list. */
-	export let regionList: string = 'list-nav';
+	export let regionList = 'list-nav';
 	/** Provide arbitrary classes to each list item. */
-	export let regionItem: string = '';
+	export let regionItem = '';
 	/** Provide arbitrary classes to each button. */
-	export let regionButton: string = 'w-full';
+	export let regionButton = 'w-full';
 	/** Provide arbitrary classes to empty message. */
-	export let regionEmpty: string = 'text-center';
+	export let regionEmpty = 'text-center';
 
 	// Local
 	let listedOptions = options;
