@@ -1,135 +1,112 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+	import { slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	const dispatch = createEventDispatcher();
 
-  import { writable, type Readable } from 'svelte/store';
-	import type { GeoNamesCityType } from '$lib/srv/model';
+	// Types
+	import type { AutocompleteOption } from './types';
 
-  import derivedAsync from '$lib/stores/asyncDerivedStore';
+	// Props
+	/**
+	 * Bind the input value.
+	 * @type {unknown}
+	 */
+	export let input: unknown = undefined;
+	/**
+	 * Define values for the list
+	 * @type {AutocompleteOption[]}
+	 */
+	export let options: AutocompleteOption[] = [];
+	/**
+	 * Provide whitelisted values
+	 * @type {unknown[]}
+	 */
+	export let whitelist: unknown[] = [];
+	/**
+	 * Provide blacklist values
+	 * @type {unknown[]}
+	 */
+	export let blacklist: unknown[] = [];
+	/** Provide a HTML markup to display when no match is found. */
+	export let emptyState: string = 'No Results Found.';
+	/** Set the animation duration. Use zero to disable. */
+	export let duration: number = 200;
+	// Props (region)
+	/** Provide arbitrary classes to nav element. */
+	export let regionNav: string = '';
+	/** Provide arbitrary classes to each list. */
+	export let regionList: string = 'list-nav';
+	/** Provide arbitrary classes to each list item. */
+	export let regionItem: string = '';
+	/** Provide arbitrary classes to each button. */
+	export let regionButton: string = 'w-full';
+	/** Provide arbitrary classes to empty message. */
+	export let regionEmpty: string = 'text-center';
 
-	import Item from './AutoCompleteItem.svelte';
+	// Local
+	let listedOptions = options;
 
-	/* HANDLING THE INPUT */
-	let searchInput: HTMLInputElement; // use with bind:this to focus element
-	let inputValue = writable('')
-	export let result: null|GeoNamesCityType = null;
-
-  const cities = derivedAsync(inputValue, [], async ($inputValue) => {
-    if ($inputValue) {
-			return await fetch("/app/api/findCity/" + $inputValue).then(res => res.json()) as Array<GeoNamesCityType>;
-    } else {
-      return [];
-    }
-  });
-
-	$: if (!inputValue) {
-		selectedIdx = -1;
+	// Whitelist Options
+	function whitelistOptions(): void {
+		if (!whitelist.length) return;
+		listedOptions = [...options].filter((option: AutocompleteOption) => whitelist.includes(option.value));
 	}
 
-	const getDisplayName = (result: GeoNamesCityType) => {
-		const place = [result.place[0]]
-		for (let i = 2; i < result.place.length; i++) {
-			if (result.place[i] !== place[-1]) {
-				place.push(result.place[i])
-			}
-		}
-		return [result.name, ...place.reverse()].join(', ');
-	};
+	// Blacklist Options
+	function blacklistOptions(): void {
+		if (!blacklist.length) return;
+		const toBlacklist = new Set(blacklist);
+		listedOptions = [...options].filter((option: AutocompleteOption) => !toBlacklist.has(option.value));
+	}
 
-	const setInputVal = (res: GeoNamesCityType) => {
-		inputValue.set(getDisplayName(res));
-		result = res;
-		selectedIdx = -1;
-    searchInput.blur()
-	};
+	function filterOptions(): AutocompleteOption[] {
+		// Create a local copy of options
+		let _options = [...listedOptions];
+		// Filter options
+		_options = _options.filter((option: AutocompleteOption) => {
+			// Format the input search value
+			const inputFormatted = String(input).toLowerCase().trim();
+			// Format the option
+			let optionFormatted = JSON.stringify([option.label, option.value, option.keywords]).toLowerCase();
+			// Check Match
+			if (optionFormatted.includes(inputFormatted)) return option;
+		});
+		return _options;
+	}
 
-	let selectedIdx = -1;
+	function onSelection(option: AutocompleteOption) {
+		/** @event {AutocompleteOption} selection - Fire on option select. */
+		dispatch('selection', option);
+	}
 
-	const navigateList = (
-		e: KeyboardEvent & {
-			currentTarget: EventTarget & Window;
-		}
-	) => {
-    if ($cities.length == 0 || document.activeElement !== searchInput) return;
-		if (e.key === 'ArrowDown') {
-      if (selectedIdx === $cities.length-1) {
-        selectedIdx = 0;
-      } else {
-        selectedIdx += 1
-      }
-		} else if (e.key === 'ArrowUp' && selectedIdx >= 0) {
-      if (selectedIdx === 0) {
-        selectedIdx = $cities.length - 1;
-      } else {
-        selectedIdx -= 1
-      }
-		} else if (e.key === 'Escape') {
-			searchInput.blur();
-		} else if (e.key === 'Enter') {
-      if (selectedIdx >= 0) {
-        setInputVal($cities[selectedIdx]);
-      } else {
-        e.preventDefault()
-      }
-		}
-	};
+	// State
+	$: if (whitelist) whitelistOptions();
+	$: if (blacklist) blacklistOptions();
+	$: optionsFiltered = input ? filterOptions() : listedOptions;
+	// Reactive
+	$: classsesBase = `${$$props.class ?? ''}`;
+	$: classesNav = `${regionNav}`;
+	$: classesList = `${regionList}`;
+	$: classesItem = `${regionItem}`;
+	$: classesButton = `${regionButton}`;
+	$: classesEmtpy = `${regionEmpty}`;
 </script>
 
-<svelte:window on:keydown={navigateList} />
-
-<form autocomplete="off" on:submit|preventDefault>
-	<div class="autocomplete">
-		<input
-			id="autocomplete-input"
-			type="text"
-			placeholder="Search Country Names"
-			bind:this={searchInput}
-			bind:value={$inputValue}
-		/>
-	</div>
-
-	<!-- FILTERED LIST OF COUNTRIES -->
-	{#if $cities && $cities.length > 0 && searchInput === document.activeElement }
-		<ul id="autocomplete-items-list">
-			{#each $cities as city, i}
-				<Item
-					itemLabel={getDisplayName(city)}
-					highlighted={i === selectedIdx}
-					on:click={() => setInputVal(city)}
-				/>
-			{/each}
-		</ul>
+<div class="autocomplete {classsesBase}" data-testid="autocomplete">
+	{#if optionsFiltered.length > 0}
+		<nav class="autocomplete-nav {classesNav}">
+			<ul class="autocomplete-list {classesList}">
+				{#each optionsFiltered as option, i (option)}
+					<li class="autocomplete-item {classesItem}" animate:flip={{ duration }} transition:slide|local={{ duration }}>
+						<button class="autocomplete-button {classesButton}" type="button" on:click={() => onSelection(option)} on:click on:keypress>
+							{@html option.label}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		</nav>
+	{:else}
+		<div class="autocomplete-empty {classesEmtpy}">{emptyState}</div>
 	{/if}
-</form>
-
-<style>
-	div.autocomplete {
-		/*the container must be positioned relative:*/
-		position: relative;
-		display: inline-block;
-		width: 300px;
-	}
-	input {
-		border: 1px solid transparent;
-		background-color: #f1f1f1;
-		padding: 10px;
-		font-size: 16px;
-		margin: 0;
-	}
-	input[type='text'] {
-		background-color: #f1f1f1;
-		width: 100%;
-	}
-	input[type='submit'] {
-		background-color: DodgerBlue;
-		color: #fff;
-	}
-
-	#autocomplete-items-list {
-		position: relative;
-		margin: 0;
-		padding: 0;
-		top: 0;
-		width: 297px;
-		border: 1px solid #ddd;
-		background-color: #ddd;
-	}
-</style>
+</div>
