@@ -22,7 +22,11 @@
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	handleSession(page);
-	setContext('userProfile', writable<Partial<UserType | null>>(data.user));
+
+	setContext('userProfile', writable<UserType|null>(data.user ? {
+		...data.user,
+		dobUtc: data.user.dobUtc ? new Date(parseInt(data.user.dobUtc)) : undefined,
+	} : null));
 
 </script>
 

@@ -1,6 +1,7 @@
 import { fail, redirect, json } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { UserType } from '$lib/srv/model';
+import { ObjectId } from 'bson';
 
 export const actions = {
 	saveProfile: async ({ request, locals: { auth, validate } }) => {
@@ -8,17 +9,28 @@ export const actions = {
 		const form = await request.formData();
 		const user: Partial<UserType> = {};
 		for (const [key, value] of form.entries()) {
-			user[key as 'profileImg' | 'firstName' | 'lastName' | 'tz'] = value.valueOf() as string;
+			if (key === 'tags') {
+				user.tags = (value.valueOf() as string).split(',').map((tag) => tag.trim());
+			} else if (key === 'dobUtc') {
+				user.dobUtc = new Date(parseInt(value.valueOf() as string));
+			} else if (key === 'birthplace') {
+				user.birthplace = parseInt(value.valueOf() as string);
+			} else {
+				user[key as 'profileImg' | 'firstName' | 'lastName' | 'tz'] = value.valueOf() as string;
+			}
 		}
-
 		// TODO: validate data
 		try {
-			auth.updateUserAttributes(userId, user);
+			const { id: _, ...result } = await auth.updateUserAttributes(userId, user);
+			return json({
+				...result,
+				dobUtc: result.dobUtc?.valueOf().toString(),
+				_id: userId
+			} as Omit<UserType, 'dobUtc'> & { dobUtc: string });
 		} catch (e) {
-			return fail(500, { message: 'Failed to save profile.' });
 			console.error(e);
+			return fail(500, { message: 'Failed to save profile.' });
 		}
-		return { status: 200 };
 	},
 	changePassword: async ({ request, locals: { auth, validate } }) => {
 		const form = await request.formData();

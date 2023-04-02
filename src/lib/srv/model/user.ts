@@ -1,16 +1,15 @@
 import { Schema } from 'mongoose';
-import type { ObjectId } from 'mongodb';
 
 export interface UserType {
 	_id: string;
 	firstName: string;
 	lastName: string;
-	profileImg: string;
-	dobUtc: Date;
 	tags: string[];
-	tz: string;
-	birthplace: ObjectId;
-	createdAt: Date;
+	tz?: string;
+	birthplace?: number;
+	dobUtc?: Date;
+	profileImg?: string;
+	createdAt?: Date;
 }
 
 export const UserSchema = new Schema<UserType>(
@@ -18,11 +17,11 @@ export const UserSchema = new Schema<UserType>(
 		_id: { type: String },
 		firstName: { type: String },
 		lastName: { type: String },
-		profileImg: { type: String },
-		dobUtc: { type: Date },
+		profileImg: { type: String, required: false },
+		dobUtc: { type: Date, required: false },
 		tags: { type: [String], default: [] },
-		tz: { type: String },
-		birthplace: { type: Schema.Types.ObjectId, ref: 'GeoNamesCity' },
+		tz: { type: String, required: false },
+		birthplace: { type: Schema.Types.Number, ref: 'GeoNamesCity', required: false },
 		createdAt: { type: Date, default: Date.now }
 	},
 	{
