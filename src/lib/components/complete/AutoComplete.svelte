@@ -1,33 +1,30 @@
 <script lang="ts">
+	/**
+	 * Two changes I want:
+	 *
+	 * - [ ] Option to add an element on top of the list, if there is no exact match, which
+	 * 		will call a cb with the current input value.
+	 * - [x] Extract the "options" stuff into a provider component.
+	*/
 	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	const dispatch = createEventDispatcher();
 
 	// Types
-	import type { AutocompleteOption } from './types';
+	import type { AutoCompleteOption, AutoCompleteProvider } from './types';
 
 	// Props
 	/**
 	 * Bind the input value.
-	 * @type {unknown}
+	 * @type {string}
 	 */
-	export let input: unknown = undefined;
+	export let input = '';
 	/**
-	 * Define values for the list
-	 * @type {AutocompleteOption[]}
+	 * Provides the options to display.
+	 * @type {AutoCompleteProvider}
 	 */
-	export let options: AutocompleteOption[] = [];
-	/**
-	 * Provide whitelisted values
-	 * @type {unknown[]}
-	 */
-	export let whitelist: unknown[] = [];
-	/**
-	 * Provide blacklist values
-	 * @type {unknown[]}
-	 */
-	export let blacklist: unknown[] = [];
+	export let options: AutoCompleteProvider;
 	/** Provide a HTML markup to display when no match is found. */
 	export let emptyState = 'No Results Found.';
 	/** Set the animation duration. Use zero to disable. */
@@ -44,48 +41,27 @@
 	/** Provide arbitrary classes to empty message. */
 	export let regionEmpty = 'text-center';
 
-	// Local
-	let listedOptions = options;
 
-	// Whitelist Options
-	function whitelistOptions(): void {
-		if (!whitelist.length) return;
-		listedOptions = [...options].filter((option: AutocompleteOption) => whitelist.includes(option.value));
-	}
-
-	// Blacklist Options
-	function blacklistOptions(): void {
-		if (!blacklist.length) return;
-		const toBlacklist = new Set(blacklist);
-		listedOptions = [...options].filter((option: AutocompleteOption) => !toBlacklist.has(option.value));
-	}
-
-	function filterOptions(): AutocompleteOption[] {
-		// Create a local copy of options
-		let _options = [...listedOptions];
-		// Filter options
-		_options = _options.filter((option: AutocompleteOption) => {
-			// Format the input search value
-			const inputFormatted = String(input).toLowerCase().trim();
-			// Format the option
-			let optionFormatted = JSON.stringify([option.label, option.value, option.keywords]).toLowerCase();
-			// Check Match
-			if (optionFormatted.includes(inputFormatted)) return option;
-		});
-		return _options;
-	}
-
-	function onSelection(option: AutocompleteOption) {
+	function onSelection(option: AutoCompleteOption) {
 		/** @event {AutocompleteOption} selection - Fire on option select. */
 		dispatch('selection', option);
 	}
+	let optionsFiltered: AutoCompleteOption[] = [];
+
+	$: {
+		const temp = options(input);
+		if (temp instanceof Promise) {
+			temp.then((res) => {
+				optionsFiltered = res;
+			});
+		} else {
+			optionsFiltered = temp;
+		}
+	}
 
 	// State
-	$: if (whitelist) whitelistOptions();
-	$: if (blacklist) blacklistOptions();
-	$: optionsFiltered = input ? filterOptions() : listedOptions;
 	// Reactive
-	$: classsesBase = `${$$props.class ?? ''}`;
+	$: classesBase = `${$$props.class ?? ''}`;
 	$: classesNav = `${regionNav}`;
 	$: classesList = `${regionList}`;
 	$: classesItem = `${regionItem}`;
@@ -93,7 +69,7 @@
 	$: classesEmtpy = `${regionEmpty}`;
 </script>
 
-<div class="autocomplete {classsesBase}" data-testid="autocomplete">
+<div class="autocomplete {classesBase}" data-testid="autocomplete">
 	{#if optionsFiltered.length > 0}
 		<nav class="autocomplete-nav {classesNav}">
 			<ul class="autocomplete-list {classesList}">
