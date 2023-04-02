@@ -12,9 +12,15 @@ export const actions = {
 			if (key === 'tags') {
 				user.tags = (value.valueOf() as string).split(',').map((tag) => tag.trim());
 			} else if (key === 'dobUtc') {
-				user.dobUtc = new Date(parseInt(value.valueOf() as string));
+				const val = parseInt(value.valueOf() as string);
+				if (!Number.isNaN(val)) {
+					user.dobUtc = new Date(parseInt(value.valueOf() as string));
+				}
 			} else if (key === 'birthplace') {
-				user.birthplace = parseInt(value.valueOf() as string);
+				const val = parseInt(value.valueOf() as string);
+				if (!Number.isNaN(val)) {
+					user.birthplace = parseInt(value.valueOf() as string);
+				}
 			} else {
 				user[key as 'profileImg' | 'firstName' | 'lastName' | 'tz'] = value.valueOf() as string;
 			}

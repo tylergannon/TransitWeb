@@ -5,6 +5,7 @@
 
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
+
 	import type { GeoNamesCityType, UserType } from '$lib/srv/model';
 	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { getContext } from 'svelte';
@@ -14,6 +15,7 @@
 	import { citiesStore, postForm } from './helper';
 
 	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
+	import InputChip from '$lib/components/inputchip/InputChip.svelte';
 	import { updateProfile } from '../../settings/client';
 
 	const people = getContext('userPeople') as PeopleStore;
@@ -27,6 +29,14 @@
 	let firstName = '';
 	let lastName = '';
 	let dobUtc: Date | null = null;
+
+	let tagsInput = '';
+	let tags: string[] = [];
+	// let addChip: (tag: string) => void;
+	let inputChip: InputChip;
+
+	$: autoCompleteTags =
+		($userProfile.tags||[]).filter((tag) => !tags.includes(tag) && !!tag.match('^' + tagsInput));
 
 	$: {
 		console.log(`currTime: ${currTime}`);
@@ -49,7 +59,12 @@
 		}
 	}
 
-	const addTag = async (tag: string) => {
+	const addTag = (tag: string) => {
+		tags = [...tags, tag];
+		tagsInput = '';
+	}
+
+	const createTag = async (tag: string) => {
 		if ($userProfile.tags.includes(tag)) return;
 		await updateProfile({ tags: [...$userProfile.tags, tag] }).then(() => {
 			userProfile.update((value) => {
@@ -59,6 +74,7 @@
 				};
 			});
 		});
+		addTag(tag)
 	};
 
 	const handleSubmit = async (event: Event) => {
@@ -188,10 +204,45 @@
 							/>
 						</label>
 					</div>
-					<label class="label mt-1 5">
+					<label class="label mt-1 5" for="tags">
 						<span class="pl-4 prose">Tags (optional)</span>
-
-						
+						<InputChip name="tags"
+							bind:input={tagsInput}
+							bind:value={tags}
+							placeholder="Add a tag..."
+						/>
+						<div class="autocomplete">
+							<nav class="autocomplete-nav">
+								<ul class="autocomplete-list list-nav">
+									{#if tagsInput.length > 2}
+										{#if autoCompleteTags.length === 0}
+											<AutoCompleteItem
+												classesItem="autocomplete-item"
+												classesButton="autocomplete-button"
+												on:click={() => createTag(tagsInput)}
+												on:keypress={() => createTag(tagsInput)}
+											>
+												<div class="flex flex-col items-start">
+													<span class="text-lg">Add "{tagsInput}"</span>
+												</div>
+											</AutoCompleteItem>
+										{/if}
+										{#each autoCompleteTags as tag (tag)}
+											<AutoCompleteItem
+												classesItem="autocomplete-item"
+												classesButton="autocomplete-button"
+												on:click={() => addTag(tag)}
+												on:keypress={() => addTag(tag)}
+											>
+												<div class="flex flex-col items-start">
+													<span class="text-lg">{tag}</span>
+												</div>
+											</AutoCompleteItem>
+										{/each}
+									{/if}
+								</ul>
+							</nav>
+						</div>
 					</label>
 				</div>
 				<!-- <div class="form-control flex-row"> -->
