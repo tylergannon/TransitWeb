@@ -2,6 +2,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
+	import CaretRight from 'carbon-icons-svelte/lib/CaretRight.svelte';
 
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
@@ -15,28 +16,34 @@
 	import { citiesStore, postForm } from './helper';
 
 	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
-	import InputChip from '$lib/components/inputchip/InputChip.svelte';
+
 	import { updateProfile } from '../../settings/client';
 
 	const people = getContext('userPeople') as PeopleStore;
 
 	const dispatch = createEventDispatcher();
-	const userProfile = getContext('userProfile') as Writable<UserType>;
+	const userProfile = getContext('userProfile') as Writable<UserType & { tags: string[] }>;
 
 	let selectedCity: GeoNamesCityType | null = null;
 	let currTime = '';
-	let currDate = '';
 	let firstName = '';
 	let lastName = '';
 	let dobUtc: Date | null = null;
 
 	let tagsInput = '';
-	let tags: string[] = [];
-	// let addChip: (tag: string) => void;
-	let inputChip: InputChip;
+	// let tags: string[] = [];
+	let showTagsControl = false;
+	const toggleTagsCtrl = () => {
+		showTagsControl = !showTagsControl;
+	};
 
-	$: autoCompleteTags =
-		($userProfile.tags||[]).filter((tag) => !tags.includes(tag) && !!tag.match('^' + tagsInput));
+	const filterTags = (tags: string[], query: string) => {
+		if (tags.length === 0) return [];
+		const match = new RegExp('^' + tagsInput, 'i');
+		return tags.filter((tag) => !!tag.match(match));
+	};
+
+	$: autoCompleteTags = filterTags($userProfile.tags, tagsInput);
 
 	$: {
 		console.log(`currTime: ${currTime}`);
@@ -54,18 +61,28 @@
 	};
 
 	$: {
-		if (currTime && currDate && selectedCity) {
-			dobUtc = zonedTimeToUtc(`${currDate} ${currTime}`, selectedCity.tz);
+		if (currTime && selectedCity) {
+			dobUtc = zonedTimeToUtc(currTime, selectedCity.tz);
+			console.log(`dobUtc: ${dobUtc}`);
 		}
 	}
 
 	const addTag = (tag: string) => {
-		tags = [...tags, tag];
+		tagObj = { ...tagObj, [tag]: true };
 		tagsInput = '';
-	}
+	};
+
+	let tagObj: { [key: string]: boolean } = {};
+
+	const clickTagHandler = (tag: string) => () => {
+		tagObj = { ...tagObj, [tag]: !tagObj[tag] };
+	};
+
+	$: canCreateTag = (tagsInput.length > 2 && autoCompleteTags.length == 0);
 
 	const createTag = async (tag: string) => {
-		if ($userProfile.tags.includes(tag)) return;
+		if (tag.length < 3) return;
+		if ($userProfile.tags.includes(tag)) return addTag(tag);
 		await updateProfile({ tags: [...$userProfile.tags, tag] }).then(() => {
 			userProfile.update((value) => {
 				return {
@@ -74,12 +91,23 @@
 				};
 			});
 		});
-		addTag(tag)
+		addTag(tag);
 	};
 
 	const handleSubmit = async (event: Event) => {
 		event.preventDefault();
-		if (!dobUtc) return;
+		if (!dobUtc || !firstName || !selectedCity) {
+			console.log('missing data');
+			return;
+		};
+		console.log({
+			firstName,
+			lastName,
+			dobUtc,
+			tz: selectedCity!.tz,
+			placeId: selectedCity!._id,
+			tags: Object.keys(tagObj).filter((tag) => tagObj[tag])
+		})
 
 		const newPerson = await postForm({
 			firstName,
@@ -87,21 +115,25 @@
 			dobUtc,
 			tz: selectedCity!.tz,
 			placeId: selectedCity!._id,
-			tags: []
+			tags: Object.keys(tagObj).filter((tag) => tagObj[tag])
 		});
 
 		people.add(newPerson);
+		clearForm();
 
 		dispatch('close');
 	};
-
-	let cityPopupSettings: PopupSettings = {
-		placement: 'bottom',
-		target: 'cities-results',
-		event: 'focus' as unknown as 'click'
+	const clearForm = () => {
+		firstName = '';
+		lastName = '';
+		dobUtc = null;
+		selectedCity = null;
+		tagObj = {};
+		tagsInput = '';
+		$cityQuery = '';
 	};
 
-	let selectedIdx = -1;
+
 </script>
 
 <AppBar />
@@ -115,7 +147,7 @@
 				<div class="grid grid-cols-1">
 					<label class="label">
 						<span class="pl-4 prose">First, give them a name.</span>
-						<input bind:value={firstName} class="input" type="text" placeholder="First Name" />
+						<input bind:value={firstName} required class="input" type="text" placeholder="First Name" />
 					</label>
 					<label class="label mt-1.5">
 						<input
@@ -153,7 +185,8 @@
 						{/if}
 						<input
 							class="input"
-							disabled={selectedCity ? true : false}
+							disabled={!!selectedCity}
+							required={!selectedCity}
 							style:display={selectedCity ? 'none' : 'block'}
 							bind:value={$cityQuery}
 							type="search"
@@ -190,6 +223,7 @@
 							<input
 								bind:value={currTime}
 								bind:this={dobInput}
+								required
 								type="datetime-local"
 								class="input"
 							/>
@@ -198,61 +232,96 @@
 							<span class="pl-0 prose">Not sure?</span>
 							<SlideToggle
 								active="bg-secondary-500"
+								tabindex="-1"
 								name="slider-label"
 								size="lg"
 								checked={false}
 							/>
 						</label>
 					</div>
-					<label class="label mt-1 5" for="tags">
-						<span class="pl-4 prose">Tags (optional)</span>
-						<InputChip name="tags"
-							bind:input={tagsInput}
-							bind:value={tags}
-							placeholder="Add a tag..."
-						/>
-						<div class="autocomplete">
-							<nav class="autocomplete-nav">
-								<ul class="autocomplete-list list-nav">
-									{#if tagsInput.length > 2}
-										{#if autoCompleteTags.length === 0}
-											<AutoCompleteItem
-												classesItem="autocomplete-item"
-												classesButton="autocomplete-button"
-												on:click={() => createTag(tagsInput)}
-												on:keypress={() => createTag(tagsInput)}
-											>
-												<div class="flex flex-col items-start">
-													<span class="text-lg">Add "{tagsInput}"</span>
-												</div>
-											</AutoCompleteItem>
-										{/if}
-										{#each autoCompleteTags as tag (tag)}
-											<AutoCompleteItem
-												classesItem="autocomplete-item"
-												classesButton="autocomplete-button"
-												on:click={() => addTag(tag)}
-												on:keypress={() => addTag(tag)}
-											>
-												<div class="flex flex-col items-start">
-													<span class="text-lg">{tag}</span>
-												</div>
-											</AutoCompleteItem>
-										{/each}
+					<div class="card p-2 pt-0 mb-2" class:overflow-hidden={!showTagsControl}>
+						<span class="card-header">
+							<button
+								id="toggleButton"
+								class="toggle-button h-8 bg-transparent border-none focus:font-semibold focus:underline text-lg focus:outline-none"
+								aria-controls="extraContent"
+								aria-expanded="false"
+								on:click={toggleTagsCtrl}
+							>
+								<span
+									class="caret mr-2 p-1 py-0.5 h-4 w-4 inline-block transition-all duration-300 ease-in-out"
+									style:transform={showTagsControl ? 'rotate(90deg)' : 'rotate(0deg)'}
+								>
+									<CaretRight />
+								</span>
+								<span class="py-1.5 mt-0.5 inline-block"
+									>Tags{#if !showTagsControl && !tagObj} (Click to add){/if}</span
+								>
+							</button>
+							<ul class="flex-nowrap inline-flex">
+								{#each $userProfile.tags as sauce}
+									{#if tagObj[sauce]}
+										<li class="chip mx-1 mb-2 variant-soft-secondary">{sauce}</li>
 									{/if}
+								{/each}
+							</ul>
+						</span>
+						<section>
+							<div
+								id="extraContent"
+								aria-labelledby="toggleButton"
+								class:max-h-0={!showTagsControl}
+								class:max-h-96={showTagsControl}
+								class:pb-2={showTagsControl}
+								class:py-2={showTagsControl}
+								class:px-2={true}
+								style:overflow={showTagsControl ? 'visible' : 'hidden'}
+								class="extra-content transition-all"
+							>
+								<input
+									type="text"
+									class="input mb-2"
+									bind:value={tagsInput}
+									on:keydown={(e)=>{if(e.key == 'Enter') {
+										e.preventDefault();
+										if (tagsInput.length > 2 && autoCompleteTags.length == 0) {
+											createTag(tagsInput);
+										}
+									}}}
+									placeholder="Click to add or type to filter..."
+								/>
+								<ul class="flex">
+									<li class="transition-all {canCreateTag ? '' : 'max-h-0 max-w-0 opacity-0 hidden'}">
+										<button
+											on:click={ ()=> createTag(tagsInput) }
+											class="chip variant-filled-primary mx-1 mb-2">Create "{tagsInput}"</button
+										>
+									</li>
+									{#each autoCompleteTags as tag}
+										<li>
+											<button
+												on:click={clickTagHandler(tag)}
+												class:variant-soft-primary={!tagObj[tag]}
+												class:variant-soft-secondary={!!tagObj[tag]}
+												class="chip mx-1 mb-2">{tag}</button
+											>
+										</li>
+									{/each}
 								</ul>
-							</nav>
-						</div>
-					</label>
+
+								<!-- Extra content goes here -->
+							</div>
+						</section>
+					</div>
 				</div>
 				<!-- <div class="form-control flex-row"> -->
 				<!-- 	<AutoComplete bind:result={selectedCity} /> -->
 				<!-- </div> -->
 				<button
 					type="submit"
-					class="w-full p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+					class="input btn variant-glass-secondary"
 				>
-					Submit
+					Create
 				</button>
 			</form>
 		</section>

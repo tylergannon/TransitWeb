@@ -13,6 +13,6 @@ export const updateProfile = async ({ createdAt: _, ...user }: Partial<UserType>
 			...user,
 			birthplace: user.birthplace?.toString(),
 			dobUtc: user.dobUtc?.valueOf().toString(),
-			tags: user.tags?.join(',')
+			tags: user.tags?.filter((t) => t.length > 2).join(',')
 		} as Partial<UserRequestType>)
 	}).then<UserType>((res) => res.json());

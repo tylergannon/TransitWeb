@@ -15,7 +15,9 @@ export const citiesStore = (cityInput: Readable<string>) =>
 
 type PersonObj = Omit<PersonType, 'userId' | '_id' | 'slug'>;
 
-export const postForm = async (personObj: PersonObj): Promise<Omit<PersonType, 'userId'>> => ({
+export const postForm = async (
+	personObj: PersonObj
+): Promise<Omit<PersonType, 'userId' | '_id'> & { _id: string }> => ({
 	...personObj,
 	...(await fetch('/app/people', {
 		method: 'POST',

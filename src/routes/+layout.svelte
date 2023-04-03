@@ -26,6 +26,7 @@
 	setContext('userProfile', writable<UserType|null>(data.user ? {
 		...data.user,
 		dobUtc: data.user.dobUtc ? new Date(parseInt(data.user.dobUtc)) : undefined,
+		tags: data.user.tags || [],
 	} : null));
 
 </script>

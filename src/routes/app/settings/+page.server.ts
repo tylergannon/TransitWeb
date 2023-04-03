@@ -10,7 +10,10 @@ export const actions = {
 		const user: Partial<UserType> = {};
 		for (const [key, value] of form.entries()) {
 			if (key === 'tags') {
-				user.tags = (value.valueOf() as string).split(',').map((tag) => tag.trim());
+				user.tags = (value.valueOf() as string)
+					.split(',')
+					.map((tag) => tag.trim())
+					.filter((t) => t.length > 2);
 			} else if (key === 'dobUtc') {
 				const val = parseInt(value.valueOf() as string);
 				if (!Number.isNaN(val)) {
@@ -28,11 +31,11 @@ export const actions = {
 		// TODO: validate data
 		try {
 			const { id: _, ...result } = await auth.updateUserAttributes(userId, user);
-			return json({
+			return {
 				...result,
 				dobUtc: result.dobUtc?.valueOf().toString(),
 				_id: userId
-			} as Omit<UserType, 'dobUtc'> & { dobUtc: string });
+			} as Omit<UserType, 'dobUtc'> & { dobUtc: string };
 		} catch (e) {
 			console.error(e);
 			return fail(500, { message: 'Failed to save profile.' });
