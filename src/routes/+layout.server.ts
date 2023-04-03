@@ -1,6 +1,3 @@
-import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
-import { Person, type PersonType } from '$lib/srv/model';
 import { handleServerSession } from '@lucia-auth/sveltekit';
 import type { LayoutServerLoadEvent } from './$types';
 
@@ -11,16 +8,23 @@ export const load = handleServerSession(async ({ locals }: LayoutServerLoadEvent
 	}
 
 	const { auth, validate } = locals;
-	const { birthplace, dobUtc, firstName, id, lastName, profileImg, tz, tags } = await auth.getUser(
-		userId
-	);
+	const {
+		birthplace,
+		dobUtc,
+		firstName,
+		id: _id,
+		lastName,
+		profileImg,
+		tz,
+		tags
+	} = await auth.getUser(userId);
 
 	return {
 		user: {
 			birthplace,
-			dobUtc,
+			dobUtc: dobUtc?.valueOf().toString(),
 			firstName,
-			id,
+			_id,
 			lastName,
 			profileImg,
 			tags,

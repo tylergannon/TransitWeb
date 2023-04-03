@@ -131,3 +131,9 @@
 		</Center>
 	{/each}
 </svg>
+
+<style lang="postcss">
+	svg {
+		border: 1px solid red;
+	}
+</style>
