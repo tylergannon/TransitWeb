@@ -10,6 +10,8 @@
   import type { UserType } from '$lib/srv/model/user';
 	import { PASSWORD_HINTS, PASSWORD_VALIDATORS } from '$lib/authHelper';
 	import type { Writable } from 'svelte/store';
+	import AppBar from '$lib/elem/AppBar.svelte';
+	import { updateProfile } from './client';
 
   export let data: PageData
   const userProfile = getContext<Writable<Partial<UserType>>>("userProfile")
@@ -28,23 +30,20 @@
   const profileImg = $form.profileImg.valid ? $form.profileImg.value : null
 
   type args = { profileImg: string, firstName: string, lastName: string }
-
-  const saveProfile = debounce(async (args: Partial<args>) => {
-    const res = await fetch("/app/settings?/saveProfile", {
-      method: "POST",
-      body: new URLSearchParams(args)
-    })
-    if (res.status == 200) {
+  const saveProfile = debounce(
+    async (args: Partial<args>) => updateProfile(args).then(() => {
       userProfile.update((value) => {
         return {
           ...value,
           ...args
         }
       })
-    }
-  })
+    })
+  )
+
 </script>
 
+<AppBar />
 <div class="p-4">
   <h1 class="text-4xl font-semibold mb-4">Settings</h1>
   {#if $saveProfile}

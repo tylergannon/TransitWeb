@@ -3,6 +3,21 @@ import { writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 
 const DEFAULT_DEBOUNCE_MS = 300;
+
+export const regularDebounce = <T>(func: (args: T) => Promise<void>, wait = 200) => {
+	let timeout: ReturnType<typeof setTimeout> | null = null;
+	return (args: T) => {
+		const later = () => {
+			timeout = null;
+			func(args);
+		};
+		if (timeout) clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	};
+};
+
+export default regularDebounce;
+
 export function debounce<T>(
 	func: (args: T) => void,
 	wait: number = DEFAULT_DEBOUNCE_MS

@@ -1,10 +1,10 @@
-import { ObjectID } from 'bson';
+import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
 import type { Model } from 'mongoose';
 import slugify from 'slugify';
 
 export interface PersonType {
-	_id: ObjectID;
+	_id: ObjectId;
 	slug: string;
 	userId: string;
 	firstName: string;
@@ -18,7 +18,7 @@ export interface PersonType {
 export type NewPersonType = Omit<PersonType, '_id' | 'slug'>;
 
 export interface PersonModel extends Model<PersonType> {
-	createPerson(person: NewPersonType): Promise<{ _id: ObjectID; slug: string }>;
+	createPerson(person: NewPersonType): Promise<{ _id: ObjectId; slug: string }>;
 }
 
 export const PersonSchema = new Schema<PersonType>(
@@ -36,7 +36,7 @@ export const PersonSchema = new Schema<PersonType>(
 	{
 		statics: {
 			async createPerson(this: import('mongoose').Model<PersonType>, person: NewPersonType) {
-				const _id = new ObjectID();
+				const _id = new ObjectId();
 				const slug = slugify(
 					person.lastName ? `${person.firstName} ${person.lastName}` : person.firstName,
 					{ lower: true }

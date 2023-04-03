@@ -19,6 +19,9 @@ export const actions = {
 			dobUtc: new Date(dateVal.match(NUMBER) ? parseInt(dateVal) : Date.parse(dateVal)),
 			tz: formData.get('tz') as string,
 			tags: tags ? tags.split(',').map((a) => a.trim()) : []
-		});
+		}).then(({ _id, slug }) => ({
+			_id: _id.toHexString(),
+			slug
+		}));
 	}
 } satisfies Actions;

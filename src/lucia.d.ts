@@ -6,7 +6,7 @@ declare namespace Lucia {
 		profileImg?: string;
 		dobUtc?: Date;
 		tz?: string;
-		birthplace?: import('mongodb').ObjectId;
+		birthplace?: number;
 		tags: string[];
 		createdAt?: Date;
 	};
