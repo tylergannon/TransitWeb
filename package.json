@@ -12,7 +12,8 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"prepare": "is-ci || husky install",
-		"lint-staged": "is-ci || lint-staged"
+		"lint-staged": "is-ci || lint-staged",
+		"ncu": "ncu -x lucia-auth"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.2.5",
@@ -27,8 +28,8 @@
 		"@types/cookie": "^0.5.1",
 		"@types/d3-path": "^3.0.0",
 		"@types/nodemailer": "^6.4.7",
-		"@typescript-eslint/eslint-plugin": "^5.57.0",
-		"@typescript-eslint/parser": "^5.57.0",
+		"@typescript-eslint/eslint-plugin": "^5.57.1",
+		"@typescript-eslint/parser": "^5.57.1",
 		"autoprefixer": "^10.4.14",
 		"carbon-icons-svelte": "^11.4.0",
 		"eslint": "^8.37.0",
