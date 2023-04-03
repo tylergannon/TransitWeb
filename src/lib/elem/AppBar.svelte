@@ -38,10 +38,6 @@
 	<svelte:fragment slot="headline" />
 	<svelte:fragment slot="trail">
 		<slot name="actions" />
-		<a type="button" class="btn variant-filled rounded-md" href="/app/design">
-			<span><Assembly size={24} /></span>
-			<span>Designer</span>
-		</a>
 		{#if $userProfile}
 			<button
 				type="button"

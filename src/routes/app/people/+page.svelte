@@ -3,16 +3,10 @@
 	import type { PeopleStore } from '$lib/stores/people';
 	import Person from './Person.svelte';
 	import AppBar from '$lib/elem/AppBar.svelte';
+	import { AppShell, ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
  	const userPeople = getContext('userPeople') as PeopleStore;
+  let group = '';
 
 </script>
 
-<AppBar />
-<div class="p-4" >
-  <h1 class="text-4xl font-semibold mb-4">People</h1>
-  <div class="flex flex-col space-y-4">
-    {#each Object.values($userPeople) as person}
-      <Person {person} />
-    {/each}
-  </div>
-</div>
+<h1>Sick</h1>
