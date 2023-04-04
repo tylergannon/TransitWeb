@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="6.9866533mm"
+   height="6.9866543mm"
+   viewBox="0 0 6.9866533 6.9866543"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486, 2022-12-01)"
+   sodipodi:docname="sun.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="4.8278424"
+     inkscape:cx="38.319395"
+     inkscape:cy="25.270087"
+     inkscape:window-width="1439"
+     inkscape:window-height="650"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="45.776142"
+       y="82.024216"
+       width="87.202515"
+       height="80.160034"
+       id="rect347" />
+    <rect
+       x="13.453242"
+       y="68.947868"
+       width="282.51807"
+       height="119.39752"
+       id="rect113" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-12.850378,-24.252639)">
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text111"
+       style="font-size:40px;line-height:1.25;font-family:'Berliner Wand';-inkscape-font-specification:'Berliner Wand';white-space:pre;shape-inside:url(#rect113);display:inline" />
+    <g
+       aria-label="☉"
+       transform="scale(0.26458333)"
+       id="text345"
+       style="font-size:40px;line-height:1.25;font-family:'Berliner Wand';-inkscape-font-specification:'Berliner Wand';white-space:pre;shape-inside:url(#rect347)">
+      <path
+         d="m 61.771484,91.663518 q 5.429688,0 9.316407,3.886718 3.886718,3.886719 3.886718,9.316404 0,5.42969 -3.886718,9.31641 -3.886719,3.88672 -9.316407,3.88672 -5.429687,0 -9.316406,-3.88672 -3.886719,-3.88672 -3.886719,-9.31641 0,-5.429685 3.886719,-9.316404 3.886719,-3.886718 9.316406,-3.886718 z m 0,25.214842 q 4.921875,0 8.457032,-3.53515 3.554687,-3.55469 3.554687,-8.47657 0,-4.941404 -3.535156,-8.457029 -3.515625,-3.535156 -8.476563,-3.535156 -4.921875,0 -8.457031,3.535156 -3.535156,3.535157 -3.535156,8.457029 0,4.96094 3.515625,8.4961 3.535156,3.51562 8.476562,3.51562 z m 0,-14.0039 q 0.839844,0 1.425782,0.58593 0.585937,0.56641 0.585937,1.40625 0,0.83985 -0.585937,1.42578 -0.585938,0.58594 -1.425782,0.58594 -0.839843,0 -1.425781,-0.58594 -0.566406,-0.58593 -0.566406,-1.42578 0,-0.83984 0.566406,-1.40625 0.585938,-0.58593 1.425781,-0.58593 z"
+         id="path351" />
+    </g>
+  </g>
+</svg>
