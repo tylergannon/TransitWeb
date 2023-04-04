@@ -2,3 +2,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+	font-family: 'Mona Sans';
+	src: url('/fonts/Mona-Sans.woff2') format('woff2 supports variations'),
+		url('/fonts/Mona-Sans.woff2') format('woff2-variations'),
+		url('/fonts/Mona-Sans.woff') format('woff'), url('/fonts/Mona-Sans.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Hubot Sans';
+	src: url('/fonts/Hubot-Sans.woff2') format('woff2 supports variations'),
+		url('/fonts/Hubot-Sans.woff2') format('woff2-variations'),
+		url('/fonts/Hubot-Sans.woff') format('woff'), url('/fonts/Hubot-Sans.ttf') format('truetype');
+	font-weight: 200 900;
+	font-stretch: 75% 125%;
+}
+
+:root {
+  --theme-font-family-base: 'Mona Sans', sans-serif;
+  --theme-font-family-heading: 'Hubot Sans', sans-serif;
+}
