@@ -1,5 +1,5 @@
-import { PUBLIC_ASTROAPI_URL } from '$env/static/public';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
+import { format, utcToZonedTime } from 'date-fns-tz';
+const PUBLIC_ASTROAPI_URL = '/astroapi';
 
 export type PlanetData<T> = {
 	sun: T;
@@ -61,29 +61,38 @@ export type TransitionReportJson = {
 	lines?: string[];
 };
 
-export function chartRequest(date: string, time: string, tz: string) {
-	const dateUtc = zonedTimeToUtc(`${date} ${time}`, tz);
-	return fetch(
+const _fmt = (d: Date, t: string, p: string) => format(utcToZonedTime(d, t), p, { timeZone: t });
+const fDate = (d: Date, t: string) => _fmt(d, t, 'yyyy-MM-dd');
+const fTime = (d: Date, t: string) => _fmt(d, t, 'HH:mm:ss');
+
+export function fetchChart(dobUtc: Date, timeZone: string, _fetch: typeof fetch) {
+	console.log('borg', dobUtc.toUTCString(), timeZone);
+	return _fetch(
 		PUBLIC_ASTROAPI_URL +
 			'/chart?' +
 			new URLSearchParams({
-				local_date: format(dateUtc, 'yyyy-MM-dd'),
-				local_time: format(dateUtc, 'HH:mm:ss'),
-				tz
+				local_time: fTime(dobUtc, timeZone),
+				tz: timeZone,
+				local_date: fDate(dobUtc, timeZone)
 			}).toString()
 	).then((res) => res.json()) as Promise<HdChartJson>;
 }
 
-export function transitionReportRequest(utcStart: Date, utcEnd: Date, tz: string) {
-	return fetch(
+export function transitionReportRequest(
+	utcStart: Date,
+	utcEnd: Date,
+	timeZone: string,
+	_fetch: typeof fetch
+) {
+	return _fetch(
 		PUBLIC_ASTROAPI_URL +
 			'/transition_report?' +
 			new URLSearchParams({
-				start_date: format(utcStart, 'yyyy-MM-dd'),
-				start_time: format(utcStart, 'HH:mm:ss'),
-				end_date: format(utcEnd, 'yyyy-MM-dd'),
-				end_time: format(utcEnd, 'HH:mm:ss'),
-				tz
+				start_date: fDate(utcStart, timeZone),
+				start_time: fTime(utcStart, timeZone),
+				end_date: fDate(utcEnd, timeZone),
+				end_time: fTime(utcEnd, timeZone),
+				tz: timeZone
 			}).toString()
 	).then((res) => res.json()) as Promise<TransitionReportJson>;
 }

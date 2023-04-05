@@ -5,7 +5,6 @@
 
 	import IncompleteCancel from 'carbon-icons-svelte/lib/IncompleteCancel.svelte';
 	import UserAvatarFilledAlt from 'carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte';
-	import Assembly from 'carbon-icons-svelte/lib/Assembly.svelte';
 
 	import type { UserType } from '$lib/srv/model';
 
@@ -13,18 +12,22 @@
 	import type { Writable } from 'svelte/store';
 	import { getContext } from 'svelte';
 
-	const userProfile: Writable<UserType> = getContext('userProfile')
+	const userProfile: Writable<UserType> = getContext('userProfile');
+	userProfile.subscribe((value) => {
+		console.log('userProfile', value);
+	});
 
 	const popupSettings: PopupSettings = {
 		event: 'click',
-		target: 'userMenu'
+		target: 'userMenu',
+		placement: 'bottom-end'
 	};
 </script>
 
 <AppBar>
 	<div class="flex items-center space-x-4 divide-x lg:pl-8">
-    <a href="/app/people">People</a>
-    <a href="/app/people/new" class="pl-4">New Person</a>
+		<a href="/app/people">People</a>
+		<a href="/app/people/new" class="pl-4">New Person</a>
 	</div>
 
 	<svelte:fragment slot="lead">
@@ -35,20 +38,21 @@
 			</a>
 		</div>
 	</svelte:fragment>
-	<svelte:fragment slot="headline" />
+	<svelte:fragment slot="headline">
+	</svelte:fragment>
 	<svelte:fragment slot="trail">
-		<slot name="actions" />
-		{#if $userProfile}
-			<button
-				type="button"
-				class="btn hover:text-secondary-600"
-				use:popup={popupSettings}
-				id="userMenu"
-			>
-				<span><UserAvatarFilledAlt size={24} /></span>
-				<span>Me</span>
-			</button>
+		<button
+			type="button"
+			class="btn hover:text-secondary-600"
+			use:popup={popupSettings}
+			id="userMenu"
+
+		>
+			<span><UserAvatarFilledAlt size={24} /></span>
+			<span>Me</span>
+		</button>
+		<div class="card p-4" data-popup="userMenu">
 			<UserMenu />
-		{/if}
+		</div>
 	</svelte:fragment>
 </AppBar>

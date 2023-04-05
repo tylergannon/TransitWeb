@@ -5,8 +5,15 @@
 
 	export let data: LayoutData;
 
-	setContext('userPeople', peopleStore(data.people));
-
+	setContext(
+		'userPeople',
+		peopleStore(
+			data.people.map((person) => ({
+				...person,
+				dobUtc: new Date(parseInt(person.dobUtc))
+			}))
+		)
+	);
 </script>
 
 <slot />
