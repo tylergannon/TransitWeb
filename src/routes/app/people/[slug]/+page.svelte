@@ -1,41 +1,42 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
 	import { getContext } from 'svelte';
-	import { derived, type Unsubscriber } from 'svelte/store';
-	import type { Writable } from 'svelte/store';
-	import { utcToZonedTime, formatInTimeZone } from 'date-fns-tz';
+
 	import type { PageData } from './$types';
-	import type { PeopleStore } from '$lib/stores/people';
-	import { chartRequest, type HdChartJson } from '$lib/hd/chart';
-	import Designer from '$lib/components/Designer.svelte';
+	import type { ClientSidePerson, PeopleStore } from '$lib/stores/people';
 
-	const userPeople = getContext('userPeople') as Writable<PeopleStore>;
+	import * as planets from '$lib/images/icons/planets';
+
+	const userPeople = getContext('userPeople') as PeopleStore;
 	export let data: PageData;
-	if (!Object.prototype.hasOwnProperty.call($userPeople, data.person.slug)) {
-		userPeople.update((people) => {
-			people[data.person.slug] = data.person;
-			return people;
-		});
+
+	let {
+		person, chart
+	} = data;
+
+	$: {
+		if ($userPeople[data.person.slug] === undefined) {
+			userPeople.add(person);
+		}
 	}
-	let chart: HdChartJson | undefined = undefined;
 
-	const person = derived(userPeople, ($userPeople) => $userPeople[data.person.slug]);
-	let unsubscribe: Unsubscriber | undefined = undefined;
+	$: person = $userPeople[data.person.slug];
 
-	onMount(async () => {
-		unsubscribe = person.subscribe(async (person) => {
-			try {
-				chart = await chartRequest(
-					formatInTimeZone(person.dobUtc, person.tz, 'yyyy-MM-dd'),
-					formatInTimeZone(person.dobUtc, person.tz, 'HH:mm:ss'),
-					person.tz
-				);
-			} catch (e) {
-				console.error('Had an issue with the chart request.', e);
-			}
-		});
-	});
-	onDestroy(()=> unsubscribe && unsubscribe());
 </script>
 
-<Designer />
+<div class="text-4xl font-bold p-4">
+	{person.firstName}
+	{person.lastName}
+</div>
+
+<div class="card rounded-md w-14 h-14 p-1">
+	<div class="flex flex-row items-center">
+		<img src={planets.sun} alt="sun" class="h-4 w-4" />
+		<span class="pl-0.5">Sun</span>
+	</div>
+	<div class="flex flex-row">
+		<span class="text-lg">{chart.design.sun[0]}</span>
+		<div class="card">
+
+		</div>
+	</div>
+</div>

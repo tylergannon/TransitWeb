@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { Person } from '$lib/srv/model';
+import { Person, type UserType } from '$lib/srv/model';
 import type { ClientSidePerson } from '$lib/stores/people';
 
 export const load = (async ({ locals, parent }) => {
@@ -14,12 +14,13 @@ export const load = (async ({ locals, parent }) => {
 	const people = (await Person.find({ userId }).select('-userId -__v')).map((person) => {
 		return {
 			...person.toObject(),
-			_id: person._id.toHexString()
+			_id: person._id.toHexString(),
+			dobUtc: person.dobUtc.valueOf().toString()
 		};
-	}) as ClientSidePerson[];
+	}) as (Omit<ClientSidePerson, 'dobUtc'> & { dobUtc: string })[];
 
 	return {
-		user: parentData.user!,
+		user: parentData.user! as Omit<UserType, 'dobUtc'> & { dobUtc: string },
 		people
 	};
 }) satisfies LayoutServerLoad;
