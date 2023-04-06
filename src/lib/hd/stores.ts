@@ -80,8 +80,8 @@ export const DEFAULT_GRAPH_PROPS: BodyGraphProps = {
 	channelSpace: 2,
 	pipRadius: 16,
 	distFromEdge: 5,
-	height: 800,
-	width: 667,
+	aspectRatio: 0.83,
+	width: 600,
 	scale: 1,
 	triangleSize: 150,
 	squareSize: 162
@@ -99,14 +99,14 @@ export type CenterProps = {
 
 export const DEFAULT_CENTER_ARGS: CenterRecord<CenterProps> = {
 	head: { name: 'head', x: 0, y: 80, shapeSize: 150 },
-	ajna: { name: 'ajna', x: 0, y: 240, scale: 1.2, shapeSize: 150, rotation: 180 },
+	ajna: { name: 'ajna', x: 0, y: 240, scale: 1, shapeSize: 150, rotation: 180 },
 	throat: { name: 'throat', x: 0, y: 420, shape: 'square', shapeSize: 162 },
 	g: { name: 'g', x: 0, y: 640, shape: 'square', shapeSize: 162, rotation: 45 },
 	sacral: { name: 'sacral', x: 0, y: 900, shape: 'square', shapeSize: 162 },
 	root: { name: 'root', x: 0, y: 1100, shape: 'square', shapeSize: 162 },
-	will: { name: 'will', x: 150, y: 750, rotation: 15, shapeSize: 150 * 0.85 },
-	spleen: { name: 'spleen', x: -300, y: 900, rotation: 90, shapeSize: 150 },
-	esp: { name: 'esp', x: 300, y: 900, rotation: 270, shapeSize: 150 }
+	will: { name: 'will', x: 160, y: 710, rotation: 15, shapeSize: 150 * 0.85 },
+	spleen: { name: 'spleen', x: -300, y: 880, rotation: 90, shapeSize: 150 },
+	esp: { name: 'esp', x: 300, y: 880, rotation: 270, shapeSize: 150 }
 };
 
 /**

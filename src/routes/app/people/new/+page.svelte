@@ -1,5 +1,13 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
+	import type { ActionData } from './$types';
 	import AddPerson from './AddPerson.svelte';
+
+	afterNavigate(() => {
+		(document.querySelector('input[name="firstName"]') as null|HTMLInputElement)?.focus();
+	});
+
+	export let form: ActionData;
 </script>
 
 
@@ -9,7 +17,7 @@
 			<h3 class="mb-6 text-xl font-semibold">New Record</h3>
 		</div>
 		<section>
-			<AddPerson />
+			<AddPerson {form} />
 		</section>
 	</div>
 	<div class="col-span-4" />
