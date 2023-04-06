@@ -1,7 +1,7 @@
-import type { AutoCompleteOption } from '$lib/components/complete/types';
 import type { GeoNamesCityType, PersonType } from '$lib/srv/model';
 import derivedStore from '$lib/stores/asyncDerivedStore';
 import type { Readable } from 'svelte/store';
+import type { ActionData } from './$types';
 const API_PATH = '/app/api/findCity/';
 
 const fetchCities = async (value: string): Promise<GeoNamesCityType[]> => {

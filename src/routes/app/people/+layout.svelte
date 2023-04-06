@@ -8,6 +8,10 @@
 	import SideBarPeople from './SideBarPeople.svelte';
 	const userPeople = getContext('userPeople') as PeopleStore;
 	let group = '';
+	
+	import { page } from '$app/stores';
+
+	let query = $page.url.searchParams.get('q') || '';
 
 	const remove = ({detail: slug}: CustomEvent<string>) => {
 		deletePerson({slug}).then(() => {
@@ -24,8 +28,8 @@
 	<svelte:fragment slot="sidebarLeft">
 		<div id="list" class="flex-grow min-h-full lg:w-72 p-4 mr-2 dark:bg-surface-900 border-solid border-slate-400">
 			<div class="flex flex-col space-y-4">
-				<input type="search" class="input" />
-				<SideBarPeople userPeople={$userPeople} />
+				<input type="search" bind:value={query} class="input" />
+				<SideBarPeople userPeople={$userPeople} bind:query />
 			</div>
 		</div>
 	</svelte:fragment>

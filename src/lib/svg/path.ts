@@ -23,6 +23,10 @@ export class SvgPath {
 	private _path: string[] = [];
 	private _rotation: Rotation = _rotateZero;
 
+	constructor(path?: string) {
+		if (path) this._path.push(path);
+	}
+
 	add(cmd: string, ...args: number[]) {
 		this._path.push(`${cmd}${args.map(rnd).join(',')}`);
 		return this;
@@ -67,7 +71,7 @@ export class SvgPath {
 		return this;
 	}
 
-	roundedTriangle(size: number, r = 0.6) {
+	roundedTriangle(size: number, r = 0.5) {
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
 		const height = k * cos30 + radius * 2;
@@ -80,11 +84,9 @@ export class SvgPath {
 			.close();
 	}
 
-	roundedSquare(size: number, r = 0.7) {
+	roundedSquare(size: number, r = 0.4) {
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
-		console.log('k', k, 'radius', radius);
-
 		return this.move([size / 2, size / 2 - radius])
 			.squareCorner([-radius, radius])
 			.line([-k, 0])
