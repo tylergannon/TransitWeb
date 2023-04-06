@@ -22,6 +22,9 @@ export const fact =
 	({ size }) =>
 		size * n;
 
+/**
+ * A tuple of functions that return the x and y coordinates of a gate
+ */
 export type GateArgs = [
 	(props: CenterDisplayProps) => number,
 	(props: CenterDisplayProps) => number
@@ -123,8 +126,8 @@ export const gatesConfig = buildGatesConfig<GateArgs>({
 		'62': [leftChannelX, top]
 	},
 	will: {
-		'21': [fact(0), fact(-0.24)],
-		'26': [fact(-0.3), fact(0.04)],
+		'21': [fact(0.05), fact(-0.3)],
+		'26': [fact(-0.38), fact(0.1)],
 		'40': [fact(0.2), fact(0.26)],
 		'51': [fact(-0.15), fact(-0.1)]
 	}

@@ -1,32 +1,41 @@
 <script lang="ts">
-	import type { GateArgs, GatesRecord } from '$lib/hd/gatePos';
-	import { CHANNELS, type BodyGraphProps, type CenterDisplayProps, type CenterName, type CenterRecord, type PipProps } from '$lib/hd/graph';
+	import type { GateArgs, GatesRecord as CenterGates } from '$lib/hd/gatePos';
+	import type { CenterDisplayProps, CenterName, PipProps } from '$lib/hd/graph';
+	import { CHANNELS } from '$lib/hd/graph';
 	import type { CenterProps, GateNumber } from '$lib/hd/stores';
 
 	import { gatesConfig } from '$lib/hd/gatePos';
 	import { DEFAULT_CENTER_ARGS, DEFAULT_GRAPH_PROPS } from '$lib/hd/stores';
 	import Center from './Center.svelte';
 	import Pip from './Pip.svelte';
-	import { pathFrom, toPoint } from '$lib/svg/path';
+	import { pathFrom, SvgPath, toPoint } from '$lib/svg/path';
 	import { subtract, add as addPoint } from '$lib/svg/calc';
 	import type { Point } from '$lib/svg/types';
+	import { filter } from '@skeletonlabs/skeleton';
+	import DropShadow from '../svg/DropShadow.svelte';
 
-	// Be simple.  Take width & height, and print a nice graph.
-	export let graphProps: BodyGraphProps = DEFAULT_GRAPH_PROPS;
+	export let {
+		aspectRatio,
+		pipRadius,
+		channelSpace,
+		distFromEdge,
+		scale,
+		squareSize,
+		triangleSize,
+		width
+	} = DEFAULT_GRAPH_PROPS;
 
-	export let head: CenterProps = DEFAULT_CENTER_ARGS.head;
-	export let ajna: CenterProps = DEFAULT_CENTER_ARGS.ajna;
-	export let throat: CenterProps = DEFAULT_CENTER_ARGS.throat;
-	export let g: CenterProps = DEFAULT_CENTER_ARGS.g;
-	export let sacral: CenterProps = DEFAULT_CENTER_ARGS.sacral;
-	export let root: CenterProps = DEFAULT_CENTER_ARGS.root;
-	export let will: CenterProps = DEFAULT_CENTER_ARGS.will;
-	export let esp: CenterProps = DEFAULT_CENTER_ARGS.esp;
-	export let spleen: CenterProps = DEFAULT_CENTER_ARGS.spleen;
-
-	$: pipRadius = graphProps.pipRadius;
-	$: channelSpace = graphProps.channelSpace;
-	$: distFromEdge = graphProps.distFromEdge;
+	export let {
+		head,
+		ajna,
+		throat,
+		g,
+		sacral,
+		root,
+		will,
+		esp,
+		spleen
+	} = DEFAULT_CENTER_ARGS;
 
 	const roundedTriangleHeight = (size: number, r = 0.6) => size * (1 - 0.134 / (1 + 2 * r));
 
@@ -43,7 +52,7 @@
 			centerDx: (scale || 1) * (2 * pipRadius + channelSpace)
 		} as CenterDisplayProps);
 
-	const buildGates = (ctr: CenterProps, [gate, fns]: [string, GateArgs]): [GateNumber, PipProps] => {
+	const entryForGate = (ctr: CenterProps, [gate, fns]: [string, GateArgs]): [GateNumber, PipProps] => {
 		const p = _props(ctr);
 		return [
 			gate as GateNumber,
@@ -56,28 +65,35 @@
 		];
 	};
 
-	const _gates = <T extends CenterName>(ctr: CenterProps) =>
+	const centerGates = <T extends CenterName>(ctr: CenterProps) =>
 		Object.fromEntries(
-			Object.entries(gatesConfig[ctr.name]).map((p) => buildGates(ctr, p))
-		) as GatesRecord<T, PipProps>;
+			Object.entries(gatesConfig[ctr.name]).map((p) => entryForGate(ctr, p))
+		) as CenterGates<T, PipProps>;
 
 	$: data = {
-		"head": {center: head, gates: _gates<'head'>(head)},
-		"ajna": {center: ajna, gates: _gates<'ajna'>(ajna)},
-		"throat": {center: throat, gates: _gates<'throat'>(throat)},
-		"g": {center: g, gates: _gates<'g'>(g)},
-		"sacral": {center: sacral, gates: _gates<'sacral'>(sacral)},
-		"root": {center: root, gates: _gates<'root'>(root)},
-		"will": {center: will, gates: _gates<'will'>(will)},
-		"esp": {center: esp, gates: _gates<'esp'>(esp)},
-		"spleen": {center: spleen, gates: _gates<'spleen'>(spleen)}
+		"head": {center: head, gates: centerGates<'head'>(head)},
+		"ajna": {center: ajna, gates: centerGates<'ajna'>(ajna)},
+		"throat": {center: throat, gates: centerGates<'throat'>(throat)},
+		"g": {center: g, gates: centerGates<'g'>(g)},
+		"sacral": {center: sacral, gates: centerGates<'sacral'>(sacral)},
+		"root": {center: root, gates: centerGates<'root'>(root)},
+		"will": {center: will, gates: centerGates<'will'>(will)},
+		"esp": {center: esp, gates: centerGates<'esp'>(esp)},
+		"spleen": {center: spleen, gates: centerGates<'spleen'>(spleen)}
+	}
+	
+	const channelOutline = (gate1: PipProps, gate2: PipProps, path: string, offset: number) => {
+		return new SvgPath(path).line([0, -1])
 	}
 
-	const channelPath = (gate1: PipProps, p1: Point, p2: Point, gate2: PipProps): string => {
+	const channelPath = (gate1: PipProps, p1: Point|null, p2: Point|null, gate2: PipProps): string => {
 		console.log("channelPath", gate1, p1, p2, gate2)
+		if (p1 === null || p2 === null)
+			return pathFrom(toPoint(gate1)).line(toPoint(gate2), "L").toString();
 		const pos1 = toPoint(gate1);
 		const pos2 = toPoint(gate2);
 		const pos2rel = subtract(pos2, pos1);
+
 		return pathFrom(pos1)
 			.cubic(p1, addPoint(pos2rel, p2), pos2rel)
 			.toString()
@@ -85,18 +101,18 @@
 
 	$: channels = CHANNELS.map(([gate1, gate2, center1, center2, p1, p2]) => {
 		console.log("channel", gate1, gate2, center1, center2, p1, p2)
-		const g1 = (data[center1].gates as GatesRecord<typeof center1, PipProps>)[gate1];
-		const g2 = (data[center2].gates as GatesRecord<typeof center2, PipProps>)[gate2];
+		const g1 = (data[center1].gates as CenterGates<typeof center1, PipProps>)[gate1];
+		const g2 = (data[center2].gates as CenterGates<typeof center2, PipProps>)[gate2];
 
 		return [gate1, gate2, center1, center2, channelPath(g1, p1, p2, g2)];
 	})
 
-
 </script>
 
 <svg
-	width={graphProps.width}
-	height={graphProps.height}
+	width={width}
+	height={width / aspectRatio}
+	class="dark:fill-slate-100"
 	viewBox="-500 0 1000 1200"
 	xmlns="http://www.w3.org/2000/svg"
 >
@@ -105,21 +121,19 @@
 		<stop offset="0%" stop-color="red" />
 		<stop offset="100%" stop-color="red" stop-opacity="0" />
 	</radialGradient>
-	<defs>
-    <radialGradient id="radial-gradient" cx="50%" cy="50%" r="50%" fx="0%" fy="0%">
-      <stop offset="0%" style="stop-color:#ff0000;"/>
-      <stop offset="100%" style="stop-color:#0000ff;"/>
-    </radialGradient>
-  </defs>
+	<DropShadow id="dropShadow" />
 </defs>
+
 	{#each channels as [gate1, gate2, center1, center2, path] (`${gate1}-${gate2}`)}
 		<path
 			id="ch{gate1}-{gate2}"
 			d={path}
+			filter="url(#dropShadow)"
 			stroke-width={pipRadius * 1.6}
 			stroke="green"
 			stroke-linecap="round"
 			fill="none"
+			z="1"
 			/>
 	{/each}
 

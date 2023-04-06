@@ -7,7 +7,7 @@ export type ClientSidePerson = Omit<ClientSide<PersonType>, 'userId'>;
 
 export type PersonStore = ClientSidePerson;
 
-export interface PeopleStore extends Readable<Record<string, PersonStore>> {
+export interface PeopleStore extends Readable<Record<string, ClientSidePerson>> {
 	add(person: ClientSidePerson): void;
 	remove(slug: string): void;
 }

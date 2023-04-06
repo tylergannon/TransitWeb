@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -12,25 +10,39 @@
 
 	import { writable } from 'svelte/store';
 	import { citiesStore, postForm } from './helper';
-	import debounce from '$lib/components/helper';
 
 	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
 	import PersonTags from './PersonTags.svelte';
+	import type { ActionData, SubmitFunction } from './$types';
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 
 	const people = getContext('userPeople') as PeopleStore;
 
-	const dispatch = createEventDispatcher();
+	const formResponse = (() => async ({ result }) => {
+		await applyAction(result);
+		if (result.type === "success") {
+			people.add({
+				...(form as NonNullable<ActionData>),
+				dobUtc: dobUtc as Date,
+				tags,
+				firstName,
+				lastName,
+				placeId: (selectedCity as GeoNamesCityType)._id,
+				tz: (selectedCity as GeoNamesCityType).tz,
+			})
+		}
+		clearForm();
+		goto("/app/people/" + (form as NonNullable<ActionData>).slug);
+	}) satisfies SubmitFunction;
+
+	export let form: ActionData
 
 	let selectedCity: GeoNamesCityType | null = null;
 	let currTime = '';
 	let firstName = '';
 	let lastName = '';
 	let dobUtc: Date | null = null;
-
-
-	$: {
-		console.log(`currTime: ${currTime}`);
-	}
 
 	let cityQuery = writable('');
 	const cities = citiesStore(cityQuery);
@@ -42,48 +54,13 @@
 		selectedCity = city;
 		cityQuery.set('');
 		dobInput.focus();
-		console.log(city);
 	};
 
 	$: {
 		if (currTime && selectedCity) {
 			dobUtc = zonedTimeToUtc(currTime, selectedCity.tz);
-			console.log(`dobUtc: ${dobUtc}`);
 		}
 	}
-
-	const handleSubmit = debounce(async (event: Event) => {
-		console.log(`I am a handler!  Super snake viper!`);
-		alert(JSON.stringify(event));
-		event.preventDefault();
-		if (!dobUtc || !firstName || !selectedCity) {
-			console.log('missing data');
-			return;
-		}
-		console.log({
-			firstName,
-			lastName,
-			dobUtc,
-			tz: selectedCity!.tz,
-			placeId: selectedCity!._id,
-			tags,
-		});
-
-		const newPerson = await postForm({
-			firstName,
-			lastName,
-			dobUtc,
-			tz: selectedCity!.tz,
-			placeId: selectedCity!._id,
-			tags,
-		});
-
-		people.add(newPerson);
-		clearForm();
-		dispatch('addPerson', newPerson);
-
-		dispatch('close');
-	});
 
 	const clearForm = () => {
 		firstName = '';
@@ -97,15 +74,23 @@
 	};
 </script>
 
-<form on:submit={handleSubmit}>
+<form method="POST" action="/app/people/new" use:enhance={formResponse}>
 	<div class="grid grid-cols-1">
 		<label class="label">
 			<span class="pl-4 prose">First, give them a name.</span>
-			<input bind:value={firstName} required class="input" type="text" placeholder="First Name" />
+			<input name="firstName" bind:value={firstName} required class="input" type="text" placeholder="First Name" />
 		</label>
 		<label class="label mt-1.5">
-			<input bind:value={lastName} class="input" type="text" placeholder="Last Name (optional)" />
+			<input name="lastName" bind:value={lastName} class="input" type="text" placeholder="Last Name (optional)" />
 		</label>
+		<input name="placeId" required value="{selectedCity?._id}" type="hidden" />
+		<input name="dobUtc" required value="{dobUtc?.valueOf()}" type="hidden" />
+		<input name="tz" required value="{selectedCity?.tz}" type="hidden" />
+
+		{#each tags as tag}
+			<input name="tags" value="{tag}" type="hidden" />
+		{/each}
+
 		<label class="label mt-1.5">
 			{#if selectedCity}
 				<span class="pl-4 prose">Place of Birth</span>
@@ -139,6 +124,7 @@
 				bind:value={$cityQuery}
 				type="search"
 				placeholder="Start typing a city name..."
+				form=""
 			/>
 		</label>
 		<div class="autocomplete">
@@ -172,6 +158,7 @@
 					required
 					type="datetime-local"
 					class="input"
+					form=""
 				/>
 			</label>
 			<label class="label mt-1.5 ml-4" for="slider-label">
