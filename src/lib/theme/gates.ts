@@ -1,23 +1,23 @@
-import type { CENTER_GATES, CenterDisplayProps, CenterName } from './graph';
+import type { CENTER_GATES, CenterDisplayProps, CenterName } from '$lib/hd/graph';
 
-export const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
-export const centerChannelX = (props: CenterDisplayProps) => 0;
-export const rightChannelX = ({ centerDx }: CenterDisplayProps) => centerDx;
-export const triangleBottomY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
+const centerChannelX = (props: CenterDisplayProps) => 0;
+const rightChannelX = ({ centerDx }: CenterDisplayProps) => centerDx;
+const triangleBottomY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	height / 2 - pipRadius - distFromEdge;
-export const triangleTopY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const triangleTopY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	-height / 2 + pipRadius + distFromEdge;
-export const top = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const top = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	-size / 2 + pipRadius + distFromEdge;
-export const bottom = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const bottom = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	size / 2 - pipRadius - distFromEdge;
-export const left = top;
-export const right = bottom;
-export const topChannelY = leftChannelX;
-export const bottomChannelY = rightChannelX;
-export const middleChannelY = centerChannelX;
+const left = top;
+const right = bottom;
+const topChannelY = leftChannelX;
+const bottomChannelY = rightChannelX;
+const middleChannelY = centerChannelX;
 
-export const fact =
+const fact =
 	(n: number): ((p: CenterDisplayProps) => number) =>
 	({ size }) =>
 		size * n;
@@ -48,7 +48,7 @@ export type GatesConf<T = GateArgs> = {
 
 export const buildGatesConfig = <T = GateArgs>(props: GatesConf<T>) => props;
 
-export const gatesConfig = buildGatesConfig<GateArgs>({
+export default buildGatesConfig<GateArgs>({
 	ajna: {
 		'4': [rightChannelX, triangleTopY],
 		'11': [rightChannelX, fact(0.05)],

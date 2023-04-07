@@ -310,6 +310,21 @@ test-randomorder = ["pytest-randomly"]
 tox = ["tox"]
 
 [[package]]
+name = "faker"
+version = "18.4.0"
+description = "Faker is a Python package that generates fake data for you."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "Faker-18.4.0-py3-none-any.whl", hash = "sha256:170ead9d0d140916168b142df69c44722b8f622ced2070802d0af9c476f0cb84"},
+    {file = "Faker-18.4.0.tar.gz", hash = "sha256:977ad0b7aa7a61ed57287d6a0723a827e9d3dd1f8cc82aaf08707f281b33bacc"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.4"
+
+[[package]]
 name = "filelock"
 version = "3.10.0"
 description = "A platform independent file lock."
@@ -540,6 +555,33 @@ files = [
 ]
 
 [[package]]
+name = "python-dateutil"
+version = "2.8.2"
+description = "Extensions to the standard Python datetime module"
+category = "dev"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+files = [
+    {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
+    {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
+]
+
+[package.dependencies]
+six = ">=1.5"
+
+[[package]]
+name = "python-lorem"
+version = "1.2.0"
+description = "Lorem ipsum generator."
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "python-lorem-1.2.0.tar.gz", hash = "sha256:114323c465558e9df5f0893a68ba8dbd9efbd94f8b62f4fb43756c88353e3c55"},
+    {file = "python_lorem-1.2.0-py3-none-any.whl", hash = "sha256:10524c0c8fb029dc8ab794aeb98debe42fdc90415b6f1c1a4c52343c2d84f9dd"},
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -721,6 +763,18 @@ files = [
 ]
 
 [[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+
+[[package]]
 name = "subprocess-tee"
 version = "0.4.1"
 description = "subprocess-tee"
@@ -806,4 +860,4 @@ setuptools = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "059c81961786ae61e9615cffbb1f3dd410060f781a598d5e965c140d6402c487"
+content-hash = "e70e0054f176c2f54338d3bf26f1284b9aab8bda459c2b67b1fc5fdf129062f2"

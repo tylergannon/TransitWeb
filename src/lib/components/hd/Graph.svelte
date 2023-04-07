@@ -1,18 +1,17 @@
 <script lang="ts">
-	import type { GateArgs, GatesRecord as CenterGates } from '$lib/hd/gatePos';
+	import type { GateArgs, GatesRecord as CenterGates } from '$lib/theme/gates';
 	import type { CenterDisplayProps, CenterName, PipProps } from '$lib/hd/graph';
-	import { CHANNELS } from '$lib/hd/graph';
-	import type { CenterProps, GateNumber } from '$lib/hd/stores';
 
-	import { gatesConfig } from '$lib/hd/gatePos';
-	import { DEFAULT_CENTER_ARGS, DEFAULT_GRAPH_PROPS } from '$lib/hd/stores';
 	import Center from './Center.svelte';
 	import Pip from './Pip.svelte';
 	import { pathFrom, SvgPath, toPoint } from '$lib/svg/path';
 	import { subtract, add as addPoint } from '$lib/svg/calc';
 	import type { Point } from '$lib/svg/types';
-	import { filter } from '@skeletonlabs/skeleton';
+
 	import DropShadow from '../svg/DropShadow.svelte';
+
+	import theme, { type CenterProps } from '$lib/theme';
+	import type { GateNumber } from '$lib/hd/gateNumber';
 
 	export let {
 		aspectRatio,
@@ -23,7 +22,7 @@
 		squareSize,
 		triangleSize,
 		width
-	} = DEFAULT_GRAPH_PROPS;
+	} = theme.props;
 
 	export let {
 		head,
@@ -35,7 +34,7 @@
 		will,
 		esp,
 		spleen
-	} = DEFAULT_CENTER_ARGS;
+	} = theme.centers;
 
 	const roundedTriangleHeight = (size: number, r = 0.6) => size * (1 - 0.134 / (1 + 2 * r));
 
@@ -67,7 +66,7 @@
 
 	const centerGates = <T extends CenterName>(ctr: CenterProps) =>
 		Object.fromEntries(
-			Object.entries(gatesConfig[ctr.name]).map((p) => entryForGate(ctr, p))
+			Object.entries(theme.gates[ctr.name]).map((p) => entryForGate(ctr, p))
 		) as CenterGates<T, PipProps>;
 
 	$: data = {
@@ -99,7 +98,7 @@
 			.toString()
 	}
 
-	$: channels = CHANNELS.map(([gate1, gate2, center1, center2, p1, p2]) => {
+	$: channels = theme.channels.map(([gate1, gate2, center1, center2, p1, p2]) => {
 		console.log("channel", gate1, gate2, center1, center2, p1, p2)
 		const g1 = (data[center1].gates as CenterGates<typeof center1, PipProps>)[gate1];
 		const g2 = (data[center2].gates as CenterGates<typeof center2, PipProps>)[gate2];

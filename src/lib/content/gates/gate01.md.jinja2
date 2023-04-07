@@ -1,0 +1,22 @@
+---
+gate: "{{ gate }}"
+name: "{{ name }}"
+hexagram: "{{ hexagram }}"
+title: "{{ title }}"
+# TODO: Remove this comment after putting real content below it.
+slogan: "{{ slogan }}"
+lines:
+{% for line in lines %} "{{ loop.index }}":
+    line: "{{ line.line }}"
+    exalted:
+      planet: {{ line.exalted.planet }}
+      text: "{{ line.exalted.text }}"
+    diminished:
+      planet: {{ line.diminished.planet }}
+      text: "{{ line.diminished.text }}"
+{% endfor %} ---
+# {{ title }}
+
+## {{ slogan }}
+
+{{ text }}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gateLines } from '$lib/hd/chart';
-	import type { GateNumber } from '$lib/hd/stores';
+	import type { GateNumber } from '$lib/hd/gateNumber';
 	import { hexagram } from '$lib/svg/hexagram';
 
 	export let gateNumber: GateNumber;
