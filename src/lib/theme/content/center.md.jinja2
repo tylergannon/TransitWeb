@@ -1,0 +1,12 @@
+---
+name: {{name}}
+displayName: {{ name | capitalize }}
+color: '#fefefe'
+motor: no
+channels: [{% for channel in channels %}'{{ channel }}', {% endfor %}]
+gates: [{% for gate in gates %}'{{ gate }}', {% endfor %}]
+---
+
+# {{ name | capitalize }}
+
+{{ text }}

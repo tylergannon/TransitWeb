@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import typer
 import os
+from pathlib import Path
 import sys
 from jinja2 import Template
 import lorem
@@ -169,9 +170,11 @@ def main(input_file: str, output_dir: str):
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    gatesPath = Path(output_dir) / "gates"
+    gatesPath.mkdir(exist_ok=True)
 
     for gate in range(1, 65):
-        output_path = os.path.join(output_dir, f"{gate:02}.md")
+        output_path = gatesPath / f"{gate:02}.md"
         hexagram = get_hexagram_name(gate)
         name = get_gate_name(gate)
         rendered = template.render(

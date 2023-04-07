@@ -5,6 +5,8 @@ hexagram: "{{ hexagram }}"
 title: "{{ title }}"
 # TODO: Remove this comment after putting real content below it.
 slogan: "{{ slogan }}"
+center:
+circuit:
 lines:
 {% for line in lines %} "{{ loop.index }}":
     line: "{{ line.line }}"
