@@ -3,10 +3,13 @@ gate: "{{ gate }}"
 name: "{{ name }}"
 hexagram: "{{ hexagram }}"
 title: "{{ title }}"
+center: {{ center }}
+paired: {{ paired }}
+channel:
+{% for channel in channels %}  - "{{ channel }}"
+{% endfor %}circuit:
 # TODO: Remove this comment after putting real content below it.
 slogan: "{{ slogan }}"
-center:
-circuit:
 lines:
 {% for line in lines %} "{{ loop.index }}":
     line: "{{ line.line }}"

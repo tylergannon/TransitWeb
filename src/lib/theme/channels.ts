@@ -50,7 +50,8 @@ const CHANNELS: ChannelConf[] = [
 const theOthers = [
 	['34', '57', 'sacral', 'spleen', [-150, -100], [1, -100]],
 	['10', '20', 'g', 'throat', [-120, 20], [-120, 0]],
-	['20', '34', 'throat', 'sacral', [-201, 0], [-401, 0]]
+	['20', '34', 'throat', 'sacral', [-201, 0], [-401, 0]],
+	['10', '57', 'g', 'spleen', [-301, 0], [-301, 0]]
 ];
 
 export default CHANNELS;
