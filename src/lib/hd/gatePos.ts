@@ -51,8 +51,8 @@ export const buildGatesConfig = <T = GateArgs>(props: GatesConf<T>) => props;
 export const gatesConfig = buildGatesConfig<GateArgs>({
 	ajna: {
 		'4': [rightChannelX, triangleTopY],
-		'11': [rightChannelX, fact(0.1)],
-		'17': [leftChannelX, fact(0.1)],
+		'11': [rightChannelX, fact(0.05)],
+		'17': [leftChannelX, fact(0.05)],
 		'24': [centerChannelX, triangleTopY],
 		'43': [centerChannelX, triangleBottomY],
 		'47': [leftChannelX, triangleTopY]

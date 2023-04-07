@@ -129,7 +129,7 @@
 			id="ch{gate1}-{gate2}"
 			d={path}
 			filter="url(#dropShadow)"
-			stroke-width={pipRadius * 1.6}
+			stroke-width={pipRadius * 1.4}
 			stroke="green"
 			stroke-linecap="round"
 			fill="none"

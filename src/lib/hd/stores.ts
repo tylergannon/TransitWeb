@@ -1,11 +1,5 @@
 import { derived, writable, type Readable, type Writable } from 'svelte/store';
-import type {
-	CenterDisplayProps,
-	BodyGraphProps,
-	CenterArgs,
-	CenterRecord,
-	CenterName
-} from './graph';
+import type { BodyGraphProps, CenterArgs, CenterRecord, CenterName } from './graph';
 
 const roundedTriangleHeight = (size: number, r = 0.6) => size * (1 - 0.134 / (1 + 2 * r));
 
@@ -78,7 +72,7 @@ export type GateRecord<T> = Record<GateNumber, T>;
 
 export const DEFAULT_GRAPH_PROPS: BodyGraphProps = {
 	channelSpace: 2,
-	pipRadius: 16,
+	pipRadius: 19,
 	distFromEdge: 5,
 	aspectRatio: 0.83,
 	width: 600,
@@ -96,17 +90,18 @@ export type CenterProps = {
 	rotation?: number;
 	scale?: number;
 };
-
+const shapeSize = 160,
+	size2 = 182;
 export const DEFAULT_CENTER_ARGS: CenterRecord<CenterProps> = {
-	head: { name: 'head', x: 0, y: 80, shapeSize: 150 },
-	ajna: { name: 'ajna', x: 0, y: 240, scale: 1, shapeSize: 150, rotation: 180 },
-	throat: { name: 'throat', x: 0, y: 420, shape: 'square', shapeSize: 162 },
-	g: { name: 'g', x: 0, y: 640, shape: 'square', shapeSize: 162, rotation: 45 },
-	sacral: { name: 'sacral', x: 0, y: 900, shape: 'square', shapeSize: 162 },
-	root: { name: 'root', x: 0, y: 1100, shape: 'square', shapeSize: 162 },
-	will: { name: 'will', x: 160, y: 710, rotation: 15, shapeSize: 150 * 0.85 },
-	spleen: { name: 'spleen', x: -300, y: 880, rotation: 90, shapeSize: 150 },
-	esp: { name: 'esp', x: 300, y: 880, rotation: 270, shapeSize: 150 }
+	head: { name: 'head', x: 0, y: 80, shapeSize: shapeSize },
+	ajna: { name: 'ajna', x: 0, y: 240, scale: 1, shapeSize: shapeSize, rotation: 180 },
+	throat: { name: 'throat', x: 0, y: 420, shape: 'square', shapeSize: size2 },
+	g: { name: 'g', x: 0, y: 640, shape: 'square', shapeSize: size2, rotation: 45 },
+	sacral: { name: 'sacral', x: 0, y: 900, shape: 'square', shapeSize: size2 },
+	root: { name: 'root', x: 0, y: 1100, shape: 'square', shapeSize: size2 },
+	will: { name: 'will', x: 160, y: 710, rotation: 15, shapeSize: shapeSize * 0.85 },
+	spleen: { name: 'spleen', x: -300, y: 880, rotation: 90, shapeSize: size2 },
+	esp: { name: 'esp', x: 300, y: 880, rotation: 270, shapeSize: size2 }
 };
 
 /**
@@ -125,27 +120,6 @@ export const bodyGraphProps = (props: Partial<BodyGraphProps> = {}) => {
 		triangleSize: res.triangleSize * scale,
 		squareSize: res.squareSize * scale
 	} as BodyGraphProps;
-};
-
-export const bodyGraphPropsStore = (props: BodyGraphProps) => {
-	const { subscribe, update } = writable({
-		...props
-	} as BodyGraphProps);
-	return {
-		subscribe,
-		update: (props: Partial<BodyGraphProps>) => update((state) => ({ ...state, ...props })),
-		scaled: derived({ subscribe }, ($props) => {
-			const scale = $props.scale;
-			return {
-				...$props,
-				pipRadius: $props.pipRadius * scale,
-				channelSpace: $props.channelSpace * scale,
-				distFromEdge: $props.distFromEdge * scale,
-				triangleSize: $props.triangleSize * scale,
-				squareSize: $props.squareSize * scale
-			} as BodyGraphProps;
-		})
-	};
 };
 
 export const centerArgs = (props: CenterArgs) => writable(props);
