@@ -47,12 +47,12 @@ PROFILES = {
     "1/4": "Investigator / Opportunist",
     "1/3": "Investigator / Martyr",
 }
-gates_by_center = {c: [] for c in CENTERS}
+gates_by_center = {c: set() for c in CENTERS}
 centers_by_gate = {}
-channels_by_center = {c: [] for c in CENTERS}
+channels_by_center = {c: set() for c in CENTERS}
 
-gates_by_gate = {str(g): [] for g in range(1, 65)}
-channels_by_gate = {str(g): [] for g in range(1, 65)}
+gates_by_gate = {str(g): set() for g in range(1, 65)}
+channels_by_gate = {str(g): set() for g in range(1, 65)}
 
 
 @app.command()
@@ -145,8 +145,8 @@ def main(
 def render_center(center: str, template: Template) -> str:
     return template.render(
         name=center,
-        channels=channels_by_center[center],
-        gates=gates_by_center[center],
+        channels=[*sorted(channels_by_center[center], key=lambda x: int(x[:x.index('_')]))],
+        gates=[*sorted(gates_by_center[center], key=int)],
         text=lorem.get_paragraph(),
     )
 
@@ -166,8 +166,8 @@ def render_gate(gate: int, template: Template) -> str:
         slogan=f"Placeholder Slogan for {name}",
         text=lorem.get_paragraph(),
         center=centers_by_gate[str(gate)],
-        paired=paired,
-        channels=channels,
+        paired=[*sorted(paired)],
+        channels=[*sorted(channels)],
         lines=[
             {
                 "line": lorem.get_sentence(word_range=(6, 9)),
@@ -226,16 +226,16 @@ CHANNELS = {
 
 
 for channel, [g1, g2, c1, c2] in CHANNELS.items():
-    gates_by_center[c1].append(g1)
-    gates_by_center[c2].append(g2)
+    gates_by_center[c1].add(g1)
+    gates_by_center[c2].add(g2)
     centers_by_gate[g1] = c1
     centers_by_gate[g2] = c2
-    gates_by_gate[g1].append(g2)
-    gates_by_gate[g2].append(g1)
-    channels_by_gate[g1].append(channel)
-    channels_by_gate[g2].append(channel)
-    channels_by_center[c1].append(channel)
-    channels_by_center[c2].append(channel)
+    gates_by_gate[g1].add(g2)
+    gates_by_gate[g2].add(g1)
+    channels_by_gate[g1].add(channel)
+    channels_by_gate[g2].add(channel)
+    channels_by_center[c1].add(channel)
+    channels_by_center[c2].add(channel)
 
 HEXAGRAMS = [
     "Creative (Heaven)",
