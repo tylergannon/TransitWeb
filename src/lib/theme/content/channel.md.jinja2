@@ -1,13 +1,13 @@
 ---
-name: {{ name }}
-display: {{ name | capitalize }}
-gate1: {{ gate1 }}
-gate2: {{ gate2 }}
+name: {{ gate1 }}_{{ gate2 }}
+display: {{ gate1 }} / {{ gate2 }}
+gate1: '{{ gate1 }}'
+gate2: '{{ gate2 }}'
 center1: {{ center1 }}
 center2: {{ center2 }}
 circuit:
 ---
 
-# {{ name | capitalize }}
+# The {{ gate1 }} / {{ gate2 }} Channel
 
 {{ text }}

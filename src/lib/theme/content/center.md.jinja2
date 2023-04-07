@@ -1,12 +1,23 @@
 ---
 name: {{name}}
 displayName: {{ name | capitalize }}
-color: '#fefefe'
-motor: no
-channels: [{% for channel in channels %}'{{ channel }}', {% endfor %}]
-gates: [{% for gate in gates %}'{{ gate }}', {% endfor %}]
+defined: '#fefefe'
+undefined: '#ababab'
+motor: no # TODO: change to 'yes' if this is a motor
+channels: {{ channels }}
+gates: {{ gates }}
 ---
 
 # {{ name | capitalize }}
+
+## About
+
+{{ text }}
+
+## Defined {{ name | capitalize }}s
+
+{{ text }}
+
+## Undefined {{ name | capitalize }}s
 
 {{ text }}
