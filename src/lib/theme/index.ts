@@ -1,5 +1,5 @@
 import type { GateArgs, GatesConf } from './gates';
-import type { CenterRecord } from '$lib/hd/graph';
+import type { CenterRecord } from '$lib/hd';
 import type { CenterProps } from './centers';
 import type { ChannelConf } from './channels';
 import type { BodyGraphProps, CenterDisplayProps, PipProps } from './types';

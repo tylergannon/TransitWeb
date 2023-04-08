@@ -1,5 +1,5 @@
-import { gateLines } from '$lib/hd/chart';
-import type { GateNumber } from '$lib/hd/gateNumber';
+import { gateLines } from '$lib/hd';
+import type { GateNumber } from '$lib/hd';
 import { SvgPath } from './path';
 import type { Point } from './types';
 

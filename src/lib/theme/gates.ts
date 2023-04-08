@@ -1,4 +1,4 @@
-import type { CENTER_GATES, CenterName } from '$lib/hd/graph';
+import type { GatesRecord } from '$lib/hd';
 import type { CenterDisplayProps } from './types';
 
 const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
@@ -30,10 +30,6 @@ export type GateArgs = [
 	(props: CenterDisplayProps) => number,
 	(props: CenterDisplayProps) => number
 ];
-
-export type GatesRecord<T extends CenterName, U = GateArgs> = {
-	[key in (typeof CENTER_GATES)[T][number]]: U;
-};
 
 export type GatesConf<T = GateArgs> = {
 	head: GatesRecord<'head', T>;

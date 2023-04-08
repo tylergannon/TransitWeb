@@ -1,5 +1,5 @@
-import type { CenterName } from '$lib/hd/graph';
-import type { GateNumber } from '$lib/hd/gateNumber';
+import type { CenterName } from '$lib/hd';
+import type { GateNumber } from '$lib/hd';
 import type { Point } from '$lib/svg/types';
 export type DashLength = number | null;
 export type ChannelConf = [

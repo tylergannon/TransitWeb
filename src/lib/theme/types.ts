@@ -1,4 +1,4 @@
-import type { GateNumber } from '$lib/hd/gateNumber';
+import type { GateNumber } from '$lib/hd';
 
 export interface TriangleCenterProps {
 	size: number;

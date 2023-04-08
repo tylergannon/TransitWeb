@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { GateArgs, GatesRecord as CenterGates } from '$lib/theme/gates';
-	import type { CenterName } from '$lib/hd/graph';
+	import type { GateArgs } from '$lib/theme';
+	import type { CenterName, GatesRecord as CenterGates } from '$lib/hd';
 
 	import Center from './Center.svelte';
 	import Pip from './Pip.svelte';
@@ -11,7 +11,7 @@
 	import DropShadow from '../svg/DropShadow.svelte';
 
 	import theme, { type CenterDisplayProps, type CenterProps, type PipProps } from '$lib/theme';
-	import type { GateNumber } from '$lib/hd/gateNumber';
+	import type { GateNumber } from '$lib/hd';
 	import { writable } from 'svelte/store';
 
 	export let {

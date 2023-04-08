@@ -13,7 +13,7 @@ export type CenterName =
 	| 'esp';
 export type CenterRecord<T> = Record<CenterName, T>;
 
-export const CENTER_GATES = {
+const CENTER_GATES = {
 	head: ['64', '61', '63'] as const,
 	ajna: ['47', '24', '4', '17', '43', '11'] as const,
 	throat: ['62', '23', '56', '35', '12', '45', '33', '8', '31', '20', '16'] as const,
@@ -24,6 +24,10 @@ export const CENTER_GATES = {
 	spleen: ['48', '57', '44', '50', '32', '28', '18'] as const,
 	esp: ['36', '22', '37', '6', '49', '55', '30'] as const
 } as const;
+
+export type GatesRecord<T extends CenterName, U> = {
+	[key in (typeof CENTER_GATES)[T][number]]: U;
+};
 
 export const channels: Record<string, { gates: GateNumber[]; centers: CenterName[] }> = {
 	'1_8': {

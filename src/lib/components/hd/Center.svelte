@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CenterName } from '$lib/hd/graph';
+	import type { CenterName } from '$lib/hd';
 	import { SvgPath } from '$lib/svg/path';
 
 	export let name: CenterName;

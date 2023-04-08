@@ -1,4 +1,4 @@
-import type { CenterRecord } from '$lib/hd/graph';
+import type { CenterRecord } from '$lib/hd';
 
 const makeColors = (args: CenterRecord<string>) => args;
 

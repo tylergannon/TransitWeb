@@ -1,4 +1,4 @@
-import type { CenterName, CenterRecord } from '$lib/hd/graph';
+import type { CenterName, CenterRecord } from '$lib/hd';
 
 export type CenterProps = {
 	name: CenterName;
