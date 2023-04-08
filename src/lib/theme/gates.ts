@@ -1,23 +1,24 @@
-import type { CENTER_GATES, CenterDisplayProps, CenterName } from './graph';
+import type { GatesRecord } from '$lib/hd';
+import type { CenterDisplayProps } from './types';
 
-export const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
-export const centerChannelX = (props: CenterDisplayProps) => 0;
-export const rightChannelX = ({ centerDx }: CenterDisplayProps) => centerDx;
-export const triangleBottomY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
+const centerChannelX = (props: CenterDisplayProps) => 0;
+const rightChannelX = ({ centerDx }: CenterDisplayProps) => centerDx;
+const triangleBottomY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	height / 2 - pipRadius - distFromEdge;
-export const triangleTopY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const triangleTopY = ({ height, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	-height / 2 + pipRadius + distFromEdge;
-export const top = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const top = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	-size / 2 + pipRadius + distFromEdge;
-export const bottom = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
+const bottom = ({ size, pipRadius, distFromEdge }: CenterDisplayProps) =>
 	size / 2 - pipRadius - distFromEdge;
-export const left = top;
-export const right = bottom;
-export const topChannelY = leftChannelX;
-export const bottomChannelY = rightChannelX;
-export const middleChannelY = centerChannelX;
+const left = top;
+const right = bottom;
+const topChannelY = leftChannelX;
+const bottomChannelY = rightChannelX;
+const middleChannelY = centerChannelX;
 
-export const fact =
+const fact =
 	(n: number): ((p: CenterDisplayProps) => number) =>
 	({ size }) =>
 		size * n;
@@ -29,10 +30,6 @@ export type GateArgs = [
 	(props: CenterDisplayProps) => number,
 	(props: CenterDisplayProps) => number
 ];
-
-export type GatesRecord<T extends CenterName, U = GateArgs> = {
-	[key in (typeof CENTER_GATES)[T][number]]: U;
-};
 
 export type GatesConf<T = GateArgs> = {
 	head: GatesRecord<'head', T>;
@@ -48,11 +45,11 @@ export type GatesConf<T = GateArgs> = {
 
 export const buildGatesConfig = <T = GateArgs>(props: GatesConf<T>) => props;
 
-export const gatesConfig = buildGatesConfig<GateArgs>({
+export default buildGatesConfig<GateArgs>({
 	ajna: {
 		'4': [rightChannelX, triangleTopY],
-		'11': [rightChannelX, fact(0.1)],
-		'17': [leftChannelX, fact(0.1)],
+		'11': [rightChannelX, fact(0.05)],
+		'17': [leftChannelX, fact(0.05)],
 		'24': [centerChannelX, triangleTopY],
 		'43': [centerChannelX, triangleBottomY],
 		'47': [leftChannelX, triangleTopY]

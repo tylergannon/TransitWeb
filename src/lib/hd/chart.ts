@@ -1,8 +1,10 @@
 import { format, utcToZonedTime } from 'date-fns-tz';
-import type { GateNumber, GateRecord } from './stores';
+import type { GateNumber } from './gateNumber';
 import { trigramOrder, lines } from '$lib/ijing/trigrams';
 import type { Trigram } from '$lib/ijing/trigrams';
 const PUBLIC_ASTROAPI_URL = '/astroapi';
+
+type GateRecord<T> = Record<GateNumber, T>;
 
 export type PlanetData<T> = {
 	sun: T;
@@ -37,6 +39,9 @@ export const planetNames = [
 	'pluto',
 	'chiron'
 ] as const;
+
+export type PlanetName = (typeof planetNames)[number];
+export type PlanetRecord<T> = Record<PlanetName, T>;
 
 export type PlanetDataJson<T> = {
 	sun: T;

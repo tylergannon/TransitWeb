@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { fetchChart } from '$lib/hd/chart';
+import { fetchChart } from '$lib/hd';
 import { fetchPerson } from '../[slug].json/client';
 
 export const load = (async ({ params: { slug }, fetch }) => {

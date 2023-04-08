@@ -5,7 +5,7 @@
 	import type { PeopleStore } from '$lib/stores/people';
 
 	import * as planets from '$lib/images/icons/planets';
-	import { hexagram, planetNames } from '$lib/hd/chart';
+	import { hexagram, planetNames } from '$lib/hd';
 	import Hexagram from '$lib/components/hd/Hexagram.svelte';
 	import Graph from '$lib/components/hd/Graph.svelte';
 
