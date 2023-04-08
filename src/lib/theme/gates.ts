@@ -1,4 +1,5 @@
-import type { CENTER_GATES, CenterDisplayProps, CenterName } from '$lib/hd/graph';
+import type { CENTER_GATES, CenterName } from '$lib/hd/graph';
+import type { CenterDisplayProps } from './types';
 
 const leftChannelX = ({ centerDx }: CenterDisplayProps) => -centerDx;
 const centerChannelX = (props: CenterDisplayProps) => 0;

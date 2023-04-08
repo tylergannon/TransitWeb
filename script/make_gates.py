@@ -2,6 +2,8 @@
 import typer
 import os
 from pathlib import Path
+from click import secho
+import json
 
 from jinja2 import Template
 import lorem
@@ -63,6 +65,27 @@ def main(
 ):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    
+    template = Template((input_dir / "data.ts.jinja2").read_text())
+    secho(template.render(
+        channels=[{
+            "name": name,
+            "centers": json.dumps([val[2], val[3]]),
+            "gates": json.dumps([val[0], val[1]]),
+        } for name, val in CHANNELS.items()],
+        centers=[{
+            "name": center,
+            "gates": json.dumps(list(gates_by_center[center])),
+            "channels": json.dumps(list(channels_by_center[center])),
+        } for center in CENTERS],
+        gates=[{
+            "name": str(get_gate_name(i)),
+            "number": i,
+            "channels": json.dumps(list(channels_by_gate[str(i)])),
+            "gates": json.dumps(list(gates_by_gate[str(i)])),
+        } for i in range(1, 65)],
+    ))
+    exit(0)
 
     template = Template((input_dir / "gate.md.jinja2").read_text())
 

@@ -63,3 +63,5 @@ export type GateNumber =
 	| '62'
 	| '63'
 	| '64';
+
+export type GateRecord<T> = Record<GateNumber, T>;

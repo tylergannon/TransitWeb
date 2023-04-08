@@ -1,0 +1,34 @@
+import type { GateNumber, GateRecord } from "$lib/hd/gateNumber";
+import type { CenterName } from "$lib/hd/graph";
+import type { CenterRecord } from "..";
+
+
+export const channels: Record<string, {gates: GateNumber[], centers: CenterName[]}> = {
+{% for channel in channels %}
+    "{{channel.name}}": {
+        gates: {{ channel.gates  }},
+        centers: {{ channel.centers  }},
+    },
+{% endfor %}
+};
+
+export type ChannelName = keyof typeof channels;
+
+export const centers: CenterRecord<{gates: GateNumber[], channels: ChannelName[]}> = {
+{% for center in centers %}
+    "{{center.name}}": {
+        gates: {{ center.gates  }},
+        channels: {{ center.channels  }},
+    },
+{% endfor %}
+};
+
+export const gates: GateRecord<{ name: string, paired: GateNumber[], channels: ChannelName[], }> = {
+{% for gate in gates %}
+    "{{gate.number}}": {
+        name: "{{gate.name}}",
+        paired: {{ gate.gates }},
+        channels: {{ gate.channels  }},
+    },
+{% endfor %}
+};

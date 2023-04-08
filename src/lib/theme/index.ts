@@ -1,9 +1,19 @@
 import type { GateArgs, GatesConf } from './gates';
-import type { BodyGraphProps, CenterRecord } from '$lib/hd/graph';
+import type { CenterRecord } from '$lib/hd/graph';
 import type { CenterProps } from './centers';
 import type { ChannelConf } from './channels';
+import type { BodyGraphProps, CenterDisplayProps, PipProps } from './types';
 
-export type { GateArgs, GatesConf, BodyGraphProps, CenterRecord, CenterProps, ChannelConf };
+export type {
+	GateArgs,
+	GatesConf,
+	BodyGraphProps,
+	CenterRecord,
+	CenterProps,
+	ChannelConf,
+	CenterDisplayProps,
+	PipProps
+};
 
 import gates from './gates';
 import centers from './centers';

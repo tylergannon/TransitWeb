@@ -40,6 +40,9 @@ export const planetNames = [
 	'chiron'
 ] as const;
 
+export type PlanetName = (typeof planetNames)[number];
+export type PlanetRecord<T> = Record<PlanetName, T>;
+
 export type PlanetDataJson<T> = {
 	sun: T;
 	moon: T;

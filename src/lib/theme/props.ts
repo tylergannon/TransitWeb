@@ -1,4 +1,4 @@
-import type { BodyGraphProps } from '$lib/hd/graph';
+import type { BodyGraphProps } from './types';
 
 const props: BodyGraphProps = {
 	channelSpace: 2,
