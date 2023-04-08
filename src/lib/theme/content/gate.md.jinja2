@@ -1,0 +1,27 @@
+---
+gate: '{{ gate }}'
+name: {{ name }}
+hexagram: {{ hexagram }}
+title: {{ title }}
+center: {{ center }}
+paired: {{ paired }}
+channel:
+{% for channel in channels %}  - {{ channel }}
+{% endfor %}circuit:
+# TODO: Remove this comment after putting real content below it.
+slogan: {{ slogan }}
+lines:
+{% for line in lines %} '{{ loop.index }}':
+    line: Placeholder text for gate {{ gate }} line {{ loop.index }}
+    exalted:
+      planet: {{ line.exalted.planet }}
+      text: Placeholder text for exaltation of gate {{ gate }} line {{ loop.index }}.
+    diminished:
+      planet: {{ line.diminished.planet }}
+      text: Placeholder text for diminition of gate {{ gate }} line {{ loop.index }}.
+{% endfor %} ---
+# {{ title }}
+
+## {{ slogan }}
+
+{{ text }}
