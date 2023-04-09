@@ -71,7 +71,7 @@
 					outer: [path2, shapes.outer, 'Z'].join(' ')
 			  };
 
-		return [g1, g2, center1, center2, path1, path2, d, _shapes] as [
+		return [g1, g2, center1, center2, path1, path2, d, _shapes, `hd-ch-${gate1}-${gate2}`] as [
 			PipProps,
 			PipProps,
 			CenterName,
@@ -79,7 +79,8 @@
 			string,
 			string,
 			number,
-			typeof _shapes
+			typeof _shapes,
+			string,
 		];
 	});
 
@@ -89,6 +90,18 @@
 <svelte:window on:mouseup={onMouseUp} />
 <h1>{path2}</h1>
 <svg style:display="none">
+</svg>
+<svg
+	width="1000"
+	height="1200"
+	class="dark:fill-slate-100"
+	viewBox="-500 0 1000 1200"
+	xmlns="http://www.w3.org/2000/svg"
+	on:mousemove={(e) => {
+		if (dragging === null) return;
+		$points[dragging] = [e.offsetX - 500, e.offsetY];
+	}}
+>
 	<defs>
 		<radialGradient id="RadialGradient1" fx="0%" fy="0%" r="40%" cx="0" cy="0">
 			<stop offset="0%" stop-color="red" />
@@ -97,7 +110,7 @@
 		<DropShadow id="dropShadow" />
 	
 		{#each channels as [gate1, gate2, center1, center2, dash, p1, p2, shapes]}
-			<mask id="hd-ch-{gate1.gate}-{gate2.gate}-inner">
+			<clipPath id="hd-ch-{gate1.gate}-{gate2.gate}-inner">
 				{#if shapes}
 					<path d={shapes.inner} fill="white" />
 				{:else}
@@ -106,23 +119,21 @@
 						y={Math.min(gate1.y, gate2.y) - 50}
 						width="100"
 						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
-						fill="white"
 					/>
 				{/if}
-			</mask>
-			<mask id="hd-ch-{gate1.gate}-{gate2.gate}-outer">
+			</clipPath>
+			<clipPath id="hd-ch-{gate1.gate}-{gate2.gate}-outer">
 				{#if shapes}
-					<path d={shapes.outer} fill="white" />
+					<path d={shapes.outer} />
 				{:else}
 					<rect
 						x={gate1.x - 100}
 						y={Math.min(gate1.y, gate2.y) - 50}
 						width="100"
 						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
-						fill="white"
 					/>
 				{/if}
-			</mask>
+			</clipPath>
 			<path id="hd-ch-{gate1.gate}-{gate2.gate}" d={p1} />
 			<g id="hd-grid">
 				{#each Array.from({ length: 20 }) as _, idx (`${idx}`)}
@@ -156,29 +167,10 @@
 			</g>
 		{/each}
 	</defs>
-</svg>
-<svg
-	width="1000"
-	height="1200"
-	class="dark:fill-slate-100"
-	viewBox="-500 0 1000 1200"
-	xmlns="http://www.w3.org/2000/svg"
-	on:mousemove={(e) => {
-		if (dragging === null) return;
-		$points[dragging] = [e.offsetX - 500, e.offsetY];
-	}}
->
 	<use href="#hd-grid" />
-	{#each channels as [gate1, gate2, center1, center2, path, dash], idx (`${gate1.gate}-${gate2.gate}`)}
-		<path
-			id="ch{gate1.gate}-{gate2.gate}"
-			d={path}
-			stroke-width={pipRadius * 1.4}
-			stroke={idx % 2 === 0 ? 'green' : 'brown'}
-			stroke-linecap="round"
-			stroke-dasharray="{dash} 1000000"
-			fill="none"
-		/>
+	{#each channels as [gate1, gate2, center1, center2, p1, p2, dash, shapes, klass], idx (`${gate1.gate}-${gate2.gate}`)}
+		<use stroke-width="{gate1.radius * 1.4}" stroke="green" href="#{klass}" fill="none" />
+		<use stroke-width="{gate1.radius * 1.4}" stroke="red" href="#{klass}" clip-path="url(#{klass}-inner)" fill="none" />
 	{/each}
 
 	{#each entries(theme.centers) as [name, { x, y, size, shape, rotation, ...p}]}
