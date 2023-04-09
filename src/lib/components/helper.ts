@@ -1,6 +1,7 @@
 import { enhance } from '$app/forms';
 import { writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
+import type { Entries } from 'type-fest';
 
 const DEFAULT_DEBOUNCE_MS = 300;
 
@@ -15,6 +16,8 @@ export const regularDebounce = <T>(func: (args: T) => Promise<void>, wait = 200)
 		timeout = setTimeout(later, wait);
 	};
 };
+
+export const entries = <T>(obj: T) => Object.entries(obj as any) as Entries<T>;
 
 export default regularDebounce;
 

@@ -1,18 +1,20 @@
 <script lang="ts">
-	import type { GateArgs } from '$lib/theme';
-	import type { CenterName, GatesRecord as CenterGates } from '$lib/hd';
+	import type { PipProps } from '$lib/theme';
+	import type { CenterName } from '$lib/hd';
+	import type { Point } from '$lib/svg';
+	import { centers } from '$lib/hd/graph';
+
+	import theme from '$lib/theme';
+	import { pathFrom, SvgPath, toPoint, subtract, addPoint } from '$lib/svg';
 
 	import Center from './Center.svelte';
 	import Pip from './Pip.svelte';
-	import { pathFrom, SvgPath, toPoint } from '$lib/svg/path';
-	import { subtract, add as addPoint } from '$lib/svg/calc';
-	import type { Point } from '$lib/svg/types';
 
 	import DropShadow from '../svg/DropShadow.svelte';
 
-	import theme, { type CenterDisplayProps, type CenterProps, type PipProps } from '$lib/theme';
-	import type { GateNumber } from '$lib/hd';
 	import { writable } from 'svelte/store';
+	import { entries } from '../helper';
+
 
 	export let {
 		aspectRatio,
@@ -24,67 +26,18 @@
 		triangleSize,
 		width
 	} = theme.props;
-
+	
 	export let { head, ajna, throat, g, sacral, root, will, esp, spleen } = theme.centers;
 
-	const roundedTriangleHeight = (size: number, r = 0.6) => size * (1 - 0.134 / (1 + 2 * r));
-
-	const _props = ({ x, y, scale, shapeSize, shape }: CenterProps) =>
-		({
-			x,
-			y,
-			scale: scale || 1,
-			pipRadius: pipRadius * (scale || 1),
-			channelSpace: channelSpace * (scale || 1),
-			distFromEdge: distFromEdge * (scale || 1),
-			size: shapeSize * (scale || 1),
-			height: (shape === 'square' ? shapeSize : roundedTriangleHeight(shapeSize)) * (scale || 1),
-			centerDx: (scale || 1) * (2 * pipRadius + channelSpace)
-		} as CenterDisplayProps);
-
-	const entryForGate = (
-		ctr: CenterProps,
-		[gate, fns]: [string, GateArgs]
-	): [GateNumber, PipProps] => {
-		const p = _props(ctr);
-		return [
-			gate as GateNumber,
-			{
-				gate: gate as GateNumber,
-				radius: p.pipRadius,
-				x: p.x + fns[0](p),
-				y: p.y + fns[1](p)
-			}
-		];
-	};
-
-	let dragging: number|null = null;
-	const onMouseUp = () => dragging = null;
+	let dragging: number | null = null;
+	const onMouseUp = () => (dragging = null);
 	let points = writable([
 		[-259, 588],
 		[-324, 710],
 		[-90, 610],
 		[-80, 649]
-	] as [Point, Point, Point, Point])
-	const colors = ["red", "green", "blue", "yellow"]
-
-
-	const centerGates = <T extends CenterName>(ctr: CenterProps) =>
-		Object.fromEntries(
-			Object.entries(theme.gates[ctr.name]).map((p) => entryForGate(ctr, p))
-		) as CenterGates<T, PipProps>;
-
-	$: data = {
-		head: { center: head, gates: centerGates<'head'>(head) },
-		ajna: { center: ajna, gates: centerGates<'ajna'>(ajna) },
-		throat: { center: throat, gates: centerGates<'throat'>(throat) },
-		g: { center: g, gates: centerGates<'g'>(g) },
-		sacral: { center: sacral, gates: centerGates<'sacral'>(sacral) },
-		root: { center: root, gates: centerGates<'root'>(root) },
-		will: { center: will, gates: centerGates<'will'>(will) },
-		esp: { center: esp, gates: centerGates<'esp'>(esp) },
-		spleen: { center: spleen, gates: centerGates<'spleen'>(spleen) }
-	};
+	] as [Point, Point, Point, Point]);
+	const colors = ['red', 'green', 'blue', 'yellow'];
 
 	const channelOutline = (gate1: PipProps, gate2: PipProps, path: string, offset: number) => {
 		return new SvgPath(path).line([0, -1]);
@@ -105,26 +58,105 @@
 		return pathFrom(pos1).cubic(p1, addPoint(pos2rel, p2), pos2rel).toString();
 	};
 
-	$: channels = theme.channels.flatMap(([gate1, gate2, center1, center2, dash, p1, p2]) => {
-		const g1 = (data[center1].gates as CenterGates<typeof center1, PipProps>)[gate1];
-		const g2 = (data[center2].gates as CenterGates<typeof center2, PipProps>)[gate2];
+	$: channels = theme.channels.map(([gate1, gate2, center1, center2, dash, p1, p2, shapes]) => {
+		const g1 = theme.gates[gate1];
+		const g2 = theme.gates[gate2];
 		const d = dash || Math.sqrt(Math.pow(g1.x - g2.x, 2) + Math.pow(g1.y - g2.y, 2)) / 1.915;
+		const path1 = channelPath(g1, p1, p2, g2);
+		const path2 = channelPath(g2, p2, p1, g1);
+		const _shapes = !shapes
+			? null
+			: {
+					inner: [path2, shapes.inner, 'Z'].join(' '),
+					outer: [path2, shapes.outer, 'Z'].join(' ')
+			  };
 
-		return [
-			[gate1, gate2, center1, center2, channelPath(g1, p1, p2, g2), d],
-			[gate2, gate1, center2, center1, channelPath(g2, p2, p1, g1), d]
-		] as [GateNumber, GateNumber, CenterName, CenterName, string, number][];
+		return [g1, g2, center1, center2, path1, path2, d, _shapes] as [
+			PipProps,
+			PipProps,
+			CenterName,
+			CenterName,
+			string,
+			string,
+			number,
+			typeof _shapes
+		];
 	});
-	const _gate = (g: GateNumber) => channels.find(([gate1]) => gate1 === g) as [GateNumber, GateNumber, CenterName, CenterName, string, number];
-	$: gate20 = data['throat'].gates['20'];
-	$: gate10 = data['g'].gates['10'];
-	$: gate34 = data['sacral'].gates['34'];
-	
-	$: path2 = `M${$points[0][0]},${$points[0][1]} C${$points[1][0]},${$points[1][1]},${$points[2][0]},${$points[2][1]},${$points[3][0]},${$points[3][1]}`
 
+	$: path2 = `M${$points[0][0]},${$points[0][1]} C${$points[1][0]},${$points[1][1]},${$points[2][0]},${$points[2][1]},${$points[3][0]},${$points[3][1]}`;
 </script>
-<svelte:window on:mouseup={onMouseUp}  />
+
+<svelte:window on:mouseup={onMouseUp} />
 <h1>{path2}</h1>
+<svg style:display="none">
+	<defs>
+		<radialGradient id="RadialGradient1" fx="0%" fy="0%" r="40%" cx="0" cy="0">
+			<stop offset="0%" stop-color="red" />
+			<stop offset="100%" stop-color="red" stop-opacity="0" />
+		</radialGradient>
+		<DropShadow id="dropShadow" />
+	
+		{#each channels as [gate1, gate2, center1, center2, dash, p1, p2, shapes]}
+			<mask id="hd-ch-{gate1.gate}-{gate2.gate}-inner">
+				{#if shapes}
+					<path d={shapes.inner} fill="white" />
+				{:else}
+					<rect
+						x={gate1.x}
+						y={Math.min(gate1.y, gate2.y) - 50}
+						width="100"
+						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
+						fill="white"
+					/>
+				{/if}
+			</mask>
+			<mask id="hd-ch-{gate1.gate}-{gate2.gate}-outer">
+				{#if shapes}
+					<path d={shapes.outer} fill="white" />
+				{:else}
+					<rect
+						x={gate1.x - 100}
+						y={Math.min(gate1.y, gate2.y) - 50}
+						width="100"
+						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
+						fill="white"
+					/>
+				{/if}
+			</mask>
+			<path id="hd-ch-{gate1.gate}-{gate2.gate}" d={p1} />
+			<g id="hd-grid">
+				{#each Array.from({ length: 20 }) as _, idx (`${idx}`)}
+					<line
+						y1="0"
+						x1={idx * 25}
+						y2="1200"
+						x2={idx * 25}
+						stroke="white"
+						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
+					/>
+					<line
+						y1="0"
+						x1={-idx * 25}
+						y2="1200"
+						x2={-idx * 25}
+						stroke="white"
+						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
+					/>
+				{/each}
+				{#each Array.from({ length: 48 }) as _, idx (`${idx}`)}
+					<line
+						x1="-500"
+						x2="500"
+						y1={idx * 25}
+						y2={idx * 25}
+						stroke="white"
+						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
+					/>
+				{/each}
+			</g>
+		{/each}
+	</defs>
+</svg>
 <svg
 	width="1000"
 	height="1200"
@@ -136,17 +168,10 @@
 		$points[dragging] = [e.offsetX - 500, e.offsetY];
 	}}
 >
-	<defs>
-		<radialGradient id="RadialGradient1" fx="0%" fy="0%" r="40%" cx="0" cy="0">
-			<stop offset="0%" stop-color="red" />
-			<stop offset="100%" stop-color="red" stop-opacity="0" />
-		</radialGradient>
-		<DropShadow id="dropShadow" />
-	</defs>
-
-	{#each channels as [gate1, gate2, center1, center2, path, dash], idx (`${gate1}-${gate2}`)}
+	<use href="#hd-grid" />
+	{#each channels as [gate1, gate2, center1, center2, path, dash], idx (`${gate1.gate}-${gate2.gate}`)}
 		<path
-			id="ch{gate1}-{gate2}"
+			id="ch{gate1.gate}-{gate2.gate}"
 			d={path}
 			stroke-width={pipRadius * 1.4}
 			stroke={idx % 2 === 0 ? 'green' : 'brown'}
@@ -156,25 +181,33 @@
 		/>
 	{/each}
 
-	{#each Object.values(data) as { center, gates }}
-		<Center {...center}>
-			{#each Object.values(gates) as gate}
-				<Pip {...gate} />
+	{#each entries(theme.centers) as [name, { x, y, size, shape, rotation, ...p}]}
+		<Center {name} {x} {y} {size} {shape} {rotation}>
+			{#each centers[name].gates as gate}
+				<Pip {...theme.gates[gate]} />
 			{/each}
 		</Center>
 	{/each}
 
 	<path
 		id="ch10-34x"
-		d="{path2}"
+		d={path2}
 		stroke-width="22"
 		stroke="white"
 		stroke-linecap="round"
 		stroke-dasharray="22500 1000000"
 		fill="none"
 	/>
-	{#each $points as point, idx (`${idx}`)}
-		<circle cx={point[0]} cy={point[1]} r="14" fill="{colors[idx]}" on:mousedown={()=>{dragging = idx;}} />
+	{#each $points as point, idx}
+		<circle
+			cx={point[0]}
+			cy={point[1]}
+			r="14"
+			fill={colors[idx]}
+			on:mousedown={() => {
+				dragging = idx;
+			}}
+		/>
 	{/each}
 </svg>
 

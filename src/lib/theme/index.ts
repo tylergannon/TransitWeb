@@ -1,12 +1,11 @@
-import type { GateArgs, GatesConf } from './gates';
+import type { GateArgs, PipProps } from './gates';
 import type { CenterRecord } from '$lib/hd';
-import type { CenterProps } from './centers';
+import type { CenterDisplayProps, CenterProps } from './centers';
 import type { ChannelConf } from './channels';
-import type { BodyGraphProps, CenterDisplayProps, PipProps } from './types';
+import type { BodyGraphProps } from './types';
 
 export type {
 	GateArgs,
-	GatesConf,
 	BodyGraphProps,
 	CenterRecord,
 	CenterProps,
@@ -20,10 +19,11 @@ import centers from './centers';
 import channels from './channels';
 import props from './props';
 import colors from './colors';
+import type { GateRecord } from '$lib/hd/gateNumber';
 
 export interface GraphTheme {
-	gates: GatesConf<GateArgs>;
-	centers: CenterRecord<CenterProps>;
+	gates: GateRecord<PipProps>;
+	centers: CenterRecord<CenterDisplayProps>;
 	props: BodyGraphProps;
 	channels: ChannelConf[];
 	colors: CenterRecord<string>;

@@ -12,3 +12,6 @@ const props: BodyGraphProps = {
 };
 
 export default props;
+
+export const triangleRatio = 0.5;
+export const squareRatio = 0.4;

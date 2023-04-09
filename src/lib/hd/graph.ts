@@ -1,5 +1,5 @@
 import type { GateNumber, GateRecord } from './gateNumber';
-import type { Chart, PlanetData, Position } from './chart';
+import type { Chart, Position } from './chart';
 
 export type CenterName =
 	| 'head'
@@ -313,388 +313,457 @@ export const centers: CenterRecord<{ gates: GateNumber[]; channels: ChannelName[
 	}
 };
 
-export const gates: GateRecord<{ name: string; paired: GateNumber[]; channels: ChannelName[] }> = {
+export const gates: GateRecord<{
+	name: string;
+	paired: GateNumber[];
+	channels: ChannelName[];
+	center: CenterName;
+}> = {
 	'1': {
 		name: 'Self-Expression',
 		paired: ['8'],
-		channels: ['1_8']
+		channels: ['1_8'],
+		center: 'g'
 	},
 
 	'2': {
 		name: 'Higher Knowing',
 		paired: ['14'],
-		channels: ['2_14']
+		channels: ['2_14'],
+		center: 'g'
 	},
 
 	'3': {
 		name: 'Ordering',
 		paired: ['60'],
-		channels: ['3_60']
+		channels: ['3_60'],
+		center: 'sacral'
 	},
 
 	'4': {
 		name: 'Formulization',
 		paired: ['63'],
-		channels: ['4_63']
+		channels: ['4_63'],
+		center: 'ajna'
 	},
 
 	'5': {
 		name: 'Universal Love',
 		paired: ['15'],
-		channels: ['5_15']
+		channels: ['5_15'],
+		center: 'sacral'
 	},
 
 	'6': {
 		name: 'Friction',
 		paired: ['59'],
-		channels: ['6_59']
+		channels: ['6_59'],
+		center: 'esp'
 	},
 
 	'7': {
 		name: 'Self Direction',
 		paired: ['31'],
-		channels: ['7_31']
+		channels: ['7_31'],
+		center: 'g'
 	},
 
 	'8': {
 		name: 'Holding Together',
 		paired: ['1'],
-		channels: ['1_8']
+		channels: ['1_8'],
+		center: 'throat'
 	},
 
 	'9': {
 		name: 'Focus',
 		paired: ['52'],
-		channels: ['9_52']
+		channels: ['9_52'],
+		center: 'sacral'
 	},
 
 	'10': {
 		name: 'Behavior',
-		paired: ['34', '57', '20'],
-		channels: ['10_20', '10_34', '10_57']
+		paired: ['34', '20', '57'],
+		channels: ['10_34', '10_57', '10_20'],
+		center: 'g'
 	},
 
 	'11': {
 		name: 'Ideas',
 		paired: ['56'],
-		channels: ['11_56']
+		channels: ['11_56'],
+		center: 'ajna'
 	},
 
 	'12': {
 		name: 'Caution',
 		paired: ['22'],
-		channels: ['12_22']
+		channels: ['12_22'],
+		center: 'throat'
 	},
 
 	'13': {
 		name: 'Listening',
 		paired: ['33'],
-		channels: ['13_33']
+		channels: ['13_33'],
+		center: 'g'
 	},
 
 	'14': {
 		name: 'Power Skills',
 		paired: ['2'],
-		channels: ['2_14']
+		channels: ['2_14'],
+		center: 'sacral'
 	},
 
 	'15': {
 		name: 'Extremes',
 		paired: ['5'],
-		channels: ['5_15']
+		channels: ['5_15'],
+		center: 'g'
 	},
 
 	'16': {
 		name: 'Enthusiasm',
 		paired: ['48'],
-		channels: ['16_48']
+		channels: ['16_48'],
+		center: 'throat'
 	},
 
 	'17': {
 		name: 'Following',
 		paired: ['62'],
-		channels: ['17_62']
+		channels: ['17_62'],
+		center: 'ajna'
 	},
 
 	'18': {
 		name: 'Correction',
 		paired: ['58'],
-		channels: ['18_58']
+		channels: ['18_58'],
+		center: 'spleen'
 	},
 
 	'19': {
 		name: 'Approach',
 		paired: ['49'],
-		channels: ['19_49']
+		channels: ['19_49'],
+		center: 'root'
 	},
 
 	'20': {
 		name: 'Contemplation',
-		paired: ['10', '34', '57'],
-		channels: ['10_20', '20_34', '20_57']
+		paired: ['10', '57', '34'],
+		channels: ['20_57', '20_34', '10_20'],
+		center: 'throat'
 	},
 
 	'21': {
 		name: 'Biting Through',
 		paired: ['45'],
-		channels: ['21_45']
+		channels: ['21_45'],
+		center: 'will'
 	},
 
 	'22': {
 		name: 'Grace',
 		paired: ['12'],
-		channels: ['12_22']
+		channels: ['12_22'],
+		center: 'esp'
 	},
 
 	'23': {
 		name: 'Splitting Apart',
 		paired: ['43'],
-		channels: ['23_43']
+		channels: ['23_43'],
+		center: 'throat'
 	},
 
 	'24': {
 		name: 'Assimilation',
 		paired: ['61'],
-		channels: ['24_61']
+		channels: ['24_61'],
+		center: 'ajna'
 	},
 
 	'25': {
 		name: 'Innocence',
 		paired: ['51'],
-		channels: ['25_51']
+		channels: ['25_51'],
+		center: 'g'
 	},
 
 	'26': {
 		name: 'Surrender',
 		paired: ['44'],
-		channels: ['26_44']
+		channels: ['26_44'],
+		center: 'will'
 	},
 
 	'27': {
 		name: 'Nourishment',
 		paired: ['50'],
-		channels: ['27_50']
+		channels: ['27_50'],
+		center: 'sacral'
 	},
 
 	'28': {
 		name: 'The Great',
 		paired: ['38'],
-		channels: ['28_38']
+		channels: ['28_38'],
+		center: 'spleen'
 	},
 
 	'29': {
 		name: 'The Small',
 		paired: ['46'],
-		channels: ['29_46']
+		channels: ['29_46'],
+		center: 'sacral'
 	},
 
 	'30': {
 		name: 'Vigilance',
 		paired: ['41'],
-		channels: ['30_41']
+		channels: ['30_41'],
+		center: 'esp'
 	},
 
 	'31': {
 		name: 'Retreat',
 		paired: ['7'],
-		channels: ['7_31']
+		channels: ['7_31'],
+		center: 'throat'
 	},
 
 	'32': {
 		name: 'Recognition',
 		paired: ['54'],
-		channels: ['32_54']
+		channels: ['32_54'],
+		center: 'spleen'
 	},
 
 	'33': {
 		name: 'Duration',
 		paired: ['13'],
-		channels: ['13_33']
+		channels: ['13_33'],
+		center: 'throat'
 	},
 
 	'34': {
 		name: 'The Abyss',
-		paired: ['20', '57', '10'],
-		channels: ['10_34', '34_57', '20_34']
+		paired: ['10', '20', '57'],
+		channels: ['10_34', '34_57', '20_34'],
+		center: 'sacral'
 	},
 
 	'35': {
 		name: 'Progress',
 		paired: ['36'],
-		channels: ['35_36']
+		channels: ['35_36'],
+		center: 'throat'
 	},
 
 	'36': {
 		name: 'Easy Progress',
 		paired: ['35'],
-		channels: ['35_36']
+		channels: ['35_36'],
+		center: 'esp'
 	},
 
 	'37': {
 		name: 'Brightness Hiding',
 		paired: ['40'],
-		channels: ['37_40']
+		channels: ['37_40'],
+		center: 'esp'
 	},
 
 	'38': {
 		name: 'The Family',
 		paired: ['28'],
-		channels: ['28_38']
+		channels: ['28_38'],
+		center: 'root'
 	},
 
 	'39': {
 		name: 'Opposition',
 		paired: ['55'],
-		channels: ['39_55']
+		channels: ['39_55'],
+		center: 'root'
 	},
 
 	'40': {
 		name: 'Obstruction',
 		paired: ['37'],
-		channels: ['37_40']
+		channels: ['37_40'],
+		center: 'will'
 	},
 
 	'41': {
 		name: 'Deliverance',
 		paired: ['30'],
-		channels: ['30_41']
+		channels: ['30_41'],
+		center: 'root'
 	},
 
 	'42': {
 		name: 'Decrease',
 		paired: ['53'],
-		channels: ['42_53']
+		channels: ['42_53'],
+		center: 'sacral'
 	},
 
 	'43': {
 		name: 'Increase',
 		paired: ['23'],
-		channels: ['23_43']
+		channels: ['23_43'],
+		center: 'ajna'
 	},
 
 	'44': {
 		name: 'Breakthrough',
 		paired: ['26'],
-		channels: ['26_44']
+		channels: ['26_44'],
+		center: 'spleen'
 	},
 
 	'45': {
 		name: 'Meeting',
 		paired: ['21'],
-		channels: ['21_45']
+		channels: ['21_45'],
+		center: 'throat'
 	},
 
 	'46': {
 		name: 'Gathering',
 		paired: ['29'],
-		channels: ['29_46']
+		channels: ['29_46'],
+		center: 'g'
 	},
 
 	'47': {
 		name: 'Pushing Upward',
 		paired: ['64'],
-		channels: ['47_64']
+		channels: ['47_64'],
+		center: 'ajna'
 	},
 
 	'48': {
 		name: 'Limitation',
 		paired: ['16'],
-		channels: ['16_48']
+		channels: ['16_48'],
+		center: 'spleen'
 	},
 
 	'49': {
 		name: 'The Well',
 		paired: ['19'],
-		channels: ['19_49']
+		channels: ['19_49'],
+		center: 'esp'
 	},
 
 	'50': {
 		name: 'Revolution',
 		paired: ['27'],
-		channels: ['27_50']
+		channels: ['27_50'],
+		center: 'spleen'
 	},
 
 	'51': {
 		name: 'The Caldron',
 		paired: ['25'],
-		channels: ['25_51']
+		channels: ['25_51'],
+		center: 'will'
 	},
 
 	'52': {
 		name: 'Thunder',
 		paired: ['9'],
-		channels: ['9_52']
+		channels: ['9_52'],
+		center: 'root'
 	},
 
 	'53': {
 		name: 'Stillness',
 		paired: ['42'],
-		channels: ['42_53']
+		channels: ['42_53'],
+		center: 'root'
 	},
 
 	'54': {
 		name: 'Cyclic Beginnings',
 		paired: ['32'],
-		channels: ['32_54']
+		channels: ['32_54'],
+		center: 'root'
 	},
 
 	'55': {
 		name: 'Youthful Folly',
 		paired: ['39'],
-		channels: ['39_55']
+		channels: ['39_55'],
+		center: 'esp'
 	},
 
 	'56': {
 		name: 'Abundance',
 		paired: ['11'],
-		channels: ['11_56']
+		channels: ['11_56'],
+		center: 'throat'
 	},
 
 	'57': {
 		name: 'The Wanderer',
-		paired: ['10', '34', '20'],
-		channels: ['34_57', '20_57', '10_57']
+		paired: ['34', '20', '10'],
+		channels: ['20_57', '10_57', '34_57'],
+		center: 'spleen'
 	},
 
 	'58': {
 		name: 'The Gentle Wind',
 		paired: ['18'],
-		channels: ['18_58']
+		channels: ['18_58'],
+		center: 'root'
 	},
 
 	'59': {
 		name: 'The Joyous Lake',
 		paired: ['6'],
-		channels: ['6_59']
+		channels: ['6_59'],
+		center: 'sacral'
 	},
 
 	'60': {
 		name: 'Dispersion',
 		paired: ['3'],
-		channels: ['3_60']
+		channels: ['3_60'],
+		center: 'root'
 	},
 
 	'61': {
 		name: 'Limitation',
 		paired: ['24'],
-		channels: ['24_61']
+		channels: ['24_61'],
+		center: 'head'
 	},
 
 	'62': {
 		name: 'Inner Truth',
 		paired: ['17'],
-		channels: ['17_62']
+		channels: ['17_62'],
+		center: 'throat'
 	},
 
 	'63': {
 		name: 'After Completion',
 		paired: ['4'],
-		channels: ['4_63']
+		channels: ['4_63'],
+		center: 'head'
 	},
 
 	'64': {
 		name: 'Harmony',
 		paired: ['47'],
-		channels: ['47_64']
+		channels: ['47_64'],
+		center: 'head'
 	}
 };

@@ -1,3 +1,4 @@
+import { squareRatio, triangleRatio } from '$lib/theme/props';
 import type { Point } from './types';
 
 type Rotation = (p: Point) => Point;
@@ -35,6 +36,9 @@ export class SvgPath {
 	move(p: Point, cmd: 'M' | 'm' = 'm') {
 		return this.add(cmd, ...this._rotation(p));
 	}
+	lines(p: Point[]) {
+		return p.reduce((p, c) => p.line(c), this);
+	}
 	line(p: Point, cmd: 'L' | 'l' = 'l') {
 		return this.add(cmd, ...this._rotation(p));
 	}
@@ -53,6 +57,10 @@ export class SvgPath {
 	quadratic(p1: Point, p2: Point, cmd: 'Q' | 'q' = 'q') {
 		return this.add(cmd, ...this._rotation(p1), ...this._rotation(p2));
 	}
+	/**
+	 * Add the Z command to the path, which closes the path.
+	 * @returns
+	 */
 	close() {
 		return this.add('Z');
 	}
@@ -71,7 +79,8 @@ export class SvgPath {
 		return this;
 	}
 
-	roundedTriangle(size: number, r = 0.5) {
+	roundedTriangle(size: number, r = triangleRatio) {
+		console.log('roundedTriangle', size, r);
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
 		const height = k * cos30 + radius * 2;
@@ -84,7 +93,8 @@ export class SvgPath {
 			.close();
 	}
 
-	roundedSquare(size: number, r = 0.4) {
+	roundedSquare(size: number, r = squareRatio) {
+		console.log('roundedSquare', size, r);
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
 		return this.move([size / 2, size / 2 - radius])
