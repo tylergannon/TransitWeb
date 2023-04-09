@@ -33,34 +33,35 @@ const curves = {
 
 const CHANNELS: ChannelConf[] = [
 	['1', '8', 'g', 'throat', null, [0, 0], [0, 0], null],
-	['10', '34', 'g', 'sacral', null, [-293, 0], [-301, 0], { inner: '', outer: 'v-30 h-275 v275' }],
-	['11', '56', 'ajna', 'throat', null, [0, 0], [0, 0], null],
+	['11', '56', 'ajna', 'throat', 75, [0, 0], [0, 0], null],
 	[
 		'12',
 		'22',
 		'throat',
 		'esp',
-		null,
+		190,
 		[110, 10],
 		[0, -290],
 		{ inner: 'h-20 v500 h300', outer: 'h-20 v-30 h300 v500' }
 	],
-	['13', '33', 'g', 'throat', null, [0, 0], [0, 0], null],
-	['16', '48', 'throat', 'spleen', null, [-122, 9], [0, -300], curves.curve12_9],
-	['17', '62', 'ajna', 'throat', null, null, null, null],
-	['18', '58', 'spleen', 'root', null, [18, 120], [-155, 0], curves.curve9_6],
+	['26', '44', 'will', 'spleen', null, [-200, -5], [40, -100], curves.curve12_9],
+	['13', '33', 'g', 'throat', 70, [0, 0], [0, 0], null],
+	['16', '48', 'throat', 'spleen', 222, [-122, 9], [0, -300], curves.curve12_9],
+	['17', '62', 'ajna', 'throat', 75, null, null, null],
+	['18', '58', 'spleen', 'root', 185, [18, 120], [-155, 0], curves.curve9_6],
 	[
 		'19',
 		'49',
 		'root',
 		'esp',
-		null,
+		150,
 		[140, 0],
 		[-14, 103],
 		{ inner: 'v-200 h300', outer: 'v30 h300 v-250' }
 	],
 	['2', '14', 'g', 'sacral', null, [0, 0], [0, 0], null],
-	['20', '57', 'throat', 'spleen', null, [-110, 10], [0, -290], curves.curve12_9],
+	['20', '57', 'throat', 'spleen', 430, [-110, 10], [0, -290], curves.curve12_9],
+	['10', '34', 'g', 'sacral', 265, [-312, 0], [-312, 0], { inner: '', outer: 'v-30 h-275 v275' }],
 	[
 		'21',
 		'45',
@@ -72,21 +73,20 @@ const CHANNELS: ChannelConf[] = [
 		{ inner: 'v20 h-140 v-270', outer: 'v20 h30 v-270 h-140' }
 	],
 	['23', '43', 'throat', 'ajna', null, [0, 0], [0, 0], null],
-	['24', '61', 'ajna', 'head', null, [0, 0], [0, 0], null],
+	['24', '61', 'ajna', 'head', 27, [0, 0], [0, 0], null],
 	[
 		'25',
 		'51',
 		'g',
 		'will',
 		null,
-		[30, 0],
-		[0, -30],
+		[35, 4],
+		[-20, -30],
 		{ inner: 'h-20 v100 h100', outer: 'v-30 h100 v120' }
 	],
-	['26', '44', 'will', 'spleen', null, [-200, -5], [40, -100], curves.curve12_9],
 	['27', '50', 'sacral', 'spleen', null, [-50, 0], [40, 40], curves.horiz],
-	['28', '38', 'spleen', 'root', null, [16, 110], [-150, 0], curves.curve9_6],
-	['29', '46', 'sacral', 'g', null, [0, 0], [0, 0], null],
+	['28', '38', 'spleen', 'root', 165, [16, 110], [-150, 0], curves.curve9_6],
+	['29', '46', 'sacral', 'g', 61, [0, 0], [0, 0], null],
 	['3', '60', 'sacral', 'root', null, [0, 0], [0, 0], null],
 	[
 		'30',
@@ -96,16 +96,16 @@ const CHANNELS: ChannelConf[] = [
 		null,
 		[-18, 120],
 		[155, 0],
-		{ inner: 'v30 h-300 v250', outer: 'h30 v250 h-300 v-200' }
+		{ inner: 'v-30 h-300 v250', outer: 'v-30 h30 v250 h-300 v-200' }
 	],
 
-	['32', '54', 'spleen', 'root', null, [14, 103], [-140, 0], curves.curve9_6],
+	['32', '54', 'spleen', 'root', 151, [14, 103], [-140, 0], curves.curve9_6],
 	[
 		'35',
 		'36',
 		'throat',
 		'esp',
-		null,
+		222,
 		[122, 9],
 		[0, -300],
 		{ inner: 'h-20 v500 h300', outer: 'h-20 v-30 h300 v500' }
@@ -116,8 +116,8 @@ const CHANNELS: ChannelConf[] = [
 		'esp',
 		'will',
 		null,
-		[-1, -55],
-		[40, 10],
+		[-1, -45],
+		[30, 10],
 		{ inner: 'v25 h-100 v-150', outer: 'v25 h25 v-150 h-100' }
 	],
 	[
@@ -125,17 +125,17 @@ const CHANNELS: ChannelConf[] = [
 		'55',
 		'root',
 		'esp',
-		null,
+		173,
 		[150, 0],
 		[-16, 110],
 		{ inner: 'v-200 h300', outer: 'v30 h300 v-250' }
 	],
-	['4', '63', 'ajna', 'head', null, [0, 0], [0, 0], null],
+	['4', '63', 'ajna', 'head', 27, [0, 0], [0, 0], null],
 	['42', '53', 'sacral', 'root', null, [0, 0], [0, 0], null],
-	['47', '64', 'ajna', 'head', null, [0, 0], [0, 0], null],
-	['5', '15', 'sacral', 'g', null, [0, 0], [0, 0], null],
+	['47', '64', 'ajna', 'head', 27, [0, 0], [0, 0], null],
+	['5', '15', 'sacral', 'g', 61, [0, 0], [0, 0], null],
 	['6', '59', 'esp', 'sacral', null, [-40, 40], [50, 0], curves['horiz']],
-	['7', '31', 'g', 'throat', null, [0, 0], [0, 0], null],
+	['7', '31', 'g', 'throat', 70, [0, 0], [0, 0], null],
 	['9', '52', 'sacral', 'root', null, [0, 0], [0, 0], null]
 ];
 

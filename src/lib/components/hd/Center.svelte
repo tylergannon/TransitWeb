@@ -18,7 +18,7 @@
 </script>
 
 <g class="center-group center-{name}">
-	<path d={path} />
+	<path d={path} class="dark:fill-black dark:stroke-blue-700" />
 	<g>
 		<slot />
 	</g>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { PipProps } from '$lib/theme';
-	import type { CenterName } from '$lib/hd';
+	import type { ChannelConf, PipProps } from '$lib/theme';
+	import type { CenterName, Chart } from '$lib/hd';
 	import type { Point } from '$lib/svg';
 	import { centers } from '$lib/hd/graph';
 
@@ -14,7 +14,7 @@
 
 	import { writable } from 'svelte/store';
 	import { entries } from '../helper';
-
+	const opts = [["inner", 0] as const, ["outer", 100] as const]
 
 	export let {
 		aspectRatio,
@@ -25,23 +25,11 @@
 		squareSize,
 		triangleSize,
 		width
-	} = theme.props;
-	
+} = theme.props;
+
 	export let { head, ajna, throat, g, sacral, root, will, esp, spleen } = theme.centers;
 
-	let dragging: number | null = null;
-	const onMouseUp = () => (dragging = null);
-	let points = writable([
-		[-259, 588],
-		[-324, 710],
-		[-90, 610],
-		[-80, 649]
-	] as [Point, Point, Point, Point]);
-	const colors = ['red', 'green', 'blue', 'yellow'];
-
-	const channelOutline = (gate1: PipProps, gate2: PipProps, path: string, offset: number) => {
-		return new SvgPath(path).line([0, -1]);
-	};
+	export let charts: {chart: Chart, name: string, color: string, displayName: string, link?: string|(()=>void)}[];
 
 	const channelPath = (
 		gate1: PipProps,
@@ -58,6 +46,18 @@
 		return pathFrom(pos1).cubic(p1, addPoint(pos2rel, p2), pos2rel).toString();
 	};
 
+	type MyChannelProps = [
+		PipProps,
+		PipProps,
+		CenterName,
+		CenterName,
+		string,
+		string,
+		number,
+		ChannelConf['7'] | null,
+		string
+	];
+
 	$: channels = theme.channels.map(([gate1, gate2, center1, center2, dash, p1, p2, shapes]) => {
 		const g1 = theme.gates[gate1];
 		const g2 = theme.gates[gate2];
@@ -71,36 +71,28 @@
 					outer: [path2, shapes.outer, 'Z'].join(' ')
 			  };
 
-		return [g1, g2, center1, center2, path1, path2, d, _shapes, `hd-ch-${gate1}-${gate2}`] as [
-			PipProps,
-			PipProps,
-			CenterName,
-			CenterName,
-			string,
-			string,
-			number,
-			typeof _shapes,
-			string,
-		];
+		return [
+			g1,
+			g2,
+			center1,
+			center2,
+			path1,
+			path2,
+			d,
+			_shapes,
+			`hd-ch-${gate1}-${gate2}`
+		] as MyChannelProps;
 	});
 
-	$: path2 = `M${$points[0][0]},${$points[0][1]} C${$points[1][0]},${$points[1][1]},${$points[2][0]},${$points[2][1]},${$points[3][0]},${$points[3][1]}`;
 </script>
 
-<svelte:window on:mouseup={onMouseUp} />
-<h1>{path2}</h1>
-<svg style:display="none">
-</svg>
+<svg style:display="none" />
 <svg
-	width="1000"
+	width="800"
 	height="1200"
 	class="dark:fill-slate-100"
-	viewBox="-500 0 1000 1200"
+	viewBox="-400 0 800 1200"
 	xmlns="http://www.w3.org/2000/svg"
-	on:mousemove={(e) => {
-		if (dragging === null) return;
-		$points[dragging] = [e.offsetX - 500, e.offsetY];
-	}}
 >
 	<defs>
 		<radialGradient id="RadialGradient1" fx="0%" fy="0%" r="40%" cx="0" cy="0">
@@ -108,72 +100,52 @@
 			<stop offset="100%" stop-color="red" stop-opacity="0" />
 		</radialGradient>
 		<DropShadow id="dropShadow" />
-	
-		{#each channels as [gate1, gate2, center1, center2, dash, p1, p2, shapes]}
-			<clipPath id="hd-ch-{gate1.gate}-{gate2.gate}-inner">
-				{#if shapes}
-					<path d={shapes.inner} fill="white" />
-				{:else}
-					<rect
-						x={gate1.x}
-						y={Math.min(gate1.y, gate2.y) - 50}
-						width="100"
-						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
-					/>
-				{/if}
-			</clipPath>
-			<clipPath id="hd-ch-{gate1.gate}-{gate2.gate}-outer">
-				{#if shapes}
-					<path d={shapes.outer} />
-				{:else}
-					<rect
-						x={gate1.x - 100}
-						y={Math.min(gate1.y, gate2.y) - 50}
-						width="100"
-						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
-					/>
-				{/if}
-			</clipPath>
-			<path id="hd-ch-{gate1.gate}-{gate2.gate}" d={p1} />
-			<g id="hd-grid">
-				{#each Array.from({ length: 20 }) as _, idx (`${idx}`)}
-					<line
-						y1="0"
-						x1={idx * 25}
-						y2="1200"
-						x2={idx * 25}
-						stroke="white"
-						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
-					/>
-					<line
-						y1="0"
-						x1={-idx * 25}
-						y2="1200"
-						x2={-idx * 25}
-						stroke="white"
-						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
-					/>
-				{/each}
-				{#each Array.from({ length: 48 }) as _, idx (`${idx}`)}
-					<line
-						x1="-500"
-						x2="500"
-						y1={idx * 25}
-						y2={idx * 25}
-						stroke="white"
-						stroke-width={idx % 10 === 0 ? 3 : idx % 5 === 0 ? 1 : 0.5}
-					/>
-				{/each}
-			</g>
-		{/each}
+
 	</defs>
-	<use href="#hd-grid" />
+
 	{#each channels as [gate1, gate2, center1, center2, p1, p2, dash, shapes, klass], idx (`${gate1.gate}-${gate2.gate}`)}
-		<use stroke-width="{gate1.radius * 1.4}" stroke="green" href="#{klass}" fill="none" />
-		<use stroke-width="{gate1.radius * 1.4}" stroke="red" href="#{klass}" clip-path="url(#{klass}-inner)" fill="none" />
+		<g>
+		<path class="backing" d={p1} />
+		<path class="backing mask" d={p1} />
+		{#each opts as [name, offset]}
+			<clipPath id="{klass}{name}">
+				{#if shapes}
+					<path d={shapes.inner} />
+				{:else}
+					<rect
+						x={gate1.x - offset}
+						y={Math.min(gate1.y, gate2.y) - 30}
+						width="100"
+						height={100 + Math.round(Math.abs(gate1.y - gate2.y))}
+					/>
+				{/if}
+			</clipPath>
+
+		{/each}
+			
+		<path
+			d={p1}
+			stroke-width={gate1.radius * 1.4}
+			stroke-dasharray="{dash} 100000"
+			stroke-linecap="butt"
+			class="stroke-primary-500"
+			opacity="0.85"
+			fill="none"
+		/>
+		<path
+		  d={p1}
+			stroke-width={gate1.radius * 1.4}
+			stroke-dasharray="{dash} 100000"
+			stroke-linecap="butt"
+			class="stroke-tertiary-700"
+			clip-path="url(#{klass}inner)"
+			fill="none"
+		/>
+
+		</g>
 	{/each}
 
-	{#each entries(theme.centers) as [name, { x, y, size, shape, rotation, ...p}]}
+	{#each entries(theme.centers) as [name, { x, y, size, shape, rotation }]}
 		<Center {name} {x} {y} {size} {shape} {rotation}>
 			{#each centers[name].gates as gate}
 				<Pip {...theme.gates[gate]} />
@@ -181,30 +153,23 @@
 		</Center>
 	{/each}
 
-	<path
-		id="ch10-34x"
-		d={path2}
-		stroke-width="22"
-		stroke="white"
-		stroke-linecap="round"
-		stroke-dasharray="22500 1000000"
-		fill="none"
-	/>
-	{#each $points as point, idx}
-		<circle
-			cx={point[0]}
-			cy={point[1]}
-			r="14"
-			fill={colors[idx]}
-			on:mousedown={() => {
-				dragging = idx;
-			}}
-		/>
-	{/each}
 </svg>
 
 <style lang="postcss">
 	svg {
-		border: 1px solid red;
+		border: 1px solid;
+		@apply border-slate-700;
+	}
+	.backing {
+		stroke-linecap: butt;
+		fill: none;
+		stroke-width: 24px;
+		opacity: 0.7;
+		@apply stroke-blue-900;
+	}
+	.backing.mask {
+		stroke-width: 22px;
+		@apply dark:stroke-black stroke-white;
+
 	}
 </style>
