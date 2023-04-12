@@ -39,7 +39,7 @@
 		link?: string | (() => void);
 	}[];
 
-	$: linkage = chartLinkage(charts.map((c) => c.chart));
+	$: linkage = chartLinkage(charts);
 
 	const linkageStore = writable(linkage);
 	$: $linkageStore = linkage;

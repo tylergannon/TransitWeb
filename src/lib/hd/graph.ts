@@ -1,5 +1,5 @@
 import type { GateNumber, GateRecord } from './gateNumber';
-import type { Chart, Position } from './chart';
+import type { Chart, PlanetName, Position } from './chart';
 import { entries, keys } from '$lib/components/helper';
 
 export type CenterName =
@@ -216,23 +216,45 @@ export type ChannelName = keyof typeof channels;
 export type ChannelRecord<T> = Record<ChannelName, T>;
 type Channel = { gates: [GateNumber, GateNumber]; centers: [CenterName, CenterName] };
 export const channel = (name: ChannelName) => channels[name] as Channel;
-export type _GateConf = [number[], ChannelName[]];
+
+/**
+ * Lists each component chart and planet that define the gate, as well as any channels
+ * completed by the gate (usually 0 or 1 but can be 2 or 3 for 10|20|34|57).
+ */
+export type _GateConf = [[PlanetName, number][], ChannelName[]];
+
+/**
+ * The data needed by graph components to render a chart.
+ */
 export type Linkage = {
 	charts: Chart[];
 	channels: ChannelName[];
 	gates: Partial<Record<GateNumber, _GateConf>>;
 	centers: Partial<Record<CenterName, ChannelName[]>>;
+	data: Array<{ name: string; displayName: string; color: string }>;
 };
 
-export const chartLinkage = (charts: Chart[]): Linkage => {
+interface GraphComponentProps {
+	chart: Chart;
+	name: string;
+	color: string;
+	displayName: string;
+	link?: string | (() => void);
+}
+
+export const chartLinkage = (charts: GraphComponentProps[]): Linkage => {
 	const _gates: Partial<Record<GateNumber, _GateConf>> = {};
 
-	const addGate = ({ gate }: Position, idx: number) => {
-		if (_gates[gate]) _gates[gate]?.[0].push(idx);
-		else _gates[gate] = [[idx], []];
+	const addGate = (planet: PlanetName, { gate }: Position, idx: number) => {
+		if (_gates[gate]) _gates[gate]?.[0].push([planet, idx]);
+		else _gates[gate] = [[[planet, idx]], []];
 	};
 
-	charts.forEach(({ tz, time, date, chiron, ...chart }) => Object.values(chart).forEach(addGate));
+	const _charts = charts.map((a) => a.chart);
+
+	_charts.forEach(({ chartDateJson, chiron, ...chart }, idx) =>
+		Object.entries(chart).forEach(([planet, pos]) => addGate(planet as PlanetName, pos, idx))
+	);
 
 	const ch = entries(channels)
 		.filter(([_, { gates }]) => gates.every((gate) => gate in _gates))
@@ -252,10 +274,11 @@ export const chartLinkage = (charts: Chart[]): Linkage => {
 	}, {} as Record<CenterName, ChannelName[]>);
 
 	return {
-		charts,
+		charts: _charts,
 		channels: ch,
 		gates: _gates,
-		centers: _centers
+		centers: _centers,
+		data: charts.map(({ name, color, displayName }) => ({ name, color, displayName }))
 	};
 };
 

@@ -13,34 +13,23 @@
 	/** Whether or not the center is defined. */
 	export let defined: boolean;
 	$: ({x, y, radius} = $theme.gates[gate]);
-	// Decide whether we're printing any channel, gate activation, or neither.
-	const skip = {"10_20": true, "20_34": true, "34_57": true, "10_57": true}
-	const isFunny = (ch: ChannelName): ch is "10_20"|"20_34"|"34_57"|"10_57" => !(ch in skip);
+	$: ({rev, dash} = $theme.channels[gate])
+	$: sources = $linkage.gates[gate]?.[0] || [];
 
-	$: sources = $linkage.gates[gate]?.[0];
-	$: channels = $linkage.gates[gate]?.[1].map(name=>{
-		if (!isFunny(name)) {
-			return {
-				name,
-				paired: $theme.gates[channel(name).gates.find(g=>g!==gate) as GateNumber],
-			}
-		}
-	})
-	
-	$: g = channels?.[0];
-
+	$: colors = Array.from(new Set(sources.map(([_, s])=>$linkage.data[s].color)));
+	$: console.log("colors", colors, $linkage.data);
 
 	const r = (x: number) => Math.round(x*100)/100;
 </script>
 
-<g id="pip-{gate}" class="pip gate{gate}" class:open={!defined} class:defined={!!$linkage.gates[gate]}>
+<g style:--ctr={dash} class:rev id="pip-{gate}" class="pip gate{gate}" class:open={!defined} class:defined={!!$linkage.gates[gate]}>
 	<circle cx={r(x)} cy={r(y)} r={r(radius)} />
-	{#if channels}
+	{#if true}
 		<g>
 		</g>
 	{:else if sources}
 		<div></div>
-s
+
 	{/if}
 	<text x={r(x)} y={r(y+2)} >
 		{gate}

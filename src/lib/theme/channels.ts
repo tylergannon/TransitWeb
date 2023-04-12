@@ -1,6 +1,11 @@
 import type { CenterName } from '$lib/hd';
 import type { GateNumber } from '$lib/hd';
+import type { GateRecord } from '$lib/hd/gateNumber';
+import { toPoint } from '$lib/svg';
+import { add } from '$lib/svg/calc';
 import type { Point } from '$lib/svg/types';
+import centers from './centers';
+import gates from './gates';
 export type DashLength = number | null;
 
 type PolyConfig = { inner: string; outer: string };
@@ -146,4 +151,51 @@ const theOthers = [
 	['10', '57', 'g', 'spleen', null, [-301, 0], [-301, 0], null]
 ];
 
-export default channels;
+export type SvgPathData = string;
+
+export interface GateChannel {
+	inner: SvgPathData;
+	outer: SvgPathData;
+	path: SvgPathData;
+	dash: number;
+	rev: boolean;
+}
+
+const ORIGIN: Point = [0, 0];
+
+const channelPathsByGate = channels.reduce((acc, [g1, g2, c1, c2, dash, p1, p2, curves]) => {
+	const [gate1, gate2] = [g1, g2].map((g) => gates[g]);
+	const [center1, center2] = [c1, c2].map((c) => centers[c]);
+	const [x1, y1] = add(toPoint(center1), toPoint(gate1)),
+		[x2, y2] = add([x1, y1], p1 ? p1 : ORIGIN),
+		[x4, y4] = add(toPoint(center2), toPoint(gate2)),
+		[x3, y3] = add([x4, y4], p2 ? p2 : ORIGIN);
+	const path = `M${x1},${y1} C${x2},${y2},${x3},${y3},${x4},${y4}`;
+	let curveDev: { inner: string; outer: string };
+	if (curves) {
+		const pathRev = `M${x4},${y4} C${x3},${y3},${x2},${y2},${x1},${y1}`;
+		curveDev = {
+			inner: [pathRev, curves.inner, 'Z'].join(' '),
+			outer: [path, curves.outer, 'Z'].join(' ')
+		};
+	} else {
+		const down = y4 > y1 ? 1 : -1;
+		curveDev = { inner: `M${x4},${y4} v${50 * down} h50 v${-200 * down} h-50 Z`, outer: '' };
+	}
+	const first = {
+		...curveDev,
+		path,
+		dash: dash || (y4 - y1) / 2,
+		rev: false
+	};
+
+	acc[g1] = first;
+	acc[g2] = {
+		...first,
+		rev: true
+	};
+
+	return acc;
+}, {} as Partial<GateRecord<GateChannel>>) as GateRecord<GateChannel>;
+
+export default channelPathsByGate;
