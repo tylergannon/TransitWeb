@@ -13,9 +13,6 @@
 	import { getContext } from 'svelte';
 
 	const userProfile: Writable<UserType> = getContext('userProfile');
-	userProfile.subscribe((value) => {
-		console.log('userProfile', value);
-	});
 
 	const popupSettings: PopupSettings = {
 		event: 'click',

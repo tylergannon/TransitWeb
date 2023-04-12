@@ -80,7 +80,6 @@ export class SvgPath {
 	}
 
 	roundedTriangle(size: number, r = triangleRatio) {
-		console.log('roundedTriangle', size, r);
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
 		const height = k * cos30 + radius * 2;
@@ -94,7 +93,6 @@ export class SvgPath {
 	}
 
 	roundedSquare(size: number, r = squareRatio) {
-		console.log('roundedSquare', size, r);
 		const k = size / (1 + 2 * r);
 		const radius = r * k;
 		return this.move([size / 2, size / 2 - radius])

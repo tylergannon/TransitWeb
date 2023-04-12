@@ -18,6 +18,7 @@ export const regularDebounce = <T>(func: (args: T) => Promise<void>, wait = 200)
 };
 
 export const entries = <T>(obj: T) => Object.entries(obj as any) as Entries<T>;
+export const keys = <T>(obj: T) => Object.keys(obj as any) as (keyof T)[];
 
 export default regularDebounce;
 

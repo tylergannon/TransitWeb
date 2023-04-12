@@ -31,7 +31,7 @@ const curves = {
 	} as PolyConfig
 };
 
-const CHANNELS: ChannelConf[] = [
+const channels: ChannelConf[] = [
 	['1', '8', 'g', 'throat', null, [0, 0], [0, 0], null],
 	['11', '56', 'ajna', 'throat', 75, [0, 0], [0, 0], null],
 	[
@@ -146,4 +146,4 @@ const theOthers = [
 	['10', '57', 'g', 'spleen', null, [-301, 0], [-301, 0], null]
 ];
 
-export default CHANNELS;
+export default channels;

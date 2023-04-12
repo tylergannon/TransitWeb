@@ -1,5 +1,8 @@
 import type { BodyGraphProps } from './types';
 
+/**
+ * Note these should be mirrored in './theme.css'.
+ */
 const props: BodyGraphProps = {
 	channelSpace: 2,
 	pipRadius: 17,
@@ -15,3 +18,4 @@ export default props;
 export const fontPipRatio = 1.5;
 export const triangleRatio = 0.5;
 export const squareRatio = 0.4;
+export const pipChannel = 1.4;

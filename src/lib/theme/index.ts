@@ -19,14 +19,13 @@ import centers from './centers';
 import channels from './channels';
 import props from './props';
 import colors from './colors';
-import type { GateRecord } from '$lib/hd/gateNumber';
 
 export interface GraphTheme {
-	gates: GateRecord<PipProps>;
-	centers: CenterRecord<CenterDisplayProps>;
-	props: BodyGraphProps;
-	channels: ChannelConf[];
-	colors: CenterRecord<string>;
+	gates: typeof gates;
+	centers: typeof centers;
+	props: typeof props;
+	channels: typeof channels;
+	colors: typeof colors;
 }
 
 export const theme: GraphTheme = {

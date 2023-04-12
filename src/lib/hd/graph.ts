@@ -1,5 +1,6 @@
 import type { GateNumber, GateRecord } from './gateNumber';
 import type { Chart, Position } from './chart';
+import { entries, keys } from '$lib/components/helper';
 
 export type CenterName =
 	| 'head'
@@ -29,7 +30,7 @@ export type GatesRecord<T extends CenterName, U> = {
 	[key in (typeof CENTER_GATES)[T][number]]: U;
 };
 
-export const channels: Record<string, { gates: GateNumber[]; centers: CenterName[] }> = {
+const channels = {
 	'1_8': {
 		gates: ['1', '8'],
 		centers: ['g', 'throat']
@@ -212,31 +213,57 @@ export const channels: Record<string, { gates: GateNumber[]; centers: CenterName
 };
 
 export type ChannelName = keyof typeof channels;
+export type ChannelRecord<T> = Record<ChannelName, T>;
+type Channel = { gates: [GateNumber, GateNumber]; centers: [CenterName, CenterName] };
+export const channel = (name: ChannelName) => channels[name] as Channel;
+export type _GateConf = [number[], ChannelName[]];
+export type Linkage = {
+	charts: Chart[];
+	channels: ChannelName[];
+	gates: Partial<Record<GateNumber, _GateConf>>;
+	centers: Partial<Record<CenterName, ChannelName[]>>;
+};
 
-export const chartLinkage = (charts: Chart[]) => {
-	const _gates: Partial<Record<GateNumber, number[]>> = {};
+export const chartLinkage = (charts: Chart[]): Linkage => {
+	const _gates: Partial<Record<GateNumber, _GateConf>> = {};
 
 	const addGate = ({ gate }: Position, idx: number) => {
-		if (_gates[gate]) _gates[gate]?.push(idx);
-		else _gates[gate] = [idx];
+		if (_gates[gate]) _gates[gate]?.[0].push(idx);
+		else _gates[gate] = [[idx], []];
 	};
 
 	charts.forEach(({ tz, time, date, chiron, ...chart }) => Object.values(chart).forEach(addGate));
 
-	const ch = Object.entries(channels)
+	const ch = entries(channels)
 		.filter(([_, { gates }]) => gates.every((gate) => gate in _gates))
-		.map(([name, _]) => name) as ChannelName[];
+		.map(([name, { gates }]) => {
+			gates.forEach((gate) => _gates[gate as GateNumber]?.[1].push(name as ChannelName));
+			return name;
+		}) as ChannelName[];
+
+	// Get centers as a reduction of the channels found.
+	const _centers = ch.reduce((acc, val) => {
+		const channel = channels[val] as Channel;
+		for (const center of channel.centers) {
+			if (center in acc) acc[center].push(val);
+			else acc[center] = [val];
+		}
+		return acc;
+	}, {} as Record<CenterName, ChannelName[]>);
 
 	return {
 		charts,
 		channels: ch,
-		gates: _gates
+		gates: _gates,
+		centers: _centers
 	};
 };
 
 export const findCenters = (ch: ChannelName[]) => {
 	const centers = new Set<CenterName>();
-	ch.forEach((channel) => channels[channel].centers.forEach((center) => centers.add(center)));
+	ch.forEach((channel) =>
+		(channels[channel] as Channel).centers.forEach((center) => centers.add(center))
+	);
 	return Array.from(centers);
 };
 
