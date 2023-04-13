@@ -1,27 +1,20 @@
 <script lang="ts">
-	import type { Chart } from '$lib/hd';
+	import type { Chart, GateNumber } from '$lib/hd';
 	import { chartLinkage } from '$lib/hd/graph';
 	import * as graph from '$lib/hd/graph';
 
 	import graphBg from '$lib/images/silhouette_seated.svg';
 
 	import theme from '$lib/theme';
-	import { CodeBlock } from '@skeletonlabs/skeleton';
-
-	import Center from './Center.svelte';
 
 	import DropShadow from '../svg/DropShadow.svelte';
 
-	import { writable, readable } from 'svelte/store';
 	import { entries, keys } from '../helper';
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import LotusPath from './LotusPath.svelte';
 	import SahasraraMandala from '$lib/images/Sahasrara_Mandala.svelte';
-	import { channelForGate } from '$lib/theme/channels';
 	import Channel from './Channel.svelte';
 	import Pip from './Pip.svelte';
-
-	const opts = [['inner', 0] as const, ['outer', 100] as const];
 
 	export let {
 		aspectRatio,
@@ -46,10 +39,11 @@
 
 	$: linkage = chartLinkage(charts);
 
-	const linkageStore = writable(linkage);
-	$: $linkageStore = linkage;
-	setContext('linkage', linkageStore);
-	setContext('theme', readable(theme));
+	$: channelData = keys(theme.channelForGate).map((g) => [
+		g,
+		linkage.gates[g]||[[], [], []],
+		theme.channelForGate[g]
+	]) as [GateNumber, graph._GateConf, graph.ChannelName][];
 
 	let bgPath = '';
 	let svgCont: HTMLDivElement;
@@ -57,6 +51,7 @@
 		svgCont.innerHTML = await fetch(graphBg).then((t) => t.text());
 		bgPath = (svgCont.querySelector('path') as SVGPathElement)?.getAttribute('d') || '';
 	});
+
 </script>
 
 <div class="hidden" bind:this={svgCont} />
@@ -74,8 +69,8 @@
 	</g>
 
 	<g class="channels">
-		{#each keys(theme.channelForGate) as gate}
-			<Channel {gate} />
+		{#each channelData as [gate, link, channel]}
+			<Channel {gate} sources={link[0]} channels={link[1]} colors={link[2]} dash={theme.channels[channel].dash} />
 		{/each}
 	</g>
 

@@ -20,12 +20,12 @@
 			chart: data.chart.design,
 			name: "design",
 			displayName: "Design",
-			color: "red",
+			color: "stroke-primary-500",
 		}, {
 			chart: data.chart.natal,
 			name: "natal",
 			displayName: "Natal",
-			color: "blue",
+			color: "stroke-secondary-500",
 		}
 	]
 

@@ -1,33 +1,36 @@
 <script lang="ts">
-	import type { GateNumber } from '$lib/hd';
-	import type { Linkage, _GateConf } from '$lib/hd/graph';
-	import type { Readable } from 'svelte/store';
-	import type { GraphTheme } from '$lib/theme';
-	import { getContext } from 'svelte';
-
-	const theme: Readable<GraphTheme> = getContext('theme') as Readable<GraphTheme>;
-	const linkage: Readable<Linkage> = getContext('linkage') as Readable<Linkage>;
+	import type { GateNumber, PlanetName } from '$lib/hd';
+	import type { ChannelName, Linkage, _GateConf } from '$lib/hd/graph';
+	import allChannels, { channelForGate } from '$lib/theme/channels';
 
 	export let gate: GateNumber;
-	$: myChannel = $theme.channelForGate[gate];
 
-	$: ({ dash } = $theme.channels[myChannel]);
-	$: rev = $theme.channels[myChannel].to === gate;
-	$: [sources, channels, colors] = $linkage.gates[gate] || ([[], [], []] as _GateConf);
+	$: dispChannel = channelForGate[gate];
+
+	export let dash: number;
+  export let sources: [PlanetName, number][];
+  export let channels: ChannelName[];
+  export let colors: string[];
+
+	$: rev = allChannels[dispChannel].to === gate;
 </script>
 
 {#if sources.length > 0}
 	<g style:--ctr={dash} class:rev>
-		<use stroke-dashoffset={rev ? -dash : 0} id="ch-{gate}" href="#path-{myChannel}" stroke={colors[0]} class="path" />
+		<use
+			stroke-dashoffset={rev ? -dash : 0}
+			id="ch-{gate}"
+			href="#path-{dispChannel}"
+			class="path {colors[0]}"
+		/>
 
 		{#if sources.length === 2}
 			<use
 				id="ch-{gate}-2"
-        stroke-dashoffset={rev ? -dash : 0}
-				href="#path-{myChannel}"
-				stroke={colors[1]}
-				class="path"
-				clip-path="url(#inner-{myChannel})"
+				stroke-dashoffset={rev ? -dash : 0}
+				href="#path-{dispChannel}"
+				class="path {colors[1]}"
+				clip-path="url(#inner-{dispChannel})"
 			/>
 		{/if}
 	</g>
