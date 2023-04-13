@@ -28,7 +28,8 @@ export const gates: GateRecord<{ name: string, paired: GateNumber[], channels: C
     "{{gate.number}}": {
         name: "{{gate.name}}",
         paired: {{ gate.gates }},
-        channels: {{ gate.channels  }},
+        channels: {{ gate.channels }},
+        center: "{{ gate.center }}",
     },
 {% endfor %}
 };

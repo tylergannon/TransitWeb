@@ -83,6 +83,7 @@ def main(
             "number": i,
             "channels": json.dumps(list(channels_by_gate[str(i)])),
             "gates": json.dumps(list(gates_by_gate[str(i)])),
+            "center": centers_by_gate[str(i)],
         } for i in range(1, 65)],
     ))
     exit(0)

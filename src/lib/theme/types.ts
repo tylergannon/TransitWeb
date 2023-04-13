@@ -16,22 +16,3 @@ export interface BodyGraphProps {
 	triangleSize: number;
 	squareSize: number;
 }
-
-export interface CenterDisplayProps {
-	x: number;
-	y: number;
-	size: number;
-	pipRadius: number;
-	centerDx: number;
-	channelSpace: number;
-	distFromEdge: number;
-	scale: number;
-	height: number;
-}
-
-export interface PipProps {
-	gate: GateNumber;
-	x: number;
-	y: number;
-	radius: number;
-}

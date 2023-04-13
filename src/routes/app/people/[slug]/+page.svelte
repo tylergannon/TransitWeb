@@ -13,7 +13,21 @@
 	export let data: PageData;
 
 	$: person = data.person;
-	$: chart = data.chart;
+	$: design = data.chart.design;
+	$: natal = data.chart.natal;
+	$: charts = [
+		{
+			chart: data.chart.design,
+			name: "design",
+			displayName: "Design",
+			color: "stroke-primary-500",
+		}, {
+			chart: data.chart.natal,
+			name: "natal",
+			displayName: "Natal",
+			color: "stroke-secondary-500",
+		}
+	]
 
 	$: {
 		if ($userPeople[data.person.slug] === undefined) {
@@ -27,7 +41,7 @@
 	{person.lastName}
 </div>
 <div class="flex flex-col relative">
-	<Graph width={400} />
+	<Graph width={400} {charts} />
 	<div
 		class="w-4/6 grid lg:grid-cols-[repeat(14,_minmax(0,_1fr))] md:grid-cols-[repeat(7,_minmax(0,_1fr))] sm:grid-cols-4 gap-0"
 	>
@@ -44,13 +58,13 @@
 				</svg>
 				-->
 				<div class="text-lg font-heading-token font-semibold text-center"
-					>{chart.design[planet]?.gate}<sup class="text-xs font-light"
-						>{chart.design[planet]?.line}</sup
+					>{design[planet]?.gate}<sup class="text-xs font-light"
+						>{design[planet]?.line}</sup
 					></div
 				>
 				<div class="text-lg font-heading-token font-semibold text-center"
-					>{chart.natal[planet]?.gate}<sup class="text-xs font-light"
-						>{chart.natal[planet]?.line}</sup
+					>{natal[planet]?.gate}<sup class="text-xs font-light"
+						>{natal[planet]?.line}</sup
 					></div
 				>
 			</div>
