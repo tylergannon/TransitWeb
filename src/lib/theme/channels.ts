@@ -85,7 +85,7 @@ const channels: ChannelConf[] = [
 		'51',
 		'g',
 		'will',
-		null,
+		55,
 		[35, 4],
 		[-20, -30],
 		{ inner: 'h-20 v100 h100', outer: 'v-30 h100 v120' }

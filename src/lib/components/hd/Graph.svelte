@@ -41,7 +41,7 @@
 
 	$: channelData = keys(theme.channelForGate).map((g) => [
 		g,
-		linkage.gates[g]||[[], [], []],
+		linkage.gates[g] || [[], [], []],
 		theme.channelForGate[g]
 	]) as [GateNumber, graph._GateConf, graph.ChannelName][];
 
@@ -51,7 +51,6 @@
 		svgCont.innerHTML = await fetch(graphBg).then((t) => t.text());
 		bgPath = (svgCont.querySelector('path') as SVGPathElement)?.getAttribute('d') || '';
 	});
-
 </script>
 
 <div class="hidden" bind:this={svgCont} />
@@ -62,15 +61,23 @@
 	viewBox="-400 0 800 1200"
 	xmlns="http://www.w3.org/2000/svg"
 >
+	<!--
 	<g class="graph-bg">
 		<SahasraraMandala />
 		<LotusPath />
 		<path d={bgPath} class="body" />
 	</g>
+	 -->
 
 	<g class="channels">
 		{#each channelData as [gate, link, channel]}
-			<Channel {gate} sources={link[0]} channels={link[1]} colors={link[2]} dash={theme.channels[channel].dash} />
+			<Channel
+				{gate}
+				sources={link[0]}
+				channels={link[1]}
+				colors={link[2]}
+				dash={theme.channels[channel].dash}
+			/>
 		{/each}
 	</g>
 
