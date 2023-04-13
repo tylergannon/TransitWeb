@@ -4,6 +4,7 @@
 	// This contains the bulk of Skeletons required styles:
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
+	import '$lib/theme/theme.postcss'
 
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
@@ -30,5 +31,7 @@
 	} : null));
 
 </script>
+
+<svelte:body data-theme="crimson" />
 
 <slot />

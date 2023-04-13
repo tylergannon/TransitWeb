@@ -79,9 +79,9 @@ export interface Position {
 	lng: LongitudeDeg;
 }
 
-type ChartJson = PlanetDataJson<PositionJson> & ChartDateJson;
+type ChartJson = PlanetDataJson<PositionJson> & { chart_date: ChartDateJson };
 
-export type Chart = PlanetData<Position> & ChartDateJson;
+export type Chart = PlanetData<Position> & { chartDateJson: ChartDateJson };
 
 const position = (p: PositionJson): Position => ({
 	gate: p[0].toString() as GateNumber,
@@ -89,9 +89,9 @@ const position = (p: PositionJson): Position => ({
 	lng: p[3]
 });
 
-const chart = (c: ChartJson): Chart => {
+const chart = ({ north_node, chart_date, ...c }: ChartJson): Chart => {
 	return {
-		...c,
+		chartDateJson: chart_date,
 		sun: position(c.sun),
 		earth: revGate(c.sun[3]),
 		moon: position(c.moon),
@@ -103,8 +103,8 @@ const chart = (c: ChartJson): Chart => {
 		uranus: position(c.uranus),
 		neptune: position(c.neptune),
 		pluto: position(c.pluto),
-		northNode: position(c.north_node),
-		southNode: revGate(c.north_node[3]),
+		northNode: position(north_node),
+		southNode: revGate(north_node[3]),
 		chiron: c.chiron && position(c.chiron)
 	};
 };
