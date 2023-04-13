@@ -3,16 +3,12 @@
 	import { chartLinkage } from '$lib/hd/graph';
 	import * as graph from '$lib/hd/graph';
 
-	import graphBg from '$lib/images/silhouette_seated.svg';
 
 	import theme from '$lib/theme';
 
 	import DropShadow from '../svg/DropShadow.svelte';
 
 	import { entries, keys } from '../helper';
-	import { onMount } from 'svelte';
-	import LotusPath from './LotusPath.svelte';
-	import SahasraraMandala from '$lib/images/Sahasrara_Mandala.svelte';
 	import Channel from './Channel.svelte';
 	import Pip from './Pip.svelte';
 
@@ -45,15 +41,8 @@
 		theme.channelForGate[g]
 	]) as [GateNumber, graph._GateConf, graph.ChannelName][];
 
-	let bgPath = '';
-	let svgCont: HTMLDivElement;
-	onMount(async () => {
-		svgCont.innerHTML = await fetch(graphBg).then((t) => t.text());
-		bgPath = (svgCont.querySelector('path') as SVGPathElement)?.getAttribute('d') || '';
-	});
 </script>
 
-<div class="hidden" bind:this={svgCont} />
 <svg
 	{width}
 	height={width * aspectRatio}
@@ -61,13 +50,7 @@
 	viewBox="-400 0 800 1200"
 	xmlns="http://www.w3.org/2000/svg"
 >
-	<!--
-	<g class="graph-bg">
-		<SahasraraMandala />
-		<LotusPath />
-		<path d={bgPath} class="body" />
-	</g>
-	 -->
+	<slot />
 
 	<g class="channels">
 		{#each channelData as [gate, link, channel]}
@@ -136,10 +119,5 @@
 
 	g.center-group > use.def {
 		@apply fill-secondary-500;
-	}
-	.graph-bg path.body {
-		fill: none;
-		@apply stroke-secondary-300 fill-secondary-100 dark:stroke-secondary-700 dark:fill-secondary-900;
-		transform: scale(1) scaleY(0.9) translateX(-450px) translateY(120px);
 	}
 </style>
