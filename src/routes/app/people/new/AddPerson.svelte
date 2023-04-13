@@ -9,7 +9,7 @@
 	import type { PeopleStore } from '$lib/stores/people';
 
 	import { writable } from 'svelte/store';
-	import { citiesStore, postForm } from './helper';
+	import { citiesStore } from './helper';
 
 	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
 	import PersonTags from './PersonTags.svelte';
@@ -43,6 +43,8 @@
 	let firstName = '';
 	let lastName = '';
 	let dobUtc: Date | null = null;
+
+	$: invalidYear = dobUtc && (dobUtc.getFullYear() < 1550 || dobUtc.getFullYear() > 2649);
 
 	let cityQuery = writable('');
 	const cities = citiesStore(cityQuery);
@@ -155,11 +157,14 @@
 				<input
 					bind:value={currTime}
 					bind:this={dobInput}
+					name="dob"
 					required
+					class:border-error-700={invalidYear}
 					type="datetime-local"
 					class="input"
 					form=""
 				/>
+				<label class:block={invalidYear} for="dob">Year must be between 1550 and 2649.</label>
 			</label>
 			<label class="label mt-1.5 ml-4" for="slider-label">
 				<span class="pl-0 prose">Not sure?</span>
@@ -179,3 +184,10 @@
 	<!-- </div> -->
 	<button type="submit" class="input btn variant-glass-secondary"> Create </button>
 </form>
+
+<style lang="postcss">
+	label[for='dob'] {
+		@apply text-xs text-error-700-200-token;
+		display: none;
+	}
+</style>

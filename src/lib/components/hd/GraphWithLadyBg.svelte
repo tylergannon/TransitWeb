@@ -5,7 +5,7 @@
 	import SahasraraMandala from '$lib/images/Sahasrara_Mandala.svelte';
 
 	let bgPath = '';
-	let svgCont: HTMLDivElement;
+	let svgCont: SVGGElement;
 	onMount(async () => {
 		svgCont.innerHTML = await fetch(graphBg).then((t) => t.text());
 		bgPath = (svgCont.querySelector('path') as SVGPathElement)?.getAttribute('d') || '';
