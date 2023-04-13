@@ -79,6 +79,12 @@ export class SvgPath {
 		return this;
 	}
 
+	shape(shape: 'square' | 'triangle', size: number, r?: number) {
+		return shape === 'square'
+			? this.roundedSquare(size, r || squareRatio)
+			: this.roundedTriangle(size, r || triangleRatio);
+	}
+
 	roundedTriangle(size: number, r = triangleRatio) {
 		const k = size / (1 + 2 * r);
 		const radius = r * k;

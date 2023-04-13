@@ -1,56 +1,40 @@
 <script lang="ts">
 	import type { CenterName } from '$lib/hd';
 	import { centers, type Linkage } from '$lib/hd/graph';
-	import { SvgPath } from '$lib/svg/path';
 	import type { GraphTheme } from '$lib/theme';
 	import { getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import Pip from './Pip.svelte';
+	import Channel from './Channel.svelte';
 
 	const theme: Readable<GraphTheme> = getContext('theme');
 	const linkage: Readable<Linkage> = getContext('linkage');
 
-	let path: string = "";
-	
-
 	export let name: CenterName;
 
-	$: props = $theme.centers[name]
-	$: channels = $linkage.centers[name];
+	$: myChannels = $linkage.centers[name];
 	$: myGates = $linkage.gates;
+	$: gates = centers[name].gates.map(gate => $theme.gates[gate]);
 
-	$: path = new SvgPath()
-		.move([props.x, props.y], 'M')
-		.rotate(props.rotation || 0)
-		[props.shape === 'square' ? 'roundedSquare' : 'roundedTriangle'](props.size)
-		.toString();
 	const thisCenterGates = centers[name].gates;
 
 </script>
 <g class="center-group center-{name}">
-	<path d={path} class:def={!!channels} />
-	<g class="bg-he">
+	<g>
 		{#each thisCenterGates as gate}
+			<Channel {gate} />
+		{/each}
+	</g>
+	<use href="#center-{name}" class:def={!!myChannels}  />
+	<g class="bg-he">
+		{#each thisCenterGates as gate, idx}
 			<g class="gate" class:def={!!myGates[gate]}>
-				<Pip {gate} defined={!!channels} />
 			</g>
 		{/each}
-
-	</g>
-	<g>
-		<slot />
 	</g>
 </g>
 
 <style lang="postcss">
-	g.center-group > path {
-		@apply fill-transparent stroke-secondary-700 dark:stroke-secondary-300;
-		stroke-width: 2px;
-	}
-
-	g.center-group > path.def {
-		@apply fill-secondary-500;
-	}
 
 	.backing {
 		stroke-linecap: butt;

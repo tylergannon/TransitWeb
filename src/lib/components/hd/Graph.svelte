@@ -1,21 +1,26 @@
 <script lang="ts">
 	import type { Chart } from '$lib/hd';
 	import { chartLinkage } from '$lib/hd/graph';
+	import * as graph from '$lib/hd/graph';
 
 	import graphBg from '$lib/images/silhouette_seated.svg';
 
 	import theme from '$lib/theme';
+	import { CodeBlock } from '@skeletonlabs/skeleton';
 
 	import Center from './Center.svelte';
 
 	import DropShadow from '../svg/DropShadow.svelte';
 
 	import { writable, readable } from 'svelte/store';
-	import { keys } from '../helper';
+	import { entries, keys } from '../helper';
 	import { onMount, setContext } from 'svelte';
 	import LotusPath from './LotusPath.svelte';
 	import SahasraraMandala from '$lib/images/Sahasrara_Mandala.svelte';
-	
+	import { channelForGate } from '$lib/theme/channels';
+	import Channel from './Channel.svelte';
+	import Pip from './Pip.svelte';
+
 	const opts = [['inner', 0] as const, ['outer', 100] as const];
 
 	export let {
@@ -45,17 +50,16 @@
 	$: $linkageStore = linkage;
 	setContext('linkage', linkageStore);
 	setContext('theme', readable(theme));
-	
+
 	let bgPath = '';
 	let svgCont: HTMLDivElement;
 	onMount(async () => {
-		svgCont.innerHTML = await fetch(graphBg).then(t=>t.text());
+		svgCont.innerHTML = await fetch(graphBg).then((t) => t.text());
 		bgPath = (svgCont.querySelector('path') as SVGPathElement)?.getAttribute('d') || '';
-	})
+	});
 </script>
-<div class="hidden" bind:this={svgCont}>
 
-</div>
+<div class="hidden" bind:this={svgCont} />
 <svg
 	{width}
 	height={width * aspectRatio}
@@ -66,12 +70,32 @@
 	<g class="graph-bg">
 		<SahasraraMandala />
 		<LotusPath />
-		<path d="{bgPath}" class="body" />
+		<path d={bgPath} class="body" />
 	</g>
 
-	{#each keys(theme.centers) as name}
-		<Center {name} />
-	{/each}
+	<g class="channels">
+		{#each keys(theme.channelForGate) as gate}
+			<Channel {gate} />
+		{/each}
+	</g>
+
+	<!-- Draw Centers Shapes -->
+	<g class="center-group">
+		{#each keys(theme.centers) as name}
+			<use href="#center-{name}" class:def={!!linkage.centers[name]} />
+		{/each}
+	</g>
+	<g class="pips">
+		{#each keys(theme.centers) as ctr}
+			{#each graph.centers[ctr].gates as gate}
+				<Pip
+					{...theme.gates[gate]}
+					ctrDefined={!!linkage.centers[ctr]}
+					defined={!!linkage.gates[gate]?.[0]}
+				/>
+			{/each}
+		{/each}
+	</g>
 
 	<defs>
 		<radialGradient id="RadialGradient1" fx="0%" fy="0%" r="40%" cx="0" cy="0">
@@ -79,14 +103,41 @@
 			<stop offset="100%" stop-color="red" stop-opacity="0" />
 		</radialGradient>
 		<DropShadow id="dropShadow" />
+		<g id="centers-defs">
+			{#each entries(theme.centers) as [name, center] (name)}
+				<path id="center-{name}" d={center.path} />
+			{/each}
+		</g>
+		<g id="channels-defs">
+			{#each entries(theme.channels) as [name, channel] (name)}
+				<path id="path-{name}" d={channel.path} />
+			{/each}
+		</g>
+		<g id="channel-clip-path-defs">
+			{#each entries(theme.channels) as [name, channel] (name)}
+				<clipPath id="inner-{name}">
+					<path d={channel.inner} />
+				</clipPath>
+				<clipPath id="outer-{name}">
+					<path d={channel.outer} />
+				</clipPath>
+			{/each}
+		</g>
 	</defs>
 </svg>
 
 <style lang="postcss">
+	g.center-group > use {
+		@apply fill-secondary-200 stroke-secondary-700 dark:stroke-secondary-300;
+		stroke-width: 2px;
+	}
 
+	g.center-group > use.def {
+		@apply fill-secondary-500;
+	}
 	.graph-bg path.body {
 		fill: none;
 		@apply stroke-secondary-300 fill-secondary-100 dark:stroke-secondary-700 dark:fill-secondary-900;
-		transform: scale(1.0) scaleY(0.9) translateX(-450px) translateY(120px);
+		transform: scale(1) scaleY(0.9) translateX(-450px) translateY(120px);
 	}
 </style>

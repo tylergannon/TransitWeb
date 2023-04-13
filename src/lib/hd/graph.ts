@@ -221,7 +221,7 @@ export const channel = (name: ChannelName) => channels[name] as Channel;
  * Lists each component chart and planet that define the gate, as well as any channels
  * completed by the gate (usually 0 or 1 but can be 2 or 3 for 10|20|34|57).
  */
-export type _GateConf = [[PlanetName, number][], ChannelName[]];
+export type _GateConf = [[PlanetName, number][], ChannelName[], string[]];
 
 /**
  * The data needed by graph components to render a chart.
@@ -246,8 +246,10 @@ export const chartLinkage = (charts: GraphComponentProps[]): Linkage => {
 	const _gates: Partial<Record<GateNumber, _GateConf>> = {};
 
 	const addGate = (planet: PlanetName, { gate }: Position, idx: number) => {
-		if (_gates[gate]) _gates[gate]?.[0].push([planet, idx]);
-		else _gates[gate] = [[[planet, idx]], []];
+		const gateConf: _GateConf = _gates[gate] || [[], [], []];
+		_gates[gate] = gateConf;
+		gateConf[0].push([planet, idx]);
+		if (!gateConf[2].includes(charts[idx].color)) gateConf[2].push(charts[idx].color);
 	};
 
 	const _charts = charts.map((a) => a.chart);

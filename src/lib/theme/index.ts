@@ -16,7 +16,7 @@ export type {
 
 import gates from './gates';
 import centers from './centers';
-import channels from './channels';
+import channels, { channelForGate } from './channels';
 import props from './props';
 import colors from './colors';
 
@@ -26,6 +26,7 @@ export interface GraphTheme {
 	props: typeof props;
 	channels: typeof channels;
 	colors: typeof colors;
+	channelForGate: typeof channelForGate;
 }
 
 export const theme: GraphTheme = {
@@ -33,7 +34,8 @@ export const theme: GraphTheme = {
 	centers,
 	props,
 	channels,
-	colors
+	colors,
+	channelForGate
 };
 
 export default theme;

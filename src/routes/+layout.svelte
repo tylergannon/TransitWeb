@@ -22,9 +22,7 @@
 	export let data: LayoutData;
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-	console.log("Is it heere??");
 	handleSession(page);
-	console.log("I wonder.");
 
 	setContext('userProfile', writable<UserType|null>(data.user ? {
 		...data.user,

@@ -1,5 +1,6 @@
 import { entries } from '$lib/components/helper';
 import type { CenterName, CenterRecord } from '$lib/hd';
+import { pathFrom } from '$lib/svg';
 
 import props, { triangleRatio } from './props';
 
@@ -13,7 +14,9 @@ export type CenterProps = {
 	scale?: number;
 };
 
-export interface CenterDisplayProps extends CenterProps {
+export interface CenterDisplayProps {
+	name: CenterName;
+	path: string;
 	x: number;
 	y: number;
 	size: number;
@@ -39,12 +42,24 @@ const PROPS: CenterRecord<CenterProps> = {
 
 const roundedTriangleHeight = (size: number, r = triangleRatio) => size * (1 - 0.134 / (1 + 2 * r));
 
-const _props = ({ shapeSize, scale: _scale, ...p }: CenterProps): CenterDisplayProps => {
+const _props = ({
+	shapeSize,
+	scale: _scale,
+	x,
+	y,
+	name,
+	...p
+}: CenterProps): CenterDisplayProps => {
 	const scale = props.scale * (_scale || 1);
 	return {
-		...p,
+		name,
+		x,
+		y,
+		path: pathFrom([x, y])
+			.rotate(p.rotation || 0)
+			.shape(p.shape || 'triangle', shapeSize)
+			.toString(),
 		scale,
-		shapeSize,
 		pipRadius: props.pipRadius * scale,
 		channelSpace: props.channelSpace * scale,
 		distFromEdge: props.distFromEdge * scale,
