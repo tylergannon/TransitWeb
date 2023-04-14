@@ -1,10 +1,12 @@
+import type { LayoutLoad } from './$types';
+
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
 import { fetchChart } from '$lib/hd';
 import { fetchPerson } from '../[slug].json/client';
 
-export const load = (async ({ params: { slug }, fetch }) => {
+export const load = (async ({ fetch, params: { slug }, parent }) => {
 	try {
+		await parent();
 		const person = await fetchPerson(slug, fetch);
 		if (!person) {
 			throw error(404, 'Not found');
@@ -17,4 +19,4 @@ export const load = (async ({ params: { slug }, fetch }) => {
 	} catch (e) {
 		throw error(500, `Error: ${(e as Error).message}`);
 	}
-}) satisfies PageLoad;
+}) satisfies LayoutLoad;
