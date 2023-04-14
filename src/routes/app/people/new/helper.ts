@@ -11,3 +11,13 @@ const fetchCities = async (value: string): Promise<GeoNamesCityType[]> => {
 
 export const citiesStore = (cityInput: Readable<string>) =>
 	derivedStore<GeoNamesCityType[]>(cityInput, [], fetchCities, 200);
+
+import { format, utcToZonedTime } from 'date-fns-tz';
+
+export function formatDatetimeLocal<T extends { dobUtc: Date; tz: string }>({
+	dobUtc,
+	tz
+}: T): string {
+	const zonedDate = utcToZonedTime(dobUtc, tz);
+	return format(zonedDate, "yyyy-MM-dd'T'HH:mm", { timeZone: tz });
+}

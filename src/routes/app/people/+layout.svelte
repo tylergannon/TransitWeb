@@ -6,7 +6,9 @@
 	import { deletePerson } from './[slug]/client';
 	import SideBarPeople from './SideBarPeople.svelte';
 	const userPeople = getContext('userPeople') as PeopleStore;
+
 	let showSidebar = true;
+
 	import SidePanelCloseFilled from "carbon-icons-svelte/lib/SidePanelCloseFilled.svelte";
 	import SidePanelOpenFilled from "carbon-icons-svelte/lib/SidePanelOpenFilled.svelte";
 	import { page } from '$app/stores';
@@ -59,6 +61,13 @@
 	#sidebar-left {
 		@apply w-0 transition-[width];
 		border-right-width: 0;
+		&.showSidebar > button {
+			left: 17rem;
+			top: 3rem;
+		}
+		& > button {
+			position: absolute;
+		}
 
 		&.showSidebar {
 			@apply flex-grow min-h-full lg:w-72 p-4 mr-2 dark:bg-surface-900 border-solid border-slate-400;

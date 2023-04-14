@@ -28,6 +28,14 @@
 					{person.firstName}
 					{person.lastName}
 				</a>
+				<a class="list-nav" href="/app/people/{person.slug}/edit">
+					<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+						<path
+							fill-rule="evenodd"
+							d="M2 16a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10zm2 0V6h10v10H4zm4-8a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1zm0 4a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1z"
+							clip-rule="evenodd"
+						/>
+					</svg>
 			</div>
 		</li>
 	{/each}
