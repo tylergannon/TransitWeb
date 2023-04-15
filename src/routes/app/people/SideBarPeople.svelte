@@ -1,10 +1,27 @@
 <script lang="ts">
+	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
+
+	import { computePosition } from '@floating-ui/dom';
+
+	import { popup } from '@skeletonlabs/skeleton';
+	import type { PopupSettings } from '@skeletonlabs/skeleton';
+
 	import type { ClientSidePerson } from '$lib/stores/people';
-	import { page } from '$app/stores';
+	import Popup from '$lib/components/presentation/Popup.svelte';
 	export let userPeople: Record<string, ClientSidePerson>;
 
 	$: peopleList = Object.values(userPeople);
-  export let query: string;
+	export let query: string;
+
+	const popupSettings: Omit<PopupSettings, 'target'> = {
+		event: 'hover',
+		middleware: {
+			offset: {
+				mainAxis: 0
+			}
+		},
+		placement: 'top-end'
+	};
 
 	const peopleFilter = (q: string) => {
 		const parts = q
@@ -17,33 +34,37 @@
 	};
 
 	$: people = peopleList.filter(peopleFilter(query));
-
 </script>
 
-<ul>
-	{#each people as person (person.slug)}
-		<li class="list-nav">
-			<div class="flex w-full">
-				<a class="list-nav" href="/app/people/{person.slug}">
-					{person.firstName}
-					{person.lastName}
-				</a>
-				<a class="list-nav" href="/app/people/{person.slug}/edit">
-					<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-						<path
-							fill-rule="evenodd"
-							d="M2 16a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10zm2 0V6h10v10H4zm4-8a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1zm0 4a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1z"
-							clip-rule="evenodd"
-						/>
-					</svg>
-			</div>
-		</li>
-	{/each}
-</ul>
+<nav class="list-nav">
+	<ul>
+		{#each people as { slug, firstName, lastName, ...rest } (rest._id)}
+			<li aria-describedby="about-{slug}" use:popup={{ ...popupSettings, target: slug }}>
+				<Popup>
+					<a href="/app/people/{slug}" class="flex-1"> {firstName} {lastName} </a>
+					<svelte:fragment slot="popup">
+						<div id="about-{slug}" data-popup={slug} class="w-36 h-28">
+							<a href="/app/people/{slug}" class="flex-1">
+								<slot {slug} {firstName} {lastName} {rest}>
+									{firstName}
+									{lastName}
+								</slot>
+							</a>
+						</div>
+					</svelte:fragment>
+				</Popup>
+			</li>
+		{/each}
+	</ul>
+</nav>
+
 
 <style lang="postcss">
 	a:visited {
 		color: inherit;
+	}
+	a:focus {
+		outline: none;
 	}
 
 	a {
@@ -53,5 +74,24 @@
 
 	a:hover {
 		@apply underline cursor-pointer;
+	}
+	[data-popup] {
+		position: absolute;
+	}
+	[data-popup],
+	[data-popup] > .arrow {
+		@apply bg-surface-300-600-token;
+		border: none;
+		outline: none;
+		z-index: 100;
+	}
+
+	nav {
+		li {
+			position: relative;
+			& > a {
+				@apply flex w-full;
+			}
+		}
 	}
 </style>

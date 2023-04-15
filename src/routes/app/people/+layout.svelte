@@ -1,17 +1,20 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
 	import AppBar from '$lib/elem/AppBar.svelte';
 	import { AppShell } from '@skeletonlabs/skeleton';
 	import { deletePerson } from './[slug]/client';
 	import SideBarPeople from './SideBarPeople.svelte';
-	const userPeople = getContext('userPeople') as PeopleStore;
-
-	let showSidebar = true;
 
 	import SidePanelCloseFilled from "carbon-icons-svelte/lib/SidePanelCloseFilled.svelte";
 	import SidePanelOpenFilled from "carbon-icons-svelte/lib/SidePanelOpenFilled.svelte";
 	import { page } from '$app/stores';
+	import { writable } from 'svelte/store';
+
+	const userPeople = getContext('userPeople') as PeopleStore;
+
+	let showSidebar = writable(true);
+	setContext('showSidebar', showSidebar);
 
 	let query = $page.url.searchParams.get('q') || '';
 
@@ -22,7 +25,7 @@
 	}
 	
 	const toggleSidebar = () => {
-		showSidebar = !showSidebar;
+		$showSidebar = !$showSidebar;
 	}
 </script>
 
@@ -32,15 +35,15 @@
 		<AppBar />
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<div id="sidebar-left" class:showSidebar>
+		<div class="sidebarLeft" class:showSidebar={$showSidebar}>
 			<button
-				on:click={()=>{showSidebar = !showSidebar;}}
-				title="{showSidebar ? 'Hide' : 'Show'} Sidebar"
+				on:click={toggleSidebar}
+				title="{$showSidebar ? 'Hide' : 'Show'} Sidebar"
 				type="button"
 			>
-				<svelte:component this={showSidebar ? SidePanelCloseFilled : SidePanelOpenFilled} />
+				<svelte:component this={$showSidebar ? SidePanelCloseFilled : SidePanelOpenFilled} size={16} />
 			</button>
-			<div class="flex flex-col space-y-4">
+			<div class="space-y-4">
 				<input type="search" bind:value={query} class="input" />
 				<SideBarPeople userPeople={$userPeople} bind:query />
 			</div>
@@ -58,7 +61,7 @@
 </AppShell>
 
 <style lang="postcss">
-	#sidebar-left {
+	.sidebarLeft {
 		@apply w-0 transition-[width];
 		border-right-width: 0;
 		&.showSidebar > button {
