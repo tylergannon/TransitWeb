@@ -12,16 +12,13 @@
 
 	import { handleSession } from '@lucia-auth/sveltekit/client';
 
-	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-
-	import { storePopup } from '@skeletonlabs/skeleton';
+	import { Modal } from '@skeletonlabs/skeleton';
 
 	import type { LayoutData } from './$types';
 	import type { UserType } from '$lib/srv/model';
 
 	export let data: LayoutData;
 
-	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	handleSession(page);
 
 	setContext('userProfile', writable<UserType|null>(data.user ? {
@@ -35,3 +32,6 @@
 <svelte:body data-theme="crimson" />
 
 <slot />
+<aside role="alertdialog">
+	<Modal />
+</aside>

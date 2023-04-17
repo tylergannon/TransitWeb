@@ -23,13 +23,13 @@
 			userPeople.remove(slug);
 		});
 	}
-	
+
 	const toggleSidebar = () => {
 		$showSidebar = !$showSidebar;
 	}
 </script>
 
-<AppShell class="min-h-screen bg-white dark:bg-black flex-col" slotPageContent="flex-grow" regionPage="min-h-fit">
+<AppShell slotSidebarLeft="overflow-x-visible overflow-y-visible" class="min-h-screen bg-white dark:bg-black" slotPageContent="flex-grow" regionPage="min-h-fit">
 
 	<svelte:fragment slot="header">
 		<AppBar />
@@ -45,7 +45,7 @@
 			</button>
 			<div class="space-y-4">
 				<input type="search" bind:value={query} class="input" />
-				<SideBarPeople userPeople={$userPeople} bind:query />
+				<SideBarPeople on:remove={remove} userPeople={$userPeople} bind:query />
 			</div>
 		</div>
 	</svelte:fragment>
@@ -73,7 +73,7 @@
 		}
 
 		&.showSidebar {
-			@apply flex-grow min-h-full lg:w-72 p-4 mr-2 dark:bg-surface-900 border-solid border-slate-400;
+			@apply min-h-full lg:w-72 p-4 mr-2 dark:bg-surface-900 border-solid border-slate-400;
 			border-right-width: 0.2px;
 		}
 	}

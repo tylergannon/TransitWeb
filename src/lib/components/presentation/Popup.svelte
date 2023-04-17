@@ -26,7 +26,23 @@
 	const dispatch = createEventDispatcher<{ openPopup: void; closePopup: void }>();
 
 	$: {
-		if (target && popup) {
+	}
+	export let tagName: 'div' | 'span' = 'div';
+	export let show = false;
+
+	let target: HTMLElement;
+	let popup: HTMLElement;
+	let arrowData: { x?: number; y?: number; centerOffset: number } = { centerOffset: 0 };
+	const destroyFns: (() => void)[] = [];
+	
+	const foo = {
+		nice(sauce: HTMLElement, baz: number) {
+			return {destroy: ()=>{}}
+		}
+	}
+
+	$: {
+		if (show && target && popup) {
 			computePosition(target, popup, {
 				placement,
 				middleware: [
@@ -42,18 +58,7 @@
 				}
 				staticSide = OP_SIDES[position.placement.split('-')[0] as Direction];
 			});
-		}
-	}
-	export let tagName: 'div' | 'span' = 'div';
 
-	let target: HTMLElement;
-	let popup: HTMLElement;
-	let arrowData: { x?: number; y?: number; centerOffset: number } = { centerOffset: 0 };
-	let visible: boolean = false;
-	const destroyFns: (() => void)[] = [];
-
-	$: {
-		if (visible) {
 			destroyFns.push(
 				autoUpdate(target, popup, () => {
 					target = target;
@@ -69,15 +74,13 @@
 	type _TransitionEvent = TransitionEvent & { currentTarget: EventTarget & typeof popup };
 	const transitionEnd = ({ currentTarget }: _TransitionEvent) => {
 		const opacity = parseFloat(getComputedStyle(currentTarget).opacity);
-		visible = opacity === 1;
-		dispatch(opacity === 1 ? 'openPopup' : 'closePopup');
+		// dispatch(opacity === 1 ? 'openPopup' : 'closePopup');
 	};
 
 	const transitionStart = (e: _TransitionEvent) => {};
 	const transitionCancel = (e: _TransitionEvent) => {};
 </script>
 
-<svelte:element this={tagName} bind:this={target} class="wrap">
 	<slot />
 
 	<aside
@@ -96,12 +99,12 @@
 				style:left={'left' === staticSide ? `-4px` : arrowData.x ? `${arrowData.x}px` : `auto`}
 				style:right={'right' === staticSide ? `-4px` : `auto`}
 				style:bottom={'bottom' === staticSide ? `-4px` : `auto`}
+				class:show
 				class="arrow"
 				bind:this={arrowElem}
 			/>
 		{/if}
 	</aside>
-</svelte:element>
 
 <style lang="postcss">
 	.wrap {
@@ -117,7 +120,8 @@
 			transition-duration: 1.1s, 0.01s;
 			transition-timing-function: ease-in-out, ease-in-out;
 		}
-		&:hover .popup, .popup:hover {
+		&:hover .popup,
+		.popup:hover {
 			opacity: 1;
 			visibility: visible;
 			pointer-events: initial;

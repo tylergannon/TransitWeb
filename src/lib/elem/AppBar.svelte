@@ -1,24 +1,17 @@
 <script lang="ts">
 	import { AppBar } from '@skeletonlabs/skeleton';
-	import { popup } from '@skeletonlabs/skeleton';
-	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
 	import IncompleteCancel from 'carbon-icons-svelte/lib/IncompleteCancel.svelte';
 	import UserAvatarFilledAlt from 'carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte';
 
-	import type { UserType } from '$lib/srv/model';
-
 	import UserMenu from '$lib/components/nav/UserMenu.svelte';
-	import type { Writable } from 'svelte/store';
-	import { getContext } from 'svelte';
+	import { Popup } from '$lib/components/presentation/popup';
 
-	const userProfile: Writable<UserType> = getContext('userProfile');
+	const popup = new Popup({
+		placement: 'bottom',
+		offset: { mainAxis: 4, crossAxis: -40 },
+	})
 
-	const popupSettings: PopupSettings = {
-		event: 'click',
-		target: 'userMenu',
-		placement: 'bottom-end'
-	};
 </script>
 
 <AppBar spacing="space-y-2" padding="p-1">
@@ -41,15 +34,27 @@
 		<button
 			type="button"
 			class="btn hover:text-secondary-600"
-			use:popup={popupSettings}
-			id="userMenu"
-
+			use:popup.target
+			on:click={popup.toggle}
 		>
 			<span><UserAvatarFilledAlt size={24} /></span>
 			<span>Me</span>
 		</button>
-		<div class="card p-4" data-popup="userMenu">
+		<aside class="popup" use:popup.floating>
 			<UserMenu />
-		</div>
+		</aside>
 	</svelte:fragment>
 </AppBar>
+
+<style lang="postcss">
+	.popup {
+		position: absolute;
+		visibility: hidden;
+		opacity: 0;
+
+		&:global(.show) {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+</style>

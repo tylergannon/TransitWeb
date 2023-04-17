@@ -1,18 +1,39 @@
 <script lang="ts">
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
-	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import { LightSwitch, getModeUserPrefers, setModeCurrent, setModeUserPrefers } from '@skeletonlabs/skeleton';
+
+	const toggleDarkMode = () => {
+		const nextVal = !getModeUserPrefers();
+		setModeUserPrefers(nextVal);
+		setModeCurrent(nextVal);
+	}
+
 </script>
 
-<nav class="list-nav">
-	<!-- (optionally you can provde a label here) -->
+<nav class="border-surface-400-500-token text-surface-900-50-token">
 	<ul>
-		<li>
+		<li class="pt-2 px-2">
 			<a href="/app/settings">
 				<span><Settings /></span>
 				<span class="flex-auto">Settings</span>
 			</a>
 		</li>
-		<li><LightSwitch /></li>
-		<!-- ... -->
+		<li class="flex-1 p-2 pt-1 relative">
+			<div class="ml-1 absolute top-[30%] left-4"><LightSwitch height={"h-4"} width={"w-8"} /> </div>
+			<button type="button" on:click={toggleDarkMode} class="w-full">
+				<span class="text-sm pl-12">🌞/🌛</span>
+			</button>
+		</li>
 	</ul>
 </nav>
+
+<style lang="postcss">
+	nav {
+		@apply w-36;
+		@apply list-nav rounded-t-none rounded-b-md;
+		@apply bg-white dark:bg-black;
+		border-style: solid;
+		border-width: 0.05rem;
+		border-top-width: 0;
+	}
+</style>
