@@ -51,7 +51,7 @@
 				on:mouseleave={popup.hide}
 				on:blur={popup.hide}
 			>
-				<a href="/app/people/{slug}" class="flex-1"> {firstName} {lastName} </a>
+				<a href="/app/people/{slug}" class="flex-wrap"> {firstName} {lastName} </a>
 				<div id="about-{slug}" class="popup" use:popup.floating>
 					<span class="flex-1 pl-1">{firstName} {lastName}</span>
 					<div class="controls flex flex-row">
@@ -101,10 +101,8 @@
 
 	nav {
 		li {
-			position: relative;
-			& > a {
-				@apply flex w-full;
-			}
+			@apply flex flex-wrap;
+			overflow: hidden;
 		}
 	}
 </style>

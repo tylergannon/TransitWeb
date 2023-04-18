@@ -16,6 +16,8 @@
 	export let offsetWidth = 0;
 	export let width = 'auto';
 	export let height = 'auto';
+	export let autoHide = false;
+	export let visible = true;
 	let container: HTMLDivElement;
 
 	$: console.log(
@@ -23,6 +25,20 @@
 	);
 
   type Handler = MouseEventListener<HTMLDivElement>
+	/**
+	 * Resets visible, calling dispatch as needed.  Returns the new size.
+	 * @param calc The distance from the cursor to the edge of the container
+	 * @param min The minimum size of the container
+	 */
+	function setSizeProp(calc: number, min: number) {
+		const actual = calc >= min ? calc : autoHide ? 0 : min;
+		if (actual === 0 && visible) {
+			visible = false; dispatch('visible', false);
+		} else if (actual > 0 && !visible) {
+			visible = true; dispatch('visible', true);
+		}
+		return `${actual}px`;
+	}
 
 	const events: {mousemove: Handler, mouseup: Handler} = {
 		mousemove: (e: MouseEvent) => {
@@ -30,10 +46,10 @@
 			const { clientX, clientY } = e;
 			const { x, y } = container.getBoundingClientRect();
 			if (resizing.includes('right')) {
-				width = `${Math.max(clientX - x, minWidth)}px`;
+				width = setSizeProp(clientX - x, minWidth);
 			}
 			if (resizing.includes('bottom')) {
-				height = `${Math.max(clientY - y, minHeight)}px`;
+				height = setSizeProp(clientY - y, minHeight);
 			}
 			dispatch('resize', { clientHeight, clientWidth });
 		},
@@ -66,6 +82,7 @@
 	style:position="relative"
 	style:width
 	style:height
+	style:visibility={visible ? 'visible' : 'hidden'}
 >
 	<slot />
 	{#if allow.includes('right')}
@@ -82,7 +99,6 @@
 <style lang="postcss">
 	.resizer {
 		position: absolute;
-		background: #000;
 		opacity: 0.2;
 		z-index: 1;
 		transition: opacity 0.2s ease;
@@ -90,7 +106,7 @@
 			opacity: 0.4;
 		}
 		&.right {
-			width: 10px;
+			width: 7px;
 			height: 100%;
 			top: 0;
 			right: 0;
@@ -98,14 +114,14 @@
 		}
 		&.bottom {
 			width: 100%;
-			height: 10px;
+			height: 7px;
 			bottom: 0;
 			left: 0;
 			cursor: row-resize;
 		}
 		&.bottom-right {
-			width: 10px;
-			height: 10px;
+			width: 5px;
+			height: 5px;
 			bottom: 0;
 			right: 0;
 			cursor: se-resize;

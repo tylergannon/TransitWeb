@@ -40,7 +40,7 @@
 		<AppBar />
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<Resizable allow={['right']} >
+		<Resizable allow={['right']} autoHide={true} minWidth={15} >
 			<div class="sidebarLeft" class:showSidebar={$showSidebar}>
 				<button
 					on:click={toggleSidebar}

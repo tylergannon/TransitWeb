@@ -45,7 +45,7 @@
 		class="w-4/6 grid lg:grid-cols-[repeat(14,_minmax(0,_1fr))] md:grid-cols-[repeat(7,_minmax(0,_1fr))] sm:grid-cols-4 gap-0"
 	>
 		{#each planetNames as planet}
-			<div class="bg-slate-300 dark:bg-slate-800 p-2 md:mb-2 item-center">
+			<div class="planet">
 				<div class="self-center items-center h-4 w-full mb-1">
 					<svelte:component this={planets[planet]} />
 				</div>
@@ -70,3 +70,9 @@
 		{/each}
 	</div>
 </div>
+
+<style lang="postcss">
+	.planet {
+		@apply bg-secondary-100 dark:bg-secondary-900 p-2 md:mb-2 items-center;
+	}
+</style>
