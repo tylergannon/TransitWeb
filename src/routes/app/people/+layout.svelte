@@ -6,10 +6,11 @@
 	import { deletePerson } from './[slug]/client';
 	import SideBarPeople from './SideBarPeople.svelte';
 
-	import SidePanelCloseFilled from "carbon-icons-svelte/lib/SidePanelCloseFilled.svelte";
-	import SidePanelOpenFilled from "carbon-icons-svelte/lib/SidePanelOpenFilled.svelte";
+	import SidePanelCloseFilled from 'carbon-icons-svelte/lib/SidePanelCloseFilled.svelte';
+	import SidePanelOpenFilled from 'carbon-icons-svelte/lib/SidePanelOpenFilled.svelte';
 	import { page } from '$app/stores';
 	import { writable } from 'svelte/store';
+	import Resizable from '$lib/components/presentation/Resizable.svelte';
 
 	const userPeople = getContext('userPeople') as PeopleStore;
 
@@ -18,64 +19,74 @@
 
 	let query = $page.url.searchParams.get('q') || '';
 
-	const remove = ({detail: slug}: CustomEvent<string>) => {
-		deletePerson({slug}).then(() => {
+	const remove = ({ detail: slug }: CustomEvent<string>) => {
+		deletePerson({ slug }).then(() => {
 			userPeople.remove(slug);
 		});
-	}
+	};
 
 	const toggleSidebar = () => {
 		$showSidebar = !$showSidebar;
-	}
+	};
 </script>
 
-<AppShell slotSidebarLeft="overflow-x-visible overflow-y-visible" class="min-h-screen bg-white dark:bg-black" slotPageContent="flex-grow" regionPage="min-h-fit">
-
+<AppShell
+	slotSidebarLeft="overflow-x-visible overflow-y-visible flex flex-row"
+	class="min-h-screen bg-white dark:bg-black"
+	slotPageContent="flex-grow"
+	regionPage="min-h-fit"
+>
 	<svelte:fragment slot="header">
 		<AppBar />
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<div class="sidebarLeft" class:showSidebar={$showSidebar}>
-			<button
-				on:click={toggleSidebar}
-				title="{$showSidebar ? 'Hide' : 'Show'} Sidebar"
-				type="button"
-			>
-				<svelte:component this={$showSidebar ? SidePanelCloseFilled : SidePanelOpenFilled} size={16} />
-			</button>
-			<div class="space-y-4">
-				<input type="search" bind:value={query} class="input" />
-				<SideBarPeople on:remove={remove} userPeople={$userPeople} bind:query />
+		<Resizable allow={['right']} >
+			<div class="sidebarLeft" class:showSidebar={$showSidebar}>
+				<button
+					on:click={toggleSidebar}
+					title="{$showSidebar ? 'Hide' : 'Show'} Sidebar"
+					type="button"
+				>
+					<svelte:component
+						this={$showSidebar ? SidePanelCloseFilled : SidePanelOpenFilled}
+						size={16}
+					/>
+				</button>
+				<div class="space-y-4">
+					<input type="search" bind:value={query} class="input" />
+					<SideBarPeople on:remove={remove} userPeople={$userPeople} bind:query />
+				</div>
 			</div>
-		</div>
+		</Resizable>
 	</svelte:fragment>
-	<svelte:fragment slot="pageHeader">
-	</svelte:fragment>
+	<svelte:fragment slot="pageHeader" />
 	<!-- Router Slot -->
 	<slot />
 
 	<!-- ---- / ---- -->
 	<svelte:fragment slot="pageFooter" />
 	<svelte:fragment slot="footer">This is where my feet go.</svelte:fragment>
-
 </AppShell>
 
 <style lang="postcss">
 	.sidebarLeft {
-		@apply w-0 transition-[width];
+		@apply transition-[width];
 		border-right-width: 0;
+		overflow: hidden;
+
 		&.showSidebar > button {
 			left: 17rem;
 			top: 3rem;
 		}
+
 		& > button {
 			position: absolute;
 		}
 
 		&.showSidebar {
-			@apply min-h-full lg:w-72 p-4 mr-2 dark:bg-surface-900 border-solid border-slate-400;
+			@apply min-h-full p-4 dark:bg-surface-900 border-solid border-slate-400;
 			border-right-width: 0.2px;
+			overflow: visible;
 		}
 	}
-
 </style>

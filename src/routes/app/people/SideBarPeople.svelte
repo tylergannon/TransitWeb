@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popup } from '$lib/components/presentation/popup';
-	import type { Click } from '$lib/components/types';
+	import type { Click } from '$lib/components/events';
 	import type { ClientSidePerson } from '$lib/stores/people';
 	import { modalStore } from '@skeletonlabs/skeleton';
 	import { Edit, TrashCan } from 'carbon-icons-svelte';
