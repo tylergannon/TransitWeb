@@ -12,4 +12,5 @@ export interface DraggableEvents {
 	start: Resizing;
 	resize: { clientWidth: number; clientHeight: number };
 	stop: void;
+	visible: boolean;
 }

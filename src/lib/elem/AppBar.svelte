@@ -10,6 +10,7 @@
 	const popup = new Popup({
 		placement: 'bottom',
 		offset: { mainAxis: 4, crossAxis: -40 },
+		dismiss: true,
 	})
 
 </script>

@@ -29,6 +29,7 @@ export type PopupArgs = {
 	flip: NonNullable<Parameters<typeof _flip>[0]>;
 	placement: dom.Placement;
 	className: string;
+	dismiss: boolean;
 };
 
 const addArrow = (el: HTMLElement): HTMLElement => {
@@ -48,6 +49,7 @@ const POPUP_ERROR = 'Tried to popup when targetEl or floatingEl is not set.';
 export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = HTMLElement>
 	implements PopupArgs
 {
+	dismiss = false;
 	_visible = false;
 	offset: number | { mainAxis: number; crossAxis?: number | undefined } = 0;
 	arrow: number | false = 0;
@@ -71,6 +73,27 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 	> = {};
 	placement: dom.Placement = 'bottom';
 	className = 'show';
+	private connectDismiss() {
+		document.addEventListener('keyup', this.onKeyup);
+		document.addEventListener('click', this.onOutsideClick);
+	}
+	private disconnectDismiss() {
+		document.removeEventListener('keyup', this.onKeyup);
+		document.removeEventListener('click', this.onOutsideClick);
+	}
+	private onKeyup = (e: KeyboardEvent) => {
+		if (e.key === 'Escape') this.hide();
+	};
+	private onOutsideClick = (e: MouseEvent) => {
+		if (
+			!this.floatingEl?.contains(e.target as Node) &&
+			!this.targetEl?.contains(e.target as Node)
+		) {
+			this.hide();
+			console.log(e);
+			console.log('I hid the popup');
+		}
+	};
 	/**
 	 * List of functions to call when destroying (obtained from autoUpdate).
 	 */
@@ -109,6 +132,10 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 		this.visible = !this.visible;
 	};
 
+	/**
+	 * The public interface to show and hide the popup.
+	 * Calls out to _show and _hide to do the actual DOM manipulation.
+	 */
 	set visible(v: boolean) {
 		if (v === this._visible) return;
 		this._visible = v;
@@ -184,15 +211,28 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 		].filter(Boolean);
 	}
 
+	/**
+	 * - Render the popup.
+	 * - Observe for positional changes.
+	 * - Add the show class.
+	 * - Listen for dismiss events if dismiss is true.
+	 */
 	private _show() {
 		this.render();
 		this.observe();
 		this.floatingEl?.classList.add(this.className);
+		if (this.dismiss) this.connectDismiss();
 	}
 
+	/**
+	 * - Stop observing for positional changes.
+	 * - Remove the show class.
+	 * - Disconnect dismiss events if dismiss is true.
+	 */
 	private _hide() {
 		this.stopObserving();
 		this.floatingEl?.classList.remove(this.className);
+		if (this.dismiss) this.disconnectDismiss();
 	}
 
 	/**
