@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
+  import Logout from "carbon-icons-svelte/lib/Logout.svelte";
 	import { LightSwitch, getModeUserPrefers, setModeCurrent, setModeUserPrefers } from '@skeletonlabs/skeleton';
+  import { enhance } from '$app/forms';
+
 
 	const toggleDarkMode = () => {
 		const nextVal = !getModeUserPrefers();
@@ -24,6 +27,15 @@
 				<span class="text-sm pl-12">🌞/🌛</span>
 			</button>
 		</li>
+    <li class="px-2">
+      <form action="/sign-in?/signOut" method="post" use:enhance >
+        <button type="submit" class="flex flex-row w-full">
+          <span><Logout /></span>
+          <span class="flex-auto">Sign out</span>
+        </button>
+
+      </form>
+    </li>
 	</ul>
 </nav>
 

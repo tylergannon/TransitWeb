@@ -53,7 +53,7 @@
 					/>
 				</button>
 				<div class="space-y-4">
-					<input type="search" bind:value={query} class="input" />
+					<input placeholder="Search for a person" type="search" bind:value={query} class="input h-8 rounded-sm bg-transparent" />
 					<SideBarPeople on:remove={remove} userPeople={$userPeople} bind:query />
 				</div>
 			</div>
@@ -69,6 +69,13 @@
 </AppShell>
 
 <style lang="postcss">
+	input[type='search'] {
+		&:hover {
+			/** It should have a small drop shadow.*/
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+			border-width: 1.5px;
+		}
+	}
 	.sidebarLeft {
 		@apply transition-[width];
 		border-right-width: 0;

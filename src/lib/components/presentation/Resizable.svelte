@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { Sides, type DraggableEvents, type ResizableSide, type Resizing } from './helper';
-	import type { Click, ClickHandler, MouseEventListener } from '../events';
+	import type { Click, MouseEventListener } from '../events';
 	import { entries } from '../helper';
 
 	export let allow: ResizableSide[] = ['right'];
@@ -19,10 +19,6 @@
 	export let autoHide = false;
 	export let visible = true;
 	let container: HTMLDivElement;
-
-	$: console.log(
-		`offsetHeight: ${offsetHeight}, offsetWidth: ${offsetWidth}, clientHeight: ${clientHeight}, clientWidth: ${clientWidth}`
-	);
 
   type Handler = MouseEventListener<HTMLDivElement>
 	/**

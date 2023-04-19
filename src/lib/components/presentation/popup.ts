@@ -30,6 +30,7 @@ export type PopupArgs = {
 	placement: dom.Placement;
 	className: string;
 	dismiss: boolean;
+	observe: false | (() => void);
 };
 
 const addArrow = (el: HTMLElement): HTMLElement => {
@@ -90,8 +91,6 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 			!this.targetEl?.contains(e.target as Node)
 		) {
 			this.hide();
-			console.log(e);
-			console.log('I hid the popup');
 		}
 	};
 	/**
@@ -156,7 +155,7 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 	 */
 	public target = (el: T, args: Partial<PopupArgs> = {}) => {
 		this.targetEl = el;
-
+		Object.assign(this, args);
 		return {
 			destroy: () => {
 				this.targetEl = undefined;
@@ -190,9 +189,9 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 	/**
 	 * Add autoupdate listeners.
 	 */
-	private observe() {
+	public observe: PopupArgs['observe'] = () => {
 		this.destroyFns.push(autoUpdate(this.targetEl as T, this.floatingEl as U, this.render));
-	}
+	};
 
 	constructor(args: Partial<PopupArgs> = {}) {
 		Object.assign(this, args);
@@ -219,7 +218,7 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 	 */
 	private _show() {
 		this.render();
-		this.observe();
+		if (this.observe) this.observe();
 		this.floatingEl?.classList.add(this.className);
 		if (this.dismiss) this.connectDismiss();
 	}
@@ -230,7 +229,7 @@ export class Popup<T extends HTMLElement = HTMLElement, U extends HTMLElement = 
 	 * - Disconnect dismiss events if dismiss is true.
 	 */
 	private _hide() {
-		this.stopObserving();
+		if (this.observe) this.stopObserving();
 		this.floatingEl?.classList.remove(this.className);
 		if (this.dismiss) this.disconnectDismiss();
 	}

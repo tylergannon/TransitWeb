@@ -52,6 +52,8 @@
 		position: absolute;
 		visibility: hidden;
 		opacity: 0;
+		top: 0;
+		left: 0;
 
 		&:global(.show) {
 			visibility: visible;
