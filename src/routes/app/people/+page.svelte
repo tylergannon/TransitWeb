@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { PeopleStore } from '$lib/stores/people';
-	import Person from './Person.svelte';
-	import AppBar from '$lib/elem/AppBar.svelte';
-	import { AppShell, ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
- 	const userPeople = getContext('userPeople') as PeopleStore;
-  let group = '';
+	import type { Readable } from 'svelte/store';
 
+	const showSidebar: Readable<boolean> = getContext('showSidebar');
+	$showSidebar = true;
 </script>
 
 <h1>Sick</h1>

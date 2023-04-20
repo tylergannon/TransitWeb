@@ -4,53 +4,80 @@
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	import type { GeoNamesCityType } from '$lib/srv/model';
-	import { zonedTimeToUtc } from 'date-fns-tz';
-	import { getContext } from 'svelte';
-	import type { PeopleStore } from '$lib/stores/people';
+	import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
-	import { writable } from 'svelte/store';
-	import { citiesStore } from './helper';
+	import { derived, writable, type Writable } from 'svelte/store';
+	import { citiesStore, formatDatetimeLocal } from './helper';
 
 	import AutoCompleteItem from '$lib/components/complete/AutoCompleteItem.svelte';
 	import PersonTags from './PersonTags.svelte';
-	import type { ActionData, SubmitFunction } from './$types';
+	import { createEventDispatcher } from 'svelte';
+	import type { ClientSidePerson } from '$lib/stores/people';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
 
-	const people = getContext('userPeople') as PeopleStore;
+	type PersonFormEvents = {
+		submit: Omit<ClientSidePerson, '_id' | 'slug'>;
+	};
 
-	const formResponse = (() => async ({ result }) => {
+	const dispatch = createEventDispatcher<PersonFormEvents>();
+
+	const submit = () => {
+		dispatch('submit', {
+			dobUtc: dobUtc as Date,
+			tags,
+			firstName,
+			lastName,
+			placeId: (selectedCity as GeoNamesCityType)._id,
+			tz: (selectedCity as GeoNamesCityType).tz
+		});
+	};
+
+	export let person: ClientSidePerson | null = null;
+	export let selectedCity: GeoNamesCityType | null = null;
+	export let action: string;
+	export let method = 'POST';
+
+	const response = (() => async ({ result }) => {
 		await applyAction(result);
-		if (result.type === "success") {
-			people.add({
-				...(form as NonNullable<ActionData>),
-				dobUtc: dobUtc as Date,
-				tags,
-				firstName,
-				lastName,
-				placeId: (selectedCity as GeoNamesCityType)._id,
-				tz: (selectedCity as GeoNamesCityType).tz,
-			})
+		if (result.type === 'success') {
+			submit();
 		}
-		clearForm();
-		goto("/app/people/" + (form as NonNullable<ActionData>).slug);
 	}) satisfies SubmitFunction;
 
-	export let form: ActionData
+	const dobStore: Writable<Date> = writable(person?.dobUtc ?? new Date());
 
-	let selectedCity: GeoNamesCityType | null = null;
-	let currTime = '';
-	let firstName = '';
-	let lastName = '';
-	let dobUtc: Date | null = null;
+	$: console.log('person', person);
+
+	$dobStore = person?.dobUtc ?? new Date();
+
+	const dobStringStore = derived(dobStore, ($dobStore) => {
+		return formatDatetimeLocal({
+			dobUtc: $dobStore,
+			tz: selectedCity?.tz ?? Intl.DateTimeFormat().resolvedOptions().timeZone
+		});
+	});
+
+	let firstName = person?.firstName ?? '';
+	let lastName = person?.lastName ?? '';
+	let dobUtc = person?.dobUtc ?? new Date();
+	let tags = person?.tags ?? [];
+
+	let dobInput: HTMLInputElement;
+
+	const onDobChange = (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+		const timeStr = e.currentTarget.value;
+		const _selectedCity = selectedCity;
+		if (_selectedCity && timeStr) {
+			$dobStore = zonedTimeToUtc(timeStr, _selectedCity.tz);
+		}
+	};
 
 	$: invalidYear = dobUtc && (dobUtc.getFullYear() < 1550 || dobUtc.getFullYear() > 2649);
 
 	let cityQuery = writable('');
 	const cities = citiesStore(cityQuery);
-	let dobInput: HTMLInputElement;
 	let tagsInput = '';
-	let tags: string[] = [];
 
 	const selectCity = (city: GeoNamesCityType) => {
 		selectedCity = city;
@@ -58,17 +85,10 @@
 		dobInput.focus();
 	};
 
-	$: {
-		if (currTime && selectedCity) {
-			dobUtc = zonedTimeToUtc(currTime, selectedCity.tz);
-		}
-	}
-
 	const clearForm = () => {
 		firstName = '';
 		lastName = '';
-		currTime = '';
-		dobUtc = null;
+		dobUtc = person?.dobUtc ?? new Date();
 		selectedCity = null;
 		tags = [];
 		tagsInput = '';
@@ -76,21 +96,34 @@
 	};
 </script>
 
-<form method="POST" action="/app/people/new" use:enhance={formResponse}>
+<form {method} {action} use:enhance={response}>
 	<div class="grid grid-cols-1">
 		<label class="label">
 			<span class="pl-4 prose">First, give them a name.</span>
-			<input name="firstName" bind:value={firstName} required class="input" type="text" placeholder="First Name" />
+			<input
+				name="firstName"
+				bind:value={firstName}
+				required
+				class="input"
+				type="text"
+				placeholder="First Name"
+			/>
 		</label>
 		<label class="label mt-1.5">
-			<input name="lastName" bind:value={lastName} class="input" type="text" placeholder="Last Name (optional)" />
+			<input
+				name="lastName"
+				bind:value={lastName}
+				class="input"
+				type="text"
+				placeholder="Last Name (optional)"
+			/>
 		</label>
-		<input name="placeId" required value="{selectedCity?._id}" type="hidden" />
-		<input name="dobUtc" required value="{dobUtc?.valueOf()}" type="hidden" />
-		<input name="tz" required value="{selectedCity?.tz}" type="hidden" />
+		<input name="placeId" required value={selectedCity?._id} type="hidden" />
+		<input name="dobUtc" required value={dobUtc?.valueOf()} type="hidden" />
+		<input name="tz" required value={selectedCity?.tz} type="hidden" />
 
 		{#each tags as tag}
-			<input name="tags" value="{tag}" type="hidden" />
+			<input name="tags" value={tag} type="hidden" />
 		{/each}
 
 		<label class="label mt-1.5">
@@ -155,8 +188,9 @@
 			<label class="label mt-1.5">
 				<span class="pl-4 prose">Date and time of birth.</span>
 				<input
-					bind:value={currTime}
 					bind:this={dobInput}
+					value={$dobStringStore}
+					on:change={onDobChange}
 					name="dob"
 					required
 					class:border-error-700={invalidYear}
@@ -182,7 +216,9 @@
 	<!-- <div class="form-control flex-row"> -->
 	<!-- 	<AutoComplete bind:result={selectedCity} /> -->
 	<!-- </div> -->
-	<button type="submit" class="input btn variant-glass-secondary"> Create </button>
+	<button type="submit" class="input btn variant-glass-secondary">
+		<slot name="submit"> Create </slot>
+	</button>
 </form>
 
 <style lang="postcss">
