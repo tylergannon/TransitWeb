@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AppBar from "$lib/elem/AppBar.svelte";
+
 
 </script>
 <svelte:head>
@@ -7,13 +9,10 @@
 
 
 <div>
+  <AppBar />
 
-  <div class="navbar bg-base-200">
-    <a href="#" class="btn btn-ghost normal-case text-xl">TransitHD</a>
-    <div class="navbar-center">Hello, good sky!</div>
-  </div>
-  <div class="h-full v-full bg-gray-300">
-    <div class="hero min-h-screen">
+  <div class="h-full v-full items-center">
+    <div class="flex hero min-h-screen items-center justify-center">
       <div class="hero-overlay bg-opacity-60"></div>
       <div class="hero-content text-center text-neutral-content">
         <div class="max-w-md">

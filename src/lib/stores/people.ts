@@ -10,6 +10,7 @@ export type PersonStore = ClientSidePerson;
 export interface PeopleStore extends Readable<Record<string, ClientSidePerson>> {
 	add(person: ClientSidePerson): void;
 	remove(slug: string): void;
+	update(slug: string, params: Partial<ClientSidePerson>): void;
 }
 
 export const peopleStore = (people: ClientSidePerson[]): PeopleStore => {
@@ -23,6 +24,12 @@ export const peopleStore = (people: ClientSidePerson[]): PeopleStore => {
 		},
 		remove(slug: string) {
 			update(({ [slug]: _, ...people }) => people);
+		},
+		update(slug: string, params: Partial<ClientSidePerson>) {
+			update((people) => {
+				people[slug] = { ...people[slug], ...params };
+				return people;
+			});
 		}
 	};
 };
