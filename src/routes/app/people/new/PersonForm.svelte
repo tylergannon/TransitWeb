@@ -1,9 +1,9 @@
 <script lang="ts">
 
-	import type { GeoNamesCityType } from '$lib/srv/model';
-	import { zonedTimeToUtc } from 'date-fns-tz';
-
 	import { derived, writable, type Writable } from 'svelte/store';
+	import type { GeoNamesCityType } from '$lib/srv/model';
+
+	import { zonedTimeToUtc } from 'date-fns-tz';
 	import { formatDatetimeLocal } from './helper';
 
 	import PersonTags from './PersonTags.svelte';
@@ -11,7 +11,6 @@
 	import type { ClientSidePerson } from '$lib/stores/people';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { applyAction, enhance } from '$app/forms';
-	import type { Evt } from '$lib/components/events';
 	import Birthplace from './Birthplace.svelte';
 
 	type PersonFormEvents = {
@@ -76,7 +75,6 @@
 
   let dobInput: HTMLInputElement;
 
-
 </script>
 
 <form {method} {action} use:enhance={response}>
@@ -110,7 +108,6 @@
         bind:this={dobInput}
         value={$dobStringStore}
         on:change={onDobChange}
-        on:blur={(e)=> {}}
         name="dob"
         required
         class:border-error-700={invalidYear}
