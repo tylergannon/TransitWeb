@@ -4,10 +4,7 @@
 	import { getContext } from 'svelte';
 	import type { ActionData } from './$types';
 	import PersonForm from './PersonForm.svelte';
-	import type { Readable } from 'svelte/store';
-
-	const showSidebar: Readable<boolean> = getContext('showSidebar');
-	$showSidebar = false;
+	import AppBar from '$lib/elem/AppBar.svelte';
 
 	afterNavigate(() => {
 		(document.querySelector('input[name="firstName"]') as null|HTMLInputElement)?.focus();
@@ -29,18 +26,19 @@
 
 </script>
 
+<AppBar />
 
-<div class="grid grid-cols-6">
-	<div class="col-span-4 col-start-2 card-hover p-4">
-		<div class="card-header">
-			<h3 class="mb-6 text-lg font-semibold text-black dark:text-white">Add A Person</h3>
+<div class="grid grid-cols-10 md:mt-8 lg:mt-10">
+	<div class="col-span-8 max-sm:col-span-10 col-start-2 max-sm:col-start-auto p-4 max-sm:p-1">
+		<div class="card-header max-sm:p-2">
+			<h1 class="mb-6 font-semibold text-black dark:text-white">Add A Person</h1>
 
 			<p>
 				Each new person you add has a story to tell.  Let's key in to it.
 			</p>
 			<hr />
 		</div>
-		<section>
+		<section class="p-4 xs:p-1">
 			<PersonForm  action="/app/people/new" on:submit={onSubmit} />
 		</section>
 	</div>
@@ -48,9 +46,6 @@
 </div>
 
 <style lang="postcss">
-	h3 {
-		@apply mb-1;
-	}
 	hr {
 		@apply border-surface-700 dark:border-surface-200;
 		border: 0.01rem solid;

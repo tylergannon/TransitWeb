@@ -18,3 +18,4 @@ import { AppBar } from '@skeletonlabs/skeleton';
 
 
 <slot />
+
