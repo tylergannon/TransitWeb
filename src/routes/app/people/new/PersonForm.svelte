@@ -1,34 +1,21 @@
 <script lang="ts">
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import { createEventDispatcher } from 'svelte';
+	import { applyAction, enhance } from '$app/forms';
 
-	import { derived, writable, type Writable } from 'svelte/store';
 	import type { GeoNamesCityType } from '$lib/srv/model';
-
-	import { zonedTimeToUtc } from 'date-fns-tz';
-	import { formatDatetimeLocal } from './helper';
+	import type { ClientSidePerson } from '$lib/stores/people';
 
 	import PersonTags from './PersonTags.svelte';
-	import { createEventDispatcher } from 'svelte';
-	import type { ClientSidePerson } from '$lib/stores/people';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { applyAction, enhance } from '$app/forms';
 	import Birthplace from './Birthplace.svelte';
+
+  import { dtLocalWithTz } from "./dateTimeLocal";
 
 	type PersonFormEvents = {
 		submit: Omit<ClientSidePerson, '_id' | 'slug'>;
 	};
 
 	const dispatch = createEventDispatcher<PersonFormEvents>();
-
-	const submit = () => {
-		dispatch('submit', {
-			dobUtc: dobUtc as Date,
-			tags,
-			firstName,
-			lastName,
-			placeId: (selectedCity as GeoNamesCityType)._id,
-			tz: (selectedCity as GeoNamesCityType).tz
-		});
-	};
 
 	export let person: ClientSidePerson | null = null;
 	export let selectedCity: GeoNamesCityType | null = null;
@@ -38,43 +25,23 @@
 	const response = (() => async ({ result }) => {
 		await applyAction(result);
 		if (result.type === 'success') {
-			submit();
+      dispatch('submit', {
+        dobUtc: $dobUtc as Date,
+        tags,
+        firstName,
+        lastName,
+        placeId: (selectedCity as GeoNamesCityType)._id,
+        tz: (selectedCity as GeoNamesCityType).tz
+      });
 		}
 	}) satisfies SubmitFunction;
 
-	const dobStore: Writable<Date> = writable(person?.dobUtc ?? new Date());
-
-	$: console.log('person', person);
-
-	$dobStore = person?.dobUtc ?? new Date();
-
-	const dobStringStore = derived(dobStore, ($dobStore) => {
-		return formatDatetimeLocal({
-			dobUtc: $dobStore,
-			tz: selectedCity?.tz ?? Intl.DateTimeFormat().resolvedOptions().timeZone
-		});
-	});
 
 	let firstName = person?.firstName ?? '';
 	let lastName = person?.lastName ?? '';
-	let dobUtc = person?.dobUtc ?? new Date();
+	let dobUtc = dtLocalWithTz(person?.dobUtc ?? new Date());
 	let tags = person?.tags ?? [];
-
-
-	const onDobChange = (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
-		const timeStr = e.currentTarget.value;
-		const _selectedCity = selectedCity;
-		if (_selectedCity && timeStr) {
-			$dobStore = zonedTimeToUtc(timeStr, _selectedCity.tz);
-		}
-	};
-
-
-	$: invalidYear = dobUtc && (dobUtc.getFullYear() < 1550 || dobUtc.getFullYear() > 2649);
 	let tagsInput = '';
-
-  let dobInput: HTMLInputElement;
-
 </script>
 
 <form {method} {action} use:enhance={response}>
@@ -105,19 +72,15 @@
     <label class="label mt-1.5">
       <span class="pl-4 prose">Date and time of birth.</span>
       <input
-        bind:this={dobInput}
-        value={$dobStringStore}
-        on:change={onDobChange}
         name="dob"
+        use:dobUtc={selectedCity?.tz}
         required
-        class:border-error-700={invalidYear}
         type="datetime-local"
         class="input"
         form=""
       />
       <label
-        class="text-error-700-200-token"
-        class:block={invalidYear} for="dob">
+        class="input-feedback text-error-700-200-token" for="dob">
         Year must be between 1550 and 2649.
       </label>
     </label>
@@ -140,7 +103,13 @@
   label {
     @apply text-lg;
   }
-	label[for='dob'] {
+  input:invalid {
+    @apply border-error-700 dark:border-error-200;
+  }
+  input:invalid ~ .input-feedback {
+    display: block;
+  }
+  label.input-feedback {
 		@apply text-xs;
 		display: none;
 	}
