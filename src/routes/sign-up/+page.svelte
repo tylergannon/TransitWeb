@@ -2,7 +2,7 @@
 	import { PASSWORD_HINTS, PASSWORD_VALIDATORS } from '$lib/authHelper';
 	import TextInputFieldset from '$lib/components/auth/InputFieldset.svelte';
 	import AuthPage from '$lib/components/auth/Page.svelte';
-	import { required, minLength, maxLength, email, pattern } from 'svelte-use-form';
+	import { required, minLength, maxLength, email } from 'svelte-use-form';
 
 </script>
 

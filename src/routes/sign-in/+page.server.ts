@@ -22,13 +22,12 @@ export const actions = {
 		}
 
 		try {
-			const key = await auth.useKey('email', email, password);
-			const session = await auth.createSession(key.userId);
-			setSession(session);
-			throw redirect(307, '/app');
+			const { userId } = await auth.useKey('email', email, password);
+			setSession(await auth.createSession(userId));
 		} catch (sorkin) {
 			return fail(400);
 		}
+		throw redirect(307, '/app');
 	},
 	signOut: async ({ locals }) => {
 		const session = await locals.validate();
