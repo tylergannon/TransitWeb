@@ -74,15 +74,15 @@
 
 	a {
 		text-decoration: none;
-		@apply text-current no-underline cursor-default transition-all duration-200;
+		/* apply text-current no-underline cursor-default transition-all duration-200; */
 	}
 
 	a:hover {
-		@apply underline cursor-pointer;
+		/* apply underline cursor-pointer; */
 	}
 	.popup {
-		@apply flex-col w-44 h-16;
-		@apply text-black dark:text-white bg-surface-50 dark:bg-surface-800 rounded-md border-surface-700-200-token;
+		/* apply flex-col w-44 h-16; */
+		/* apply text-black dark:text-white bg-surface-50 dark:bg-surface-800 rounded-md border-surface-700-200-token; */
 
 		position: absolute;
 		border: none;
@@ -101,7 +101,7 @@
 
 	nav {
 		li {
-			@apply flex flex-wrap;
+			/* apply flex flex-wrap; */
 			overflow: hidden;
 		}
 	}

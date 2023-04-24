@@ -24,7 +24,7 @@
 <style lang="postcss">
 	.graph-bg path.body {
 		fill: none;
-		@apply stroke-secondary-300 fill-secondary-100 dark:stroke-secondary-700 dark:fill-secondary-900;
+		/* apply stroke-secondary-300 fill-secondary-100 dark:stroke-secondary-700 dark:fill-secondary-900; */
 		transform: scale(1) scaleY(0.9) translateX(-450px) translateY(120px);
 	}
 </style>

@@ -41,9 +41,9 @@
 
 <style lang="postcss">
 	nav {
-		@apply w-36;
-		@apply rounded-t-none rounded-b-md;
-		@apply bg-white dark:bg-black;
+		/* apply w-36; */
+		/* apply rounded-t-none rounded-b-md; */
+		/* apply bg-white dark:bg-black; */
 		border-style: solid;
 		border-width: 0.05rem;
 		border-top-width: 0;

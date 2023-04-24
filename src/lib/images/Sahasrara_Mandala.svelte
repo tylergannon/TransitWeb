@@ -308,17 +308,21 @@
 	</g>
 </svg>
 
+<!--
 <style lang="postcss">
+  
 	g {
-		@apply stroke-secondary-400 dark:stroke-secondary-800;
+		apply stroke-secondary-400 dark:stroke-secondary-800;
 		stroke: rgba(var(--color-secondary-400));
 	}
 	stop[offset='0'] {
-		@apply [stop-color:rgba(var(--color-secondary-200))]
+		apply [stop-color:rgba(var(--color-secondary-200))]
 					 dark:[stop-color:rgba(var(--color-secondary-800))];
 	}
 	stop[offset='1'] {
-		@apply [stop-color:rgba(var(--color-secondary-400))]
+		apply [stop-color:rgba(var(--color-secondary-400))]
 					 dark:[stop-color:rgba(var(--color-secondary-600))];
 	}
 </style>
+-->
+

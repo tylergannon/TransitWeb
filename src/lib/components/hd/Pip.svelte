@@ -25,27 +25,27 @@
 <style lang="postcss">
 	text {
 		font-size: var(--pip-font-size);
-		@apply fill-primary-800;
+		/* apply fill-primary-800; */
 		text-anchor: middle;
 		alignment-baseline: middle;
 		z-index: 101;
 	}
 	g:not(.defined).open > text {
-		@apply fill-primary-400;
+		/* apply fill-primary-400; */
 	}
 
 	g.defined, g.open > text {
-		@apply fill-primary-500;
+		/* apply fill-primary-500; */
 	}
 
 	g.defined > text {
-		@apply fill-primary-100;
+		/* apply fill-primary-100; */
 	}
 
 	g > circle {
 		fill: none;
 	}
 	g.defined > circle {
-		@apply fill-primary-500;
+		/* apply fill-primary-500; */
 	}
 </style>

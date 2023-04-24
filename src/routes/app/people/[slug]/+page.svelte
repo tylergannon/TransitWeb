@@ -121,11 +121,11 @@
 			visibility: visible;
 			overflow: visible;
 			border-radius: 0.5rem;
-			@apply bg-secondary-100 dark:bg-surface-800 p-2 rounded-lg;
-			@apply drop-shadow-md;
+			/* apply bg-secondary-100 dark:bg-surface-800 p-2 rounded-lg; */
+			/* apply drop-shadow-md; */
 		}
 	}
 	.planet {
-		@apply bg-secondary-50 dark:bg-secondary-900 p-2 md:mb-2 items-center;
+		/* apply bg-secondary-50 dark:bg-secondary-900 p-2 md:mb-2 items-center; */
 	}
 </style>

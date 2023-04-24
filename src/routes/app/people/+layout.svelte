@@ -77,7 +77,7 @@
 		}
 	}
 	.sidebarLeft {
-		@apply transition-[width];
+		/* apply transition-[width]; */
 		border-right-width: 0;
 		overflow: hidden;
 
@@ -91,7 +91,7 @@
 		}
 
 		&.showSidebar {
-			@apply min-h-full p-4 dark:bg-surface-900 border-solid border-slate-400;
+			/* apply min-h-full p-4 dark:bg-surface-900 border-solid border-slate-400; */
 			border-right-width: 0.2px;
 			overflow: visible;
 		}

@@ -41,11 +41,11 @@
 		fill: none;
 		stroke-width: 24px;
 		opacity: 0.7;
-		@apply stroke-blue-900;
+		/* apply stroke-blue-900; */
 	}
 	.backing.mask {
 		stroke-width: 22px;
-		@apply dark:stroke-black stroke-white;
+		/* apply dark:stroke-black stroke-white; */
 	}
 
 </style>

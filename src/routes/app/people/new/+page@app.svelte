@@ -47,9 +47,9 @@
 
 <style lang="postcss">
 	hr {
-		@apply border-surface-700 dark:border-surface-200;
+		/* apply border-surface-700 dark:border-surface-200; */
 		border: 0.01rem solid;
-		@apply mb-2;
+		/* apply mb-2; */
 	}
 
 </style>

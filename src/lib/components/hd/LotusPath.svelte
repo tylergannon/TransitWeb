@@ -5,7 +5,7 @@
 
 <style lang="postcss">
 	path {
-		@apply stroke-secondary-300 fill-secondary-300 dark:stroke-secondary-700 dark:fill-secondary-700;
+		/* apply stroke-secondary-300 fill-secondary-300 dark:stroke-secondary-700 dark:fill-secondary-700; */
 		stroke-width: 0.025px;
 		transform: translateY(1000px) translateX(-250px) scale(80) scaleY(0.8);
 	}
