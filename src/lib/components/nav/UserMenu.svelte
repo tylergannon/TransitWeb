@@ -13,7 +13,7 @@
 
 </script>
 
-<nav class="border-surface-400-500-token text-surface-900-50-token">
+<nav class="border-surface-400-500-token text-surface-900-50-token list-nav">
 	<ul>
 		<li class="pt-2 px-2">
 			<a href="/app/settings">
@@ -42,7 +42,7 @@
 <style lang="postcss">
 	nav {
 		@apply w-36;
-		@apply list-nav rounded-t-none rounded-b-md;
+		@apply rounded-t-none rounded-b-md;
 		@apply bg-white dark:bg-black;
 		border-style: solid;
 		border-width: 0.05rem;
