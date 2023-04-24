@@ -15,11 +15,16 @@
     <div class="flex hero min-h-screen items-center justify-center">
       <div class="hero-overlay bg-opacity-60"></div>
       <div class="hero-content text-center text-neutral-content">
-        <div class="max-w-md">
-          <h1 class="mb-5 text-5xl font-bold">Transit HD</h1>
-          <p class="mb-5">It will be pretty expensive but you're worth it.</p>
-          <a href="/sign-up" class="btn btn-primary">Sign up now!</a>
-          <a href="/sign-in" class="btn btn-secondary">I have an account</a>
+        <div class=" prose">
+          <h1 class="mb-5 text-5xl font-bold">Discover Keys You Can Use To Understand Your Relationships</h1>
+          <p class="mb-5 prose">
+            Human Design is a model of personality developed in the 20th century
+            to aid in a fundamental shift in human consciousness, promoting the
+            understanding that each personality, even "problematic" ones, actually
+            plays an important role in the world.
+          </p>
+          <a href="/sign-up" class="btn variant-soft-primary">Sign up now!</a>
+          <a href="/sign-in" class="btn bg-secondary-400">I have an account</a>
         </div>
       </div>
     </div>
