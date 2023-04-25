@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 
 import mongoose from 'mongoose';
 import ViteRestart from 'vite-plugin-restart'
+import vitePluginPurgeCss from "@mojojoejo/vite-plugin-purgecss"
 
 function disconnect() {
 	return {
@@ -28,7 +29,7 @@ const viteRestart = ViteRestart({
  *  host: 'dev.me.transithd.com'
  */
 export default defineConfig({
-	plugins: [sveltekit(), viteRestart, disconnect()],
+	plugins: [sveltekit(), vitePluginPurgeCss(), viteRestart, disconnect()],
 	server: { },
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']

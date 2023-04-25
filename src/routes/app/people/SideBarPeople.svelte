@@ -2,7 +2,6 @@
 	import { Popup } from '$lib/components/presentation/popup';
 	import type { Click } from '$lib/components/events';
 	import type { ClientSidePerson } from '$lib/stores/people';
-	import { modalStore } from '@skeletonlabs/skeleton';
 	import { Edit, TrashCan } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
 	export let userPeople: Record<string, ClientSidePerson>;
@@ -15,13 +14,7 @@
 	const delPerson = (e: Click<HTMLButtonElement>) => {
 		e.preventDefault();
 		const slug = e.currentTarget.dataset.slug;
-		modalStore.trigger({
-			title: 'Delete Person',
-			type: 'confirm',
-			response(r: boolean) {
-				if (r) dispatch('remove', slug);
-			}
-		})
+		// modalStore.trigger({ title: 'Delete Person', type: 'confirm', response(r: boolean) { if (r) dispatch('remove', slug); } })
 	}
 
 	const peopleFilter = (q: string) => {

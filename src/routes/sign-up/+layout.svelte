@@ -1,7 +1,8 @@
 <script lang="ts">
 	import AppBarLead from '$lib/elem/AppBarLead.svelte';
-import { AppBar } from '@skeletonlabs/skeleton';
 </script>
+
+<!--component
 
 <AppBar >
 
@@ -14,8 +15,8 @@ import { AppBar } from '@skeletonlabs/skeleton';
 	</svelte:fragment>
 </AppBar>
 
+-->
 
-
+<AppBarLead />
 
 <slot />
-

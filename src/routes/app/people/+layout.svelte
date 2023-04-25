@@ -2,7 +2,6 @@
 	import { getContext, setContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
 	import AppBar from '$lib/elem/AppBar.svelte';
-	import { AppShell } from '@skeletonlabs/skeleton';
 	import { deletePerson } from './[slug]/client';
 	import SideBarPeople from './SideBarPeople.svelte';
 
@@ -29,6 +28,10 @@
 		$showSidebar = !$showSidebar;
 	};
 </script>
+
+<header>
+  <AppBar />
+</header>
 
 <AppShell
 	slotSidebarLeft="overflow-x-visible overflow-y-visible flex flex-row"
