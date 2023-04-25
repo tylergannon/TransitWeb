@@ -1,17 +1,9 @@
-<script lang="ts">
-	import AppBarLead from "$lib/elem/AppBarLead.svelte";
-
-
-
-</script>
 <svelte:head>
   <title>TransitHD - Hello Good Sky!</title>
 </svelte:head>
 
 
 <div>
-  <AppBarLead />
-
   <div>
     <div>
       <div></div>
@@ -24,8 +16,8 @@
             understanding that each personality, even "problematic" ones, actually
             plays an important role in the world.
           </p>
-          <a href="/sign-up">Sign up now!</a>
-          <a href="/sign-in">I have an account</a>
+          <a href="/auth/sign-up">Sign up now!</a>
+          <a href="/auth/sign-in">I have an account</a>
         </div>
       </div>
     </div>

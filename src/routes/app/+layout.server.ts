@@ -7,7 +7,7 @@ export const load = (async ({ locals, parent }) => {
 	const parentData = await parent();
 
 	if (parentData.user === null) {
-		throw redirect(307, '/sign-in');
+		throw redirect(307, '/auth/sign-in');
 	}
 	const userId = (await locals.validate())?.userId ?? -1;
 

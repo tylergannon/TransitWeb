@@ -10,7 +10,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 servers/node/.out
 static/cities/*.gz
-.out/*
+**/.out/*
 .venv
 .vscode-extensions
 
