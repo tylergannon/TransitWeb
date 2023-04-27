@@ -4,7 +4,6 @@
 	import { flip } from 'svelte/animate';
 
 	// Types
-	import type { CssClasses } from '@skeletonlabs/skeleton';
 
 	// Event Dispatcher
 	const dispatch = createEventDispatcher();
@@ -46,13 +45,13 @@
 
 	// Props (styles)
 	/** Provide classes or a variant to style the chips. */
-	export let chips: CssClasses = 'variant-filled';
+	export let chips: string = 'variant-filled';
 	/** Provide classes used to indicate invalid state. */
-	export let invalid: CssClasses = 'input-error';
+	export let invalid: string = 'input-error';
 	/** Provide classes to set padding styles. */
-	export let padding: CssClasses = 'p-2';
+	export let padding: string = 'p-2';
 	/** Provide classes to set border radius styles. */
-	export let rounded: CssClasses = 'rounded-container-token';
+	export let rounded: string = 'rounded-container-token';
   
   let form: HTMLFormElement;
 

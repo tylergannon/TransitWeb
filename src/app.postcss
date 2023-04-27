@@ -1,30 +1,35 @@
 /* Write your global styles here, in PostCSS syntax */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-@font-face {
-	font-family: 'Mona Sans';
-	src: url('/fonts/Mona-Sans.woff2') format('woff2 supports variations'),
-		url('/fonts/Mona-Sans.woff2') format('woff2-variations'),
-		url('/fonts/Mona-Sans.woff') format('woff'), url('/fonts/Mona-Sans.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'Hubot Sans';
-	src: url('/fonts/Hubot-Sans.woff2') format('woff2 supports variations'),
-		url('/fonts/Hubot-Sans.woff2') format('woff2-variations'),
-		url('/fonts/Hubot-Sans.woff') format('woff'), url('/fonts/Hubot-Sans.ttf') format('truetype');
-	font-weight: 200 900;
-	font-stretch: 75% 125%;
-}
 
 :root {
-  --theme-font-family-base: 'Mona Sans', sans-serif;
-  --theme-font-family-heading: 'Hubot Sans', sans-serif;
-	--theme-rounded-base: 6px;
-	--theme-rounded-container: 12px;
+  @custom-media --media-sm (max-width: 640px);
+  @custom-media --media-md (max-width: 768px);
+  @custom-media --media-lg (max-width: 1024px);
+  @custom-media --media-xl (max-width: 1280px);
+  @custom-media --media-2xl (max-width: 1536px);
+  @custom-media --media-3xl (max-width: 1920px);
+  @custom-media --media-sm-up (min-width: 640px);
+  @custom-media --media-md-up (min-width: 768px);
+  @custom-media --media-lg-up (min-width: 1024px);
+  @custom-media --media-xl-up (min-width: 1280px);
+  @custom-media --media-2xl-up (min-width: 1536px);
+  @custom-media --media-3xl-up (min-width: 1920px);
 
+  --tw-0: #2E3440;
+  --tw-1: #3B4252;
+  --tw-2: #434C5E;
+  --tw-3: #4C566A;
+  --tw-4: #D8DEE9;
+  --tw-5: #E5E9F0;
+  --tw-6: #ECEFF4;
+  --tw-7: #8FBCBB;
+  --tw-8: #88C0D0;
+  --tw-9: #81A1C1;
+  --tw-10: #5E81AC;
+  --tw-11: #BF616A;
+  --tw-12: #D08770;
+  --tw-13: #EBCB8B;
+  --tw-14: #A3BE8C;
+  --tw-15: #B48EAD;
 }
+

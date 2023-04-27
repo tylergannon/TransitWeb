@@ -2,7 +2,6 @@
 	import { Popup } from '$lib/components/presentation/popup';
 	import type { Click } from '$lib/components/events';
 	import type { ClientSidePerson } from '$lib/stores/people';
-	import { modalStore } from '@skeletonlabs/skeleton';
 	import { Edit, TrashCan } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
 	export let userPeople: Record<string, ClientSidePerson>;
@@ -15,13 +14,7 @@
 	const delPerson = (e: Click<HTMLButtonElement>) => {
 		e.preventDefault();
 		const slug = e.currentTarget.dataset.slug;
-		modalStore.trigger({
-			title: 'Delete Person',
-			type: 'confirm',
-			response(r: boolean) {
-				if (r) dispatch('remove', slug);
-			}
-		})
+		// modalStore.trigger({ title: 'Delete Person', type: 'confirm', response(r: boolean) { if (r) dispatch('remove', slug); } })
 	}
 
 	const peopleFilter = (q: string) => {
@@ -74,15 +67,15 @@
 
 	a {
 		text-decoration: none;
-		@apply text-current no-underline cursor-default transition-all duration-200;
+		/* apply text-current no-underline cursor-default transition-all duration-200; */
 	}
 
 	a:hover {
-		@apply underline cursor-pointer;
+		/* apply underline cursor-pointer; */
 	}
 	.popup {
-		@apply flex-col w-44 h-16;
-		@apply text-black dark:text-white bg-surface-50 dark:bg-surface-800 rounded-md border-surface-700-200-token;
+		/* apply flex-col w-44 h-16; */
+		/* apply text-black dark:text-white bg-surface-50 dark:bg-surface-800 rounded-md border-surface-700-200-token; */
 
 		position: absolute;
 		border: none;
@@ -101,7 +94,7 @@
 
 	nav {
 		li {
-			@apply flex flex-wrap;
+			/* apply flex flex-wrap; */
 			overflow: hidden;
 		}
 	}

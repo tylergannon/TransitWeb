@@ -1,7 +1,6 @@
 <script lang="ts">
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { ClientSidePerson } from '$lib/stores/people';
-	import { ListBoxItem } from '@skeletonlabs/skeleton';
 	import type { Writable } from 'svelte/store';
 	import { createEventDispatcher } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
@@ -15,7 +14,7 @@
 
 {#if visible}
 	<div out:fade={{ duration: 500 }} class="overflow-clip">
-		<ListBoxItem
+		<!-- <ListBoxItem
 			bind:group
 			name="person"
 			value={$person.slug}
@@ -38,6 +37,6 @@
 						: 'border-1 border-slate-700'}">Remove {$person.firstName}?</button
 				>
 			</div>
-		</ListBoxItem>
+		</ListBoxItem> -->
 	</div>
 {/if}

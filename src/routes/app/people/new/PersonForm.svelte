@@ -101,16 +101,16 @@
 
 <style lang="postcss">
   label {
-    @apply text-lg;
+    /* apply text-lg; */
   }
   input:invalid {
-    @apply border-error-700 dark:border-error-200;
+    /* apply border-error-700 dark:border-error-200; */
   }
   input:invalid ~ .input-feedback {
     display: block;
   }
   label.input-feedback {
-		@apply text-xs;
+		/* apply text-xs; */
 		display: none;
 	}
 </style>

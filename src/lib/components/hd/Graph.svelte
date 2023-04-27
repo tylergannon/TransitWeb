@@ -113,11 +113,11 @@
 
 <style lang="postcss">
 	g.center-group > use {
-		@apply fill-secondary-200 stroke-secondary-700 dark:stroke-secondary-300;
+		/* apply fill-secondary-200 stroke-secondary-700 dark:stroke-secondary-300; */
 		stroke-width: 2px;
 	}
 
 	g.center-group > use.def {
-		@apply fill-secondary-500;
+		/* apply fill-secondary-500; */
 	}
 </style>

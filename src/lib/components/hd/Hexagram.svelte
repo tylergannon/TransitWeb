@@ -17,7 +17,7 @@
 
 <style lang="postcss">
 	path {
-		@apply dark:stroke-white stroke-black;
+		/* apply dark:stroke-white stroke-black; */
 		stroke-linecap: round;
 		fill: none;
 	}

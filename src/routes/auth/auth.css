@@ -1,0 +1,113 @@
+/* *:focus, *:focus-visible {
+    outline: 0;
+  } */
+h1 {
+	margin-top: 5%;
+	margin-bottom: 5%;
+	text-align: center;
+	font-weight: 900;
+}
+label,
+span {
+	margin-left: 5%;
+	margin-right: 5%;
+	display: block;
+}
+
+form.dark input {
+	border: 1px solid var(--tw-3);
+	box-shadow: inset 0 1px 2px var(--tw-3);
+}
+
+input,
+button {
+	padding: 0.5em 0.6em 0.4em 0.6em;
+
+	display: inline-block;
+	border: 1px solid var(--tw-4);
+	box-shadow: inset 0 1px 2px var(--tw-4);
+	box-sizing: border-box;
+	border-radius: 8px;
+	display: block;
+	width: 90%;
+	margin: 3px 5%;
+
+	font-size: 20px;
+}
+
+form input:focus {
+	outline: 0;
+	border-width: 2px;
+	border-color: var(--tw-7);
+}
+
+form input:invalid {
+	border-color: var(--tw-11);
+}
+
+form.dark input:focus {
+	border-color: var(--tw-12);
+}
+
+form.dark input {
+	border-color: var(--tw-4);
+	background-color: var(--tw-1);
+	color: var(--tw-6);
+}
+
+form.dark input:invalid {
+	border-color: var(--tw-11);
+}
+
+button {
+	background-color: var(--tw-2);
+	border-color: var(--tw-1);
+	color: var(--tw-11);
+}
+/* Button base styles */
+button {
+	font-family: inherit;
+	font-weight: 600;
+	padding: 0.5rem 1.25rem;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+	outline: none;
+}
+
+/* Light mode button */
+button {
+	background-color: var(--tw-10);
+	color: var(--tw-0);
+	height: 2.2em;
+}
+
+button:hover {
+	background-color: var(--tw-9);
+}
+
+button:active {
+	background-color: var(--tw-8);
+}
+
+button:focus-visible {
+	box-shadow: 0 0 0 3px var(--tw-4);
+}
+
+/* Dark mode button */
+form.dark button {
+	background-color: var(--tw-12);
+	color: var(--tw-0);
+}
+
+form.dark button:hover {
+	background-color: var(--tw-11);
+}
+
+form.dark button:active {
+	background-color: var(--tw-10);
+}
+
+form.dark button:focus-visible {
+	box-shadow: 0 0 0 3px var(--tw-8);
+}

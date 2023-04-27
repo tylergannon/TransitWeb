@@ -1,15 +1,8 @@
 <script lang="ts">
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import Logout from "carbon-icons-svelte/lib/Logout.svelte";
-	import { LightSwitch, getModeUserPrefers, setModeCurrent, setModeUserPrefers } from '@skeletonlabs/skeleton';
   import { enhance } from '$app/forms';
 
-
-	const toggleDarkMode = () => {
-		const nextVal = !getModeUserPrefers();
-		setModeUserPrefers(nextVal);
-		setModeCurrent(nextVal);
-	}
 
 </script>
 
@@ -23,7 +16,7 @@
 		</li>
 		<li class="flex-1 p-2 pt-1 relative">
 			<div class="ml-1 absolute top-[30%] left-4"><LightSwitch height={"h-4"} width={"w-8"} /> </div>
-			<button type="button" on:click={toggleDarkMode} class="w-full">
+			<button type="button" on:click class="w-full">
 				<span class="text-sm pl-12">🌞/🌛</span>
 			</button>
 		</li>
@@ -41,9 +34,9 @@
 
 <style lang="postcss">
 	nav {
-		@apply w-36;
-		@apply rounded-t-none rounded-b-md;
-		@apply bg-white dark:bg-black;
+		/* apply w-36; */
+		/* apply rounded-t-none rounded-b-md; */
+		/* apply bg-white dark:bg-black; */
 		border-style: solid;
 		border-width: 0.05rem;
 		border-top-width: 0;

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types';
+  import { enhance } from '$app/forms';
 	import TextInputFieldset from '$lib/components/auth/InputFieldset.svelte';
   import { required, url } from "svelte-use-form"
 
@@ -10,7 +11,6 @@
   import type { UserType } from '$lib/srv/model/user';
 	import { PASSWORD_HINTS, PASSWORD_VALIDATORS } from '$lib/authHelper';
 	import type { Writable } from 'svelte/store';
-	import AppBar from '$lib/elem/AppBar.svelte';
 	import { updateProfile } from './client';
 
   export let data: PageData
@@ -43,9 +43,12 @@
 
 </script>
 
-<AppBar />
 <div class="p-4">
   <h1 class="text-4xl font-semibold mb-4">Settings</h1>
+  <form use:enhance action="/auth" method="post">
+    <button type="submit">Sign Out</button>
+
+  </form>
   {#if $saveProfile}
   saving...
   {/if}

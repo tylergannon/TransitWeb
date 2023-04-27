@@ -2,7 +2,6 @@
 	import { getContext, setContext } from 'svelte';
 	import type { PeopleStore } from '$lib/stores/people';
 	import AppBar from '$lib/elem/AppBar.svelte';
-	import { AppShell } from '@skeletonlabs/skeleton';
 	import { deletePerson } from './[slug]/client';
 	import SideBarPeople from './SideBarPeople.svelte';
 
@@ -29,6 +28,10 @@
 		$showSidebar = !$showSidebar;
 	};
 </script>
+
+<header>
+  <AppBar />
+</header>
 
 <AppShell
 	slotSidebarLeft="overflow-x-visible overflow-y-visible flex flex-row"
@@ -77,7 +80,7 @@
 		}
 	}
 	.sidebarLeft {
-		@apply transition-[width];
+		/* apply transition-[width]; */
 		border-right-width: 0;
 		overflow: hidden;
 
@@ -91,7 +94,7 @@
 		}
 
 		&.showSidebar {
-			@apply min-h-full p-4 dark:bg-surface-900 border-solid border-slate-400;
+			/* apply min-h-full p-4 dark:bg-surface-900 border-solid border-slate-400; */
 			border-right-width: 0.2px;
 			overflow: visible;
 		}

@@ -23,8 +23,8 @@ image: cities_data astroapi auth-server
 clean:
 	rm -rf .out/* static/cities/*.gz
 
-.out/mongodb-initdb/load_cities.js:
-	@mkdir -p .out/mongodb-initdb
+stack/.out/mongodb-initdb/load_cities.js:
+	@mkdir -p stack/.out/mongodb-initdb
 	script/build_cities_js.py --output $@
 
 static/cities/cities%.tsv.gz: .out/cities/cities%.txt
@@ -42,7 +42,7 @@ cities_data: static/cities/cities15000.tsv.gz \
 							static/cities/cities5000.tsv.gz \
 							static/cities/cities500.tsv.gz \
 							static/cities/admin-areas.tsv.gz \
-							.out/mongodb-initdb/load_cities.js
+							stack/.out/mongodb-initdb/load_cities.js
 
 ansible:
 	cd ansible \
@@ -50,14 +50,14 @@ ansible:
 	&& ansible-playbook -i ./inventory.yml ./playbooks/$(num)*.yml
 
 astroapi:
-	@cd servers/astroapi && make image
+	@cd stack/servers/astroapi && make image
 
 auth-server:
-	@cd servers/auth && make image
+	@cd stack/servers/auth && make image
 
 dev-server: alpine-fish
-	@cd servers/dev-server && make image
+	@cd stack/servers/dev-server && make image
 
 alpine-fish:
-	@cd servers/alpine-fish && make image
+	@cd stack/servers/alpine-fish && make image
 
